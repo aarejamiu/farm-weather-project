@@ -9,33 +9,35 @@ form.addEventListener('submit', async (e) => {
     let confirmPassword = form.confirmPassword.value;
 
     if (password === confirmPassword){
-        message.textContent = "Logging in ...";
+        message.textContent = "Registering ...";
+        try{
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                message.textContent = "Registration successful!";
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+                form.reset();
+            } else {
+                message.textContent = data.message || 'Registration failed.';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            message.textContent = 'An error occurred during registration.';
+        }
     }else {
         message.textContent = "Password does not match.";
     }
 })
-try{
-    const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, email, password })
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-        message.textContent = " Registration successful!";
-        window.location.href = 'login.html';
-        form.reset();
-    } else {
-        message.textContent = data.message || 'Registration failed.';
-    }
-} catch (error) {
-    console.error('Error:', error);
-    message.textContent = 'An error occurred during registration.';
-}
 
 // Login form handling
 const loginForm = document.getElementById('loginForm');
