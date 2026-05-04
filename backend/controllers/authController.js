@@ -8,6 +8,7 @@ const registerUser = async (req, res) => {
     try {
         let userExists = await User.findOne({ email });
         if (userExists) {
+            console.log('User already exists:', email);
             return res.status(400).json({ message: 'User already exists' });
         }
         const salt = await bcrypt.genSalt(10);
@@ -19,6 +20,7 @@ const registerUser = async (req, res) => {
             password: hashedPassword
         });
 
+        console.log('User registered successfully:', user._id);
         res.status(201).json({ message: 'User registered successfully',
             user: {
                 id: user._id,
@@ -28,9 +30,9 @@ const registerUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
+  console.error("REGISTER ERROR:", error);
+  res.status(500).json({ message: error.message });
+}
 };
 
 const loginUser = async (req, res) => {
