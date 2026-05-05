@@ -3,9 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard-Farm-Weather</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <!-- <li><a href="settings.html">Settings</a></li> -->
+            <li><a href="logout.html">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Welcome to Your Dashboard</h1>
+        <p>Here you can view your weather data, manage your profile, and access other
+        features.</p>
+    </div>
+
+    <div class="container">
+        <input type="text" id="search" placeholder="Enter farm location">
+        <button id="getWeatherBtn">Get Weather</button>
+    </div>
+
+    <div id="weatherResult">
+        <h3>Weather Information</h3>
+        <p id="temp"></p>
+        <p id="humidity"></p>
+        <p id="wind"></p>
+        <p id="condition"></p>
+        <p id="location"></p>
+    </div>
+    <textarea id="note" placeholder="Add note (e.g Good for planting maize)"></textarea>
+    <button id="saveBtn">Save Weather</button>
+
+    <h3>Saved Dates</h3>
+    <div id="savedDates"></div>
+
+    <!-- <nav class="navbar">
+    <h2>🌱 FarmWeather</h2>
+    <button id="logoutBtn">Logout</button>
+  </nav> -->
+
+  <!-- <div class="dashboard"> -->
+
+    <!-- LEFT: WEATHER -->
+    <!-- <div class="card weather-card">
+      <h3>Weather Checker</h3>
+
+      <div class="input-group">
+        <input type="text" id="location" placeholder="Enter city">
+        <button id="getWeatherBtn">Check</button>
+      </div>
+
+      <div id="weatherResult" class="weather-result">
+        <h2 id="cityName"></h2>
+        <p id="temp"></p>
+        <p id="humidity"></p>
+        <p id="wind"></p>
+        <p id="condition"></p>
+      </div>
+
+      <textarea id="note" placeholder="Add farming note..."></textarea>
+      <button id="saveBtn">Save Weather</button>
+    </div>
+
+    <div class="card saved-card">
+      <h3>Saved Dates</h3>
+      <div id="savedDates"></div>
+    </div>
+
+  </div> -->
+
+
+    <script src="js/dashboard.js"></script>
 </body>
 </html>
