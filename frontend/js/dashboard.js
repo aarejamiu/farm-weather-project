@@ -1,24 +1,57 @@
 const token = localStorage.getItem('token');
 
-if(!token){
+if (!token) {
     window.location.href = 'login.html';
 }
 
 const logoutBtn = document.getElementById('logoutBtn');
-
+if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('token');
         window.location.href = 'login.html';
     });
+}
+
+const getWeatherBtn = document.getElementById('getWeatherBtn');
+if (getWeatherBtn) {
+    getWeatherBtn.addEventListener('click', async () => {
+        const location = document.getElementById('search').value.trim();
+        if (!location) {
+            alert('Please enter a location');
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/weather/weather?location=${encodeURIComponent(location)}`);
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || 'Unable to fetch weather');
+            }
+
+            const data = await res.json();
+            const weather = data.weather;
+
+            document.getElementById('temp').textContent = `Temp: ${weather.temp} °C`;
+            document.getElementById('humidity').textContent = `Humidity: ${weather.humidity}%`;
+            document.getElementById('wind').textContent = `Wind: ${weather.wind} km/h`;
+            document.getElementById('condition').textContent = `Condition: ${weather.condition}`;
+            document.getElementById('location').textContent = `Location: ${weather.location}`;
+        } catch (error) {
+            console.error('Error fetching weather:', error);
+            alert(error.message || 'Failed to fetch weather');
+        }
+    });
+}
 
 const saveBtn = document.getElementById('saveBtn');
-saveBtn.addEventListener('click', async () => {
-    const note = document.getElementById('note').value;
-    const location = document.getElementById('location').value;
-    const temp = document.getElementById('temp').textContent.split(': ')[1];
-    const humidity = document.getElementById('humidity').textContent.split(': ')[1];
-    const wind = document.getElementById('wind').textContent.split(': ')[1];
-    const condition = document.getElementById('condition').textContent.split(': ')[1];
+if (saveBtn) {
+    saveBtn.addEventListener('click', async () => {
+        const note = document.getElementById('note').value;
+        const location = document.getElementById('location').textContent.split(': ')[1] || document.getElementById('search').value;
+        const temp = document.getElementById('temp').textContent.split(': ')[1];
+        const humidity = document.getElementById('humidity').textContent.split(': ')[1];
+        const wind = document.getElementById('wind').textContent.split(': ')[1];
+        const condition = document.getElementById('condition').textContent.split(': ')[1];
 
     try {
         const res = await fetch("http://localhost:5000/api/dates/save", {
@@ -37,7 +70,8 @@ saveBtn.addEventListener('click', async () => {
     } catch (error) {
         console.error("Error saving date:", error);
     }
-});
+    });
+}
 
 const loadSavedDates = async () => {
     try {
@@ -87,4 +121,49 @@ const deleteDate = async (id) => {
     }
 };
 
+const loadProfile = async () => {
+    try{
+        const res = await fetch("http://localhost:5000/api/profile", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await res.json();
+        document.getElementById('profileName').textContent = data.name;
+        document.getElementById('profileEmail').textContent = data.email;
+        document.getElementById('profileLocation').textContent = data.farmLocation || "Not set";
+
+        if (data.farmLocation){
+            document.getElementById('newLocation').value = data.farmLocation;
+        }
+    } catch (error) {
+        console.error("Error loading profile:", error);
+    }
+};
+
+const updateBtn = document.getElementById('updateLocationBtn');
+updateBtn.addEventListener('click', async () => {
+    const newLocation = document.getElementById('newLocation').value;
+
+    try {
+        const res = await fetch("http://localhost:5000/api/profile", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ farmLocation: newLocation })
+        });
+
+        const data = await res.json();
+        alert(data.message);
+        loadProfile();
+    } catch (error) {
+        console.error("Error updating location:", error);
+    }
+});
+
 loadSavedDates();
+loadProfile()

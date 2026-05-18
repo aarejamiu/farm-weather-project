@@ -15,11 +15,11 @@ const getWeather = async (req, res) => {
         const data = response.data;
 
         const weather = {
-            temp: data.main.temp,
-            humidity: data.main.humidity,
-            wind: data.wind.speed,
-            condition: data.weather[0].description,
-            location: `${data.name}, ${data.sys.country}`
+            temp: data.current.temp_c,
+            humidity: data.current.humidity,
+            wind: data.current.wind_kph,
+            condition: data.current.condition.text,
+            location: `${data.location.name}, ${data.location.country}`
         };
 
         res.json({ weather })

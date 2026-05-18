@@ -13,6 +13,11 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    farmLocation: {
+        type: String,
+        required: true,
+        default: ""  
     }
 }, {timestamps: true});
 
