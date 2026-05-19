@@ -4,6 +4,6 @@ const { getProfile, updateFarmLocation } = require('../controllers/profileContro
 const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/', authMiddleware, getProfile);
-router.put('/farm-location', authMiddleware, updateFarmLocation);
+router.put('/location', authMiddleware, updateFarmLocation);
 
 module.exports = router;

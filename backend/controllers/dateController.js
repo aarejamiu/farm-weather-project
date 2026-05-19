@@ -24,12 +24,22 @@ const saveDate = async (req, res) => {
 
 const getDates = async (req, res) => {
     try {
-        const dates = await SavedDate.find({ user: req.user.id }).sort({ date: -1 });
-        res.status(200).json({ dates });
-    } catch (error) {
-        console.error("GET DATES ERROR:", error);
-        res.status(500).json({ message: "Server error" });
-    }
+
+    const dates = await SavedDate.find({
+      user: req.user.id
+    });
+
+    res.json(dates);
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      message: 'Server error'
+    });
+
+  }
 };
 
 const deleteDate = async (req, res) => {

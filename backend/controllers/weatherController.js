@@ -1,32 +1,34 @@
 const axios = require('axios');
 
 const getWeather = async (req, res) => {
-    const { location } = req.query;
-
-    if (!location){
-        return res.status(400).json({ message: 'Location is required' });
-    }
 
     try {
-        const apiKey = process.env.WEATHER_API_KEY;
+        const location = req.query.location
 
-        const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}`);
+        if (!location){
+            return res.status(400).json({ message: 'Location is required' });
+        }    
 
-        const data = response.data;
+    const apiKey = process.env.WEATHER_API_KEY;
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`;
+
+    const response = await axios.get(url)
+    const data = response.data;
 
         const weather = {
-            temp: data.current.temp_c,
-            humidity: data.current.humidity,
-            wind: data.current.wind_kph,
-            condition: data.current.condition.text,
-            location: `${data.location.name}, ${data.location.country}`
+            temp: data.main.temp,
+            humidity: data.main.humidity,
+            wind: data.wind.speed,
+            condition: data.weather[0].description,
+            city: data.name
         };
 
         res.json({ weather })
-        }catch (error) {
+    }catch (error) {
             console.error('Weather error:', error.response?.data || error.message);
             res.status(500).json({ message: 'Failed to fetch weather data' });
-        }
+    }
 }
 
-module.exports = { getWeather };
+module.exports = {getWeather};

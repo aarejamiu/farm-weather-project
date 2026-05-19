@@ -35,7 +35,7 @@ if (getWeatherBtn) {
             document.getElementById('humidity').textContent = `Humidity: ${weather.humidity}%`;
             document.getElementById('wind').textContent = `Wind: ${weather.wind} km/h`;
             document.getElementById('condition').textContent = `Condition: ${weather.condition}`;
-            document.getElementById('location').textContent = `Location: ${weather.location}`;
+            document.getElementById('locationDisplay').textContent = `Location: ${weather.city}`;
         } catch (error) {
             console.error('Error fetching weather:', error);
             alert(error.message || 'Failed to fetch weather');
@@ -47,8 +47,7 @@ const saveBtn = document.getElementById('saveBtn');
 if (saveBtn) {
     saveBtn.addEventListener('click', async () => {
         const note = document.getElementById('note').value;
-        const location = document.getElementById('location').textContent.split(': ')[1] || document.getElementById('search').value;
-        const temp = document.getElementById('temp').textContent.split(': ')[1];
+const location = document.getElementById('locationDisplay').textContent.split(': ')[1] || document.getElementById('search').value;        const temp = document.getElementById('temp').textContent.split(': ')[1];
         const humidity = document.getElementById('humidity').textContent.split(': ')[1];
         const wind = document.getElementById('wind').textContent.split(': ')[1];
         const condition = document.getElementById('condition').textContent.split(': ')[1];
@@ -82,6 +81,10 @@ const loadSavedDates = async () => {
             }
         });
 
+        if (!res.ok) {
+            throw new Error('Failed to load dates');
+        }
+
         const data = await res.json();
 
         const container = document.getElementById('savedDates');
@@ -99,6 +102,11 @@ const loadSavedDates = async () => {
                 <p><strong>Note:</strong> ${item.note}</p>
                 <button class="deleteBtn" data-id="${item._id}">Delete</button>
             `;
+            const deleteBtn = div.querySelector('.deleteBtn');
+
+            deleteBtn.addEventListener('click', () => {
+            deleteDate(item._id);
+            });
             container.appendChild(div);
         });
     } catch (error) {
@@ -144,11 +152,14 @@ const loadProfile = async () => {
 };
 
 const updateBtn = document.getElementById('updateLocationBtn');
+
+if (updateBtn) {
+
 updateBtn.addEventListener('click', async () => {
     const newLocation = document.getElementById('newLocation').value;
 
     try {
-        const res = await fetch("http://localhost:5000/api/profile", {
+        const res = await fetch("http://localhost:5000/api/profile/location", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -157,6 +168,10 @@ updateBtn.addEventListener('click', async () => {
             body: JSON.stringify({ farmLocation: newLocation })
         });
 
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || 'Failed to update location');
+        }
         const data = await res.json();
         alert(data.message);
         loadProfile();
@@ -164,6 +179,6 @@ updateBtn.addEventListener('click', async () => {
         console.error("Error updating location:", error);
     }
 });
-
+}
 loadSavedDates();
 loadProfile()

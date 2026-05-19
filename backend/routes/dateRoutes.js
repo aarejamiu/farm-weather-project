@@ -1,7 +1,7 @@
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
-const { saveDate, getDates, deleteDate } = require('../controllers/dateController');
 const router = express.Router();
+const { saveDate, getDates, deleteDate } = require('../controllers/dateController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 
 router.post('/save', authMiddleware, saveDate),

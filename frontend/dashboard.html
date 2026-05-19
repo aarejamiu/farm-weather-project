@@ -1,6 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+
+    <h2>🌱 FarmWeather</h2>
+
+    <button id="logoutBtn">
+      Logout
+    </button>
+
+  </nav>
+
+
+  <div class="dashboard">
+
+    <!-- PROFILE CARD -->
+    <div class="card profile-card">
+
+      <h3>Farmer Profile</h3>
+
+      <p>
+        <strong>Name:</strong>
+        <span id="profileName"></span>
+      </p>
+
+      <p>
+        <strong>Email:</strong>
+        <span id="profileEmail"></span>
+      </p>
+
+      <p>
+        <strong>Farm Location:</strong>
+        <span id="profileLocation"></span>
+      </p>
+
+      <input
+        type="text"
+        id="newLocation"
+        placeholder="Update farm location"
+      >
+
+      <button id="updateLocationBtn">
+        Update Location
+      </button>
+
+    </div>
+
+
+    <!-- WEATHER CARD -->
+    <div class="card weather-card">
+
+      <h3>Weather Checker</h3>
+
+      <div class="input-group">
+
+        <input
+          type="text"
+          id="search"
+          placeholder="Enter city"
+        >
+
+        <button id="getWeatherBtn">
+          Check Weather
+        </button>
+
+      </div>
+
+
+      <!-- WEATHER RESULT -->
+      <div id="weatherResult">
+
+        <h2 id="cityName"></h2>
+
+        <p id="locationDisplay"></p>
+
+        <p id="temp"></p>
+
+        <p id="humidity"></p>
+
+        <p id="wind"></p>
+
+        <p id="condition"></p>
+
+      </div>
+
+
+      <!-- NOTES -->
+      <textarea
+        id="note"
+        placeholder="Add farming note..."
+      ></textarea>
+
+      <button id="saveBtn">
+        Save Weather
+      </button>
+
+    </div>
+
+
+    <!-- FORECAST CHART -->
+    <div class="card chart-card">
+
+      <h3>Forecast Trends</h3>
+
+      <canvas id="tempChart"></canvas>
+
+    </div>
+
+
+    <!-- SAVED DATES -->
+    <div class="card saved-card">
+
+      <h3>Saved Dates</h3>
+
+      <div id="savedDates"></div>
+
+    </div>
+
+  </div>
+
+
+  <script src="js/dashboard.js"></script>
+
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard-Farm-Weather</title>
@@ -11,7 +151,6 @@
         <ul>
             <li><a href="dashboard.html">Dashboard</a></li>
             <li><a href="profile.html">Profile</a></li>
-            <!-- <li><a href="settings.html">Settings</a></li> -->
             <li><a href="logout.html">Logout</a></li>
         </ul>
     </nav>
@@ -47,7 +186,7 @@
       <p><strong>Farm Location:</strong> <span id="profileLocation"></span></p>
       <input type="text" id="newLocation" placeholder="Update farm location">
       <button id="updateLocationBtn">Update Location</button>
-    </div>
+    </div> -->
 
     <!-- <nav class="navbar">
     <h2>🌱 FarmWeather</h2>
@@ -85,6 +224,6 @@
   </div> -->
 
 
-    <script src="js/dashboard.js"></script>
+    <!-- <script src="js/dashboard.js"></script>
 </body>
-</html>
+</html> -->

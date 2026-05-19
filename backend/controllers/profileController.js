@@ -31,7 +31,7 @@ try {
 
     res.json({
         message: "Farm location updated successfully",
-        farmLocation: user.farmLocation
+        // farmLocation: user.farmLocation
     });
 } catch (error) {
     console.error(error);
