@@ -5,7 +5,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 
 router.post('/save', authMiddleware, saveDate),
-router.get('/get', authMiddleware, getDates),
+router.get('/', authMiddleware, getDates),
 router.delete('/:id', authMiddleware, deleteDate)
 
 module.exports = router;

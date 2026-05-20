@@ -36,6 +36,7 @@ if (getWeatherBtn) {
             document.getElementById('wind').textContent = `Wind: ${weather.wind} km/h`;
             document.getElementById('condition').textContent = `Condition: ${weather.condition}`;
             document.getElementById('locationDisplay').textContent = `Location: ${weather.city}`;
+            loadForecast(weather.city);
         } catch (error) {
             console.error('Error fetching weather:', error);
             alert(error.message || 'Failed to fetch weather');
@@ -47,9 +48,10 @@ const saveBtn = document.getElementById('saveBtn');
 if (saveBtn) {
     saveBtn.addEventListener('click', async () => {
         const note = document.getElementById('note').value;
-const location = document.getElementById('locationDisplay').textContent.split(': ')[1] || document.getElementById('search').value;        const temp = document.getElementById('temp').textContent.split(': ')[1];
-        const humidity = document.getElementById('humidity').textContent.split(': ')[1];
-        const wind = document.getElementById('wind').textContent.split(': ')[1];
+        const location = document.getElementById('locationDisplay').textContent.split(': ')[1] || document.getElementById('search').value;
+        const temp = parseFloat(document.getElementById('temp').textContent.split(': ')[1]);
+        const humidity = parseFloat(document.getElementById('humidity').textContent.split(': ')[1]);
+        const wind = parseFloat(document.getElementById('wind').textContent.split(': ')[1]);
         const condition = document.getElementById('condition').textContent.split(': ')[1];
 
     try {
@@ -150,6 +152,32 @@ const loadProfile = async () => {
         console.error("Error loading profile:", error);
     }
 };
+
+const loadForecast = async (location) => {
+    try {
+        const res = await fetch(`http://localhost:5000/api/weather/forecast?location=${encodeURIComponent(location)}`);
+
+        const data = await res.json();
+
+        const container = document.getElementById('forecastContainer');
+        container.innerHTML = '';
+
+        data.forecast.forEach(day => {
+            const div = document.createElement('div');
+            div.classList.add('forecast-day');
+            div.innerHTML = `
+                <p><strong>Date:</strong> ${day.date}</p>
+                <p><strong>Temp:</strong> ${day.temp}°C</p>
+                <p><strong>Humidity:</strong> ${day.humidity}%</p>
+                <p><strong>Wind:</strong> ${day.wind} km/h</p>
+                <p><strong>Condition:</strong> ${day.condition}</p>
+            `;
+            container.appendChild(div);
+        })
+    }catch (error) {
+        console.error("Error loading forecast:", error);
+    }
+}
 
 const updateBtn = document.getElementById('updateLocationBtn');
 
