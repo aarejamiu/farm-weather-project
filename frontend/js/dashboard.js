@@ -174,7 +174,17 @@ const loadForecast = async (location) => {
     try {
         const res = await fetch(`http://localhost:5000/api/weather/forecast?location=${encodeURIComponent(location)}`);
 
+        if (!res.ok) {
+            console.error('Forecast API error:', res.status);
+            return;
+        }
+
         const data = await res.json();
+
+        if (!data.forecast || !Array.isArray(data.forecast)) {
+            console.error('Invalid forecast data:', data);
+            return;
+        }
 
         const container = document.getElementById('forecastContainer');
         container.innerHTML = '';

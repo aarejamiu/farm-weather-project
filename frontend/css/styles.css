@@ -94,6 +94,15 @@ nav {
   left: 0;
 }
 
+nav h2 {
+  margin: 0;
+  color: white;
+}
+
+#logoutBtn {
+  width: 15%;
+  justify-content: right;
+}
 /* DASHBOARD CONTAINER */
 body .container {
   margin-top: 80px;

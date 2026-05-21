@@ -45,8 +45,8 @@ const getForecast = async (req, res) => {
         const response = await axios.get(url);
         const data = response.data;
 
-        const forecast = data.list.filter(item =>item.dt_txt.includes("12:00:00")).map(item => ({
-            date: item.dt_txt.toDateString(),
+        const forecast = data.list.filter(item => item.dt_txt.includes("12:00:00")).map(item => ({
+            date: new Date(item.dt_txt).toDateString(),
             temp: item.main.temp,
             humidity: item.main.humidity,
             wind: item.wind.speed,
