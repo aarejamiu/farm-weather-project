@@ -16,7 +16,7 @@
   <!-- NAVBAR -->
   <nav class="navbar">
 
-    <h2>🌱 FarmWeather</h2>
+    <h2>🌱 Leaders-Union Farm Weather</h2>
 
     <button id="logoutBtn">
       Logout
@@ -26,14 +26,14 @@
 
 
   <div class="dashboard">
-
+    <div class="left-column">
     <!-- PROFILE CARD -->
     <div class="card profile-card">
 
       <h3>Farmer Profile</h3>
 
       <p>
-        <strong>Name:</strong>
+        <strong>Username:</strong>
         <span id="profileName"></span>
       </p>
 
@@ -58,8 +58,17 @@
       </button>
 
     </div>
+        <!-- FORECAST CHART -->
+    <div class="card chart-card">
 
+      <h3>Forecast Trends</h3>
+      <div id="forecastContainer"></div>
+      <canvas id="tempChart"></canvas>
 
+    </div>
+    </div>
+
+    <div class="right-column">
     <!-- WEATHER CARD -->
     <div class="card weather-card">
 
@@ -110,17 +119,6 @@
 
     </div>
 
-
-    <!-- FORECAST CHART -->
-    <div class="card chart-card">
-
-      <h3>Forecast Trends</h3>
-      <div id="forecastContainer"></div>
-      <canvas id="tempChart"></canvas>
-
-    </div>
-
-
     <!-- SAVED DATES -->
     <div class="card saved-card">
 
@@ -131,7 +129,7 @@
     </div>
 
   </div>
-
+  </div>
 
   <script src="js/dashboard.js"></script>
 

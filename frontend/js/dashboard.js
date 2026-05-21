@@ -4,6 +4,15 @@ if (!token) {
     window.location.href = 'login.html';
 }
 
+const handleUnauthorized = async (res) => {
+    if (res.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+        return true;
+    }
+    return false;
+};
+
 const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
@@ -64,6 +73,8 @@ if (saveBtn) {
             body: JSON.stringify({ note, location, temp, humidity, wind, condition })
         });
 
+        if (await handleUnauthorized(res)) return;
+
         const data = await res.json();
         alert(data.message);
 
@@ -82,6 +93,8 @@ const loadSavedDates = async () => {
                 "Authorization": `Bearer ${token}`
             }
         });
+
+        if (await handleUnauthorized(res)) return;
 
         if (!res.ok) {
             throw new Error('Failed to load dates');
@@ -125,6 +138,8 @@ const deleteDate = async (id) => {
             }
         });
 
+        if (await handleUnauthorized(res)) return;
+
         loadSavedDates();
     } catch (error) {
         console.error("Error deleting date:", error);
@@ -139,6 +154,8 @@ const loadProfile = async () => {
                 "Authorization": `Bearer ${token}`
             }
         });
+
+        if (await handleUnauthorized(res)) return;
 
         const data = await res.json();
         document.getElementById('profileName').textContent = data.name;
@@ -195,6 +212,8 @@ updateBtn.addEventListener('click', async () => {
             },
             body: JSON.stringify({ farmLocation: newLocation })
         });
+
+        if (await handleUnauthorized(res)) return;
 
         if (!res.ok) {
             const text = await res.text();
