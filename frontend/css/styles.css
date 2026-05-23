@@ -8,7 +8,7 @@
 
 /* BODY */
 body {
-  background: linear-gradient(to right, #4facfe, #00f2fe);
+  background: linear-gradient(to right, #1a1b1b, #525353);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -45,14 +45,14 @@ input {
 }
 
 input:focus {
-  border-color: #4facfe;
+  border-color: #6b859c;
 }
 
 /* BUTTONS */
 button {
   width: 100%;
   padding: 12px;
-  background: #4facfe;
+  background: #161718;
   color: white;
   border: none;
   border-radius: 5px;
@@ -61,12 +61,12 @@ button {
 }
 
 button:hover {
-  background: #00c6ff;
+  background: #333a3b;
 }
 
 /* LINKS */
 a {
-  color: #4facfe;
+  color: #3f4b55;
   text-decoration: none;
 }
 
@@ -83,7 +83,7 @@ a:hover {
 /* NAVBAR (Dashboard) */
 nav {
   width: 100%;
-  background: #333;
+  background-color: #1b4332;
   color: white;
   padding: 15px;
   display: flex;
@@ -174,7 +174,7 @@ body .container {
   width: 30%;
   margin-top: 10px;
   padding: 10px;
-  background: #4facfe;
+  background: #506272;
   color: white;
   border: none;
   border-radius: 8px;
@@ -248,9 +248,92 @@ textarea {
 .chart-card {
   height: fit-content;
 }
-/* RESPONSIVE */
+
+footer {
+    background-color: #1b4332;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    width: 100%;
+}
+/* =========================
+   TABLETS
+========================= */
+
+@media (max-width: 1024px) {
+  .dashboard {
+    grid-template-columns:
+    repeat(2, 1fr);
+    gap: 15px;
+    padding: 15px;
+  }
+}
+
 @media (max-width: 768px) {
+  body {
+    padding: 0;
+  }
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 15px;
+  }
   .dashboard {
     grid-template-columns: 1fr;
+    padding: 10px;
+    gap: 15px;
+  }
+  .card {
+    padding: 15px;
+    border-radius: 15px;
+  }
+  .input-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .input-group input {
+    width: 100%;
+  }
+  .input-group button {
+    width: 100%;
+  }
+  #forecastContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .forecast-card {
+    width: 100%;
+  }
+  #savedDates {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+/* =========================
+   SMALL PHONES
+========================= */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.5rem;
+  }
+  h3 {
+    font-size: 1.1rem;
+  }
+  p {
+    font-size: 0.9rem;
+  }
+  button {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+  input,
+  textarea {
+    font-size: 0.9rem;
+  }
+  .card {
+    padding: 12px;
   }
 }

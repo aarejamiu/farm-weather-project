@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     },
     farmLocation: {
         type: String,
-        required: true,
+        required: false,
         default: ""  
     }
 }, {timestamps: true});

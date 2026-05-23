@@ -158,17 +158,37 @@ const loadProfile = async () => {
         if (await handleUnauthorized(res)) return;
 
         const data = await res.json();
-        document.getElementById('profileName').textContent = data.name;
+        document.getElementById('profileName').textContent = data.username;
         document.getElementById('profileEmail').textContent = data.email;
         document.getElementById('profileLocation').textContent = data.farmLocation || "Not set";
 
         if (data.farmLocation){
             document.getElementById('newLocation').value = data.farmLocation;
+        
+        loadWeather(data.farmLocation);
+        loadForecast(data.farmLocation);
         }
     } catch (error) {
         console.error("Error loading profile:", error);
     }
 };
+
+const loadWeather = async (location) => {
+    try {
+        const res = await fetch(`http://localhost:5000/api/weather/weather?location=${encodeURIComponent(location)}`);
+
+        const data = await res.json();
+        const weather = data.weather;
+
+        document.getElementById('temp').textContent = `Temp: ${weather.temp} °C`;
+        document.getElementById('humidity').textContent = `Humidity: ${weather.humidity}%`;
+        document.getElementById('wind').textContent = `Wind: ${weather.wind} km/h`;
+        document.getElementById('condition').textContent = `Condition: ${weather.condition}`;
+        document.getElementById('locationDisplay').textContent = `Location: ${weather.city}`;
+    } catch (error) {
+        console.error("Error loading weather:", error);
+    }
+}
 
 const loadForecast = async (location) => {
     try {
