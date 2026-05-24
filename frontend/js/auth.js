@@ -14,7 +14,7 @@ form.addEventListener('submit', async (e) => {
         message.textContent = "Password does not match.";
     }
     try{
-    const res = await fetch("http://localhost:5000/api/auth/register",{
+    const res = await fetch("https://leaders-union-farm-weather-site.onrender.com/api/auth/register",{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

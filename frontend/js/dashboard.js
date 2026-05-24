@@ -31,7 +31,7 @@ if (getWeatherBtn) {
         }
 
         try {
-            const res = await fetch(`http://localhost:5000/api/weather/weather?location=${encodeURIComponent(location)}`);
+            const res = await fetch(`https://leaders-union-farm-weather-site.onrender.com/api/weather/weather?location=${encodeURIComponent(location)}`);
             if (!res.ok) {
                 const errorData = await res.json();
                 throw new Error(errorData.message || 'Unable to fetch weather');
@@ -64,7 +64,7 @@ if (saveBtn) {
         const condition = document.getElementById('condition').textContent.split(': ')[1];
 
     try {
-        const res = await fetch("http://localhost:5000/api/dates/save", {
+        const res = await fetch("https://leaders-union-farm-weather-site.onrender.com/api/dates/save", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -87,7 +87,7 @@ if (saveBtn) {
 
 const loadSavedDates = async () => {
     try {
-        const res = await fetch("http://localhost:5000/api/dates", {
+        const res = await fetch("https://leaders-union-farm-weather-site.onrender.com/api/dates", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -131,7 +131,7 @@ const loadSavedDates = async () => {
 
 const deleteDate = async (id) => {
     try {
-        const res = await fetch(`http://localhost:5000/api/dates/${id}`, {
+        const res = await fetch(`https://leaders-union-farm-weather-site.onrender.com/api/dates/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -148,7 +148,7 @@ const deleteDate = async (id) => {
 
 const loadProfile = async () => {
     try{
-        const res = await fetch("http://localhost:5000/api/profile", {
+        const res = await fetch("https://leaders-union-farm-weather-site.onrender.com/api/profile", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -175,7 +175,7 @@ const loadProfile = async () => {
 
 const loadWeather = async (location) => {
     try {
-        const res = await fetch(`http://localhost:5000/api/weather/weather?location=${encodeURIComponent(location)}`);
+        const res = await fetch(`https://leaders-union-farm-weather-site.onrender.com/api/weather/weather?location=${encodeURIComponent(location)}`);
 
         const data = await res.json();
         const weather = data.weather;
@@ -192,7 +192,7 @@ const loadWeather = async (location) => {
 
 const loadForecast = async (location) => {
     try {
-        const res = await fetch(`http://localhost:5000/api/weather/forecast?location=${encodeURIComponent(location)}`);
+        const res = await fetch(`https://leaders-union-farm-weather-site.onrender.com/api/weather/forecast?location=${encodeURIComponent(location)}`);
 
         if (!res.ok) {
             console.error('Forecast API error:', res.status);
@@ -234,7 +234,7 @@ updateBtn.addEventListener('click', async () => {
     const newLocation = document.getElementById('newLocation').value;
 
     try {
-        const res = await fetch("http://localhost:5000/api/profile/location", {
+        const res = await fetch("https://leaders-union-farm-weather-site.onrender.com/api/profile/location", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
