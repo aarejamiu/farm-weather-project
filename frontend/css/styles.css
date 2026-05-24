@@ -83,7 +83,7 @@ a:hover {
 /* NAVBAR (Dashboard) */
 nav {
   width: 100%;
-  background-color: #1b4332;
+  background: #1b4332;
   color: white;
   padding: 15px;
   display: flex;
@@ -102,6 +102,7 @@ nav h2 {
 #logoutBtn {
   width: 15%;
   justify-content: right;
+  background: #ff4d4d;
 }
 /* DASHBOARD CONTAINER */
 body .container {
@@ -250,7 +251,7 @@ textarea {
 }
 
 footer {
-    background-color: #1b4332;
+    background: #1b4332;
     color: white;
     text-align: center;
     padding: 20px;
@@ -260,7 +261,7 @@ footer {
 /* =========================
    TABLETS
 ========================= */
-
+/* 
 @media (max-width: 1024px) {
   .dashboard {
     grid-template-columns:
@@ -268,7 +269,7 @@ footer {
     gap: 15px;
     padding: 15px;
   }
-}
+} */
 
 @media (max-width: 768px) {
   body {
@@ -281,11 +282,18 @@ footer {
     padding: 15px;
   }
   .dashboard {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    width: 100%;
     padding: 10px;
     gap: 15px;
   }
+  .left-column,
+  .right-column {
+    width: 100%;
+    flex: none;
+  }
   .card {
+    width: 100%;
     padding: 15px;
     border-radius: 15px;
   }
@@ -293,9 +301,7 @@ footer {
     flex-direction: column;
     gap: 10px;
   }
-  .input-group input {
-    width: 100%;
-  }
+  .input-group input,
   .input-group button {
     width: 100%;
   }
@@ -311,11 +317,14 @@ footer {
     max-height: 300px;
     overflow-y: auto;
   }
+  .mobile-title {
+    display: none;
+}
 }
 /* =========================
    SMALL PHONES
 ========================= */
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   h2 {
     font-size: 1.5rem;
   }
@@ -336,4 +345,33 @@ footer {
   .card {
     padding: 12px;
   }
+} */
+@media (max-width: 480px) {
+    .dashboard {
+        gap: 15px;
+        width: 100%;
+        padding: 10px;
+    }
+    .card {
+        padding: 15px;
+        border-radius: 15px;
+    }
+    input,
+    textarea,
+    button {
+        width: 100%;
+        font-size: 0.95rem;
+    }
+    .navbar h2 {
+        font-size: 1.2rem;
+    }
+    .forecast-card {
+      min-width: 100%;
+    }
+    .desktop-title {
+        display: none;
+    }
+    .mobile-title {
+        display: inline;
+    }
 }
