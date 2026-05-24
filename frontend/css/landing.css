@@ -44,6 +44,17 @@ body {
     transition: 0.3s ease;
 }
 
+.custom-navbar .btn-primary {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    color: white !important;
+}
+
+.custom-navbar .btn-primary:hover {
+    background-color: #157347 !important;
+    border-color: #157347 !important;
+}
+
 .custom-navbar .btn:hover {
     transform: translateY(-2px);
 }

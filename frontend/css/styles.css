@@ -52,7 +52,7 @@ input:focus {
 button {
   width: 100%;
   padding: 12px;
-  background: #161718;
+  background: #1b4332;
   color: white;
   border: none;
   border-radius: 5px;
@@ -61,7 +61,15 @@ button {
 }
 
 button:hover {
-  background: #333a3b;
+  background: #16392a;
+}
+
+.desktop-title {
+  display: inline !important;
+}
+
+.mobile-title {
+  display: none !important;
 }
 
 /* LINKS */
@@ -100,9 +108,9 @@ nav h2 {
 }
 
 #logoutBtn {
-  width: 15%;
-  justify-content: right;
   background: #ff4d4d;
+  width: auto;
+  padding: 10px 18px;
 }
 /* DASHBOARD CONTAINER */
 body .container {
@@ -145,12 +153,19 @@ body .container {
   position: fixed;
   top: 0;
   width: 100%;
-  background: #1e1e2f;
+  background: #1b4332;
   color: white;
   padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 1000;
+}
+
+.navbar button {
+  width: auto;
+  min-width: 120px;
+  padding: 10px 18px;
 }
 
 /* CARD STYLE */
@@ -175,7 +190,7 @@ body .container {
   width: 30%;
   margin-top: 10px;
   padding: 10px;
-  background: #506272;
+  background: #1b4332;
   color: white;
   border: none;
   border-radius: 8px;
@@ -276,10 +291,21 @@ footer {
     padding: 0;
   }
   .navbar {
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
     padding: 15px;
+  }
+  .navbar h2 {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: white;
+  }
+  .navbar button {
+    width: auto;
+    min-width: 120px;
+    flex-shrink: 0;
   }
   .dashboard {
     flex-direction: column;
@@ -317,9 +343,12 @@ footer {
     max-height: 300px;
     overflow-y: auto;
   }
+  .desktop-title {
+    display: none !important;
+  }
   .mobile-title {
-    display: none;
-}
+    display: inline !important;
+  }
 }
 /* =========================
    SMALL PHONES
@@ -362,16 +391,38 @@ footer {
         width: 100%;
         font-size: 0.95rem;
     }
+    .navbar {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar button {
+      width: auto;
+      min-width: 120px;
+      flex-shrink: 0;
+    }
     .navbar h2 {
         font-size: 1.2rem;
+        flex: 1 1 auto;
+        min-width: 0;
     }
     .forecast-card {
       min-width: 100%;
     }
     .desktop-title {
-        display: none;
+        display: none !important;
     }
     .mobile-title {
-        display: inline;
+        display: inline !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .desktop-title {
+        display: inline !important;
+    }
+    .mobile-title {
+        display: none !important;
     }
 }
