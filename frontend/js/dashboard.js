@@ -105,39 +105,74 @@ const initCalendar = () => {
 
         dateClick: async (info) => {
             const clickedDate = info.dateStr;
-            const location = document.getElementById('profileLocation').textContent;
+            const location    = document.getElementById('profileLocation').textContent;
             if (!location || location === 'Not set') return;
 
-            // Store the clicked date globally so Save uses it
+            // Store clicked date so Save uses it
             window._selectedDate = clickedDate;
 
-            // Load fresh weather & forecast
-            await loadWeather(location);
-            await loadForecast(location);
-
-            // Clear previous note
-            document.getElementById('note').value = '';
-
-            // Update save card to reflect selected date
+            const today   = new Date().toISOString().split('T')[0];
+            const isPast  = clickedDate < today;
             const saveCard = document.querySelector('.save-weather-card');
-            if (saveCard) {
-                const heading = saveCard.querySelector('h3');
-                const sub     = saveCard.querySelector('.save-sub');
-                const noteEl  = document.getElementById('note');
-                const w       = window._currentWeather;
+            const heading  = saveCard?.querySelector('h3');
+            const sub      = saveCard?.querySelector('.save-sub');
+            const noteEl   = document.getElementById('note');
 
-                if (heading) heading.textContent = `Save Weather — ${clickedDate}`;
-                if (sub && w) {
-                    sub.innerHTML = `${conditionIcon(w.condition)} <strong>${w.condition}</strong> &nbsp;·&nbsp; ${w.city || location}`;
+            // Show loading state on save card
+            if (heading) heading.textContent = `Save Weather — ${clickedDate}`;
+            if (sub)     sub.innerHTML       = `⏳ Loading weather for ${clickedDate}...`;
+            if (noteEl)  noteEl.value        = '';
+
+            try {
+                let weather;
+
+                if (isPast) {
+                    // Use historical endpoint for past dates
+                    const res  = await fetch(`${BASE}/weather/historical?location=${encodeURIComponent(location)}&date=${clickedDate}`);
+                    if (!res.ok) throw new Error('Historical weather not available');
+                    const data = await res.json();
+                    weather    = data.historical;
+                } else {
+                    // Use current weather for today or future
+                    const res  = await fetch(`${BASE}/weather/weather?location=${encodeURIComponent(location)}`);
+                    if (!res.ok) throw new Error('Could not fetch weather');
+                    const data = await res.json();
+                    weather    = data.weather;
+                }
+
+                // Store as current weather so Save button works
+                window._currentWeather = weather;
+
+                // Update save card metric tiles
+                document.getElementById('saveTempVal').textContent  = weather.temp      ?? '--';
+                document.getElementById('saveHumVal').textContent   = weather.humidity  ?? '--';
+                document.getElementById('saveWindVal').textContent  = weather.wind      ?? '--';
+
+                // Update stats bar
+                document.getElementById('statTemp').textContent     = weather.temp      ?? '--';
+                document.getElementById('statHumidity').textContent = weather.humidity  ?? '--';
+                document.getElementById('statWind').textContent     = weather.wind      ?? '--';
+
+                // Update subtitle with condition
+                if (sub) {
+                    sub.innerHTML = `${conditionIcon(weather.condition)} <strong>${weather.condition}</strong> &nbsp;&middot;&nbsp; ${weather.city || location}`;
                 }
                 if (noteEl) noteEl.placeholder = `Add note for ${clickedDate} (e.g. Good day for planting...)`;
 
-                // Scroll and highlight — no reset timeout
+                // Also load forecast
+                await loadForecast(weather.city || location);
+
+            } catch (e) {
+                console.error(e);
+                if (sub) sub.textContent = '⚠️ Could not load weather for this date.';
+            }
+
+            // Scroll to and highlight save card
+            if (saveCard) {
                 saveCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 saveCard.style.transition  = 'box-shadow 0.3s, border-color 0.3s';
                 saveCard.style.boxShadow   = '0 0 0 3px rgba(46,125,50,0.45)';
                 saveCard.style.borderColor = '#2e7d32';
-
                 setTimeout(() => {
                     saveCard.style.boxShadow   = '';
                     saveCard.style.borderColor = '';
