@@ -3,147 +3,227 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Dashboard</title>
-
+  <title>Leaders-Union Farm Weather</title>
   <link rel="stylesheet" href="css/styles.css">
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
 </head>
-
 <body>
 
-  <!-- NAVBAR -->
+  <!-- ── NAVBAR ── -->
   <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="brand-icon">🌿</div>
+      <div class="brand-text">
+        <span class="brand-name">Leaders-Union</span>
+        <span class="brand-sub">Farm Weather</span>
+      </div>
+    </div>
 
-    <h2>
-        <span class="desktop-title">
-            🌱 Leaders-Union Farm Weather
-        </span>
+    <div class="navbar-center" id="weatherBadge">
+      <!-- Populated by JS: city · temp · condition -->
+    </div>
 
-        <span class="mobile-title">
-            🌱 FarmWeather
-        </span>
-    </h2>
-
-    <button id="logoutBtn">
-      Logout
-    </button>
-
+    <div class="navbar-right">
+      <button class="icon-btn" title="Notifications">🔔</button>
+      <div class="avatar-pill" id="navAvatar">JF</div>
+      <button id="logoutBtn" class="logout-btn">⇥ Logout</button>
+    </div>
   </nav>
 
+  <!-- ── STATS BAR ── -->
+  <div class="stats-bar">
+    <div class="stat-card saved-stat">
+      <div class="stat-top">
+        <span class="stat-label">SAVED DATES</span>
+        <span class="stat-icon">📅</span>
+      </div>
+      <div class="stat-value" id="savedCount">0</div>
+      <div class="stat-unit">records</div>
+    </div>
+    <div class="stat-card temp-stat">
+      <div class="stat-top">
+        <span class="stat-label">TEMPERATURE</span>
+        <span class="stat-icon">🌡️</span>
+      </div>
+      <div class="stat-value"><span id="statTemp">--</span>°</div>
+      <div class="stat-unit">Celsius</div>
+    </div>
+    <div class="stat-card humidity-stat">
+      <div class="stat-top">
+        <span class="stat-label">HUMIDITY</span>
+        <span class="stat-icon">💧</span>
+      </div>
+      <div class="stat-value"><span id="statHumidity">--</span>%</div>
+      <div class="stat-unit">Relative</div>
+    </div>
+    <div class="stat-card wind-stat">
+      <div class="stat-top">
+        <span class="stat-label">WIND SPEED</span>
+        <span class="stat-icon">💨</span>
+      </div>
+      <div class="stat-value" id="statWind">--</div>
+      <div class="stat-unit">km/h</div>
+    </div>
+  </div>
 
+  <!-- ── MAIN LAYOUT ── -->
   <div class="dashboard">
+
+    <!-- LEFT COLUMN -->
     <div class="left-column">
-    <!-- PROFILE CARD -->
-    <div class="card profile-card">
 
-      <h3>Farmer Profile</h3>
+      <!-- Profile Card -->
+      <div class="card profile-card">
+        <div class="profile-header">
+          <div class="tractor-icon">🚜</div>
+        </div>
+        <div class="profile-body">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="navAvatar2">JF</div>
+            <span class="active-badge">🌿 Active Farmer</span>
+          </div>
+          <h2 id="profileName" class="profile-name">--</h2>
+          <div class="profile-meta">
+            <p>✉ <span id="profileEmail">--</span></p>
+            <p>📍 <span id="profileLocation" class="location-green">--</span></p>
+          </div>
+          <div class="farm-location-box">
+            <div class="farm-label">FARM LOCATION</div>
+            <div class="farm-location-row">
+              <input type="text" id="newLocation" placeholder="Enter new location">
+              <button id="updateLocationBtn" class="btn-update">✏ Update</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <p>
-        <strong>Username:</strong>
-        <span id="profileName"></span>
-      </p>
+      <!-- Calendar Card -->
+      <div class="card calendar-card">
+        <div class="calendar-card-header">
+          <div>
+            <div class="month-title" id="calMonthTitle">June 2026</div>
+            <div class="month-sub">Favorable Weather Calendar</div>
+          </div>
+          <div class="calendar-nav">
+            <button id="calPrev">‹</button>
+            <button id="calNext">›</button>
+          </div>
+        </div>
+        <div id="calendar"></div>
+        <div class="calendar-legend">
+          <div class="legend-item"><span class="legend-dot today"></span> Today</div>
+          <div class="legend-item"><span class="legend-dot saved"></span> Saved record</div>
+          <div class="legend-item"><span class="legend-dot selected"></span> Selected</div>
+        </div>
+      </div>
 
-      <p>
-        <strong>Email:</strong>
-        <span id="profileEmail"></span>
-      </p>
+      <!-- Date Detail Panel -->
+      <div class="card date-detail-card" id="dateDetailPanel">
+        <div class="placeholder-state" id="dateDetailPlaceholder">
+          <div class="placeholder-icon">📅</div>
+          <p class="placeholder-text">Select a date</p>
+          <p class="placeholder-sub">Click any date on the calendar to view details</p>
+        </div>
+        <div class="detail-content hidden" id="dateDetailContent">
+          <p id="detailLocation"></p>
+          <p id="detailTemp"></p>
+          <p id="detailHumidity"></p>
+          <p id="detailWind"></p>
+          <p id="detailCondition"></p>
+          <p id="detailNote"></p>
+        </div>
+      </div>
 
-      <p>
-        <strong>Farm Location:</strong>
-        <span id="profileLocation"></span>
-      </p>
-
-      <input
-        type="text"
-        id="newLocation"
-        placeholder="Update farm location"
-      >
-
-      <button id="updateLocationBtn">
-        Update Location
-      </button>
+      <!-- Save Today's Weather -->
+      <div class="card save-weather-card">
+        <h3>Save Today's Weather</h3>
+        <p class="save-sub">Add a note and save current conditions</p>
+        <div class="save-metrics">
+          <div class="save-metric temp-metric">
+            <div class="sm-value"><span id="saveTempVal">--</span>°C</div>
+            <div class="sm-label">Temp</div>
+          </div>
+          <div class="save-metric hum-metric">
+            <div class="sm-value"><span id="saveHumVal">--</span>%</div>
+            <div class="sm-label">Humidity</div>
+          </div>
+          <div class="save-metric wind-metric">
+            <div class="sm-value"><span id="saveWindVal">--</span> km/h</div>
+            <div class="sm-label">Wind</div>
+          </div>
+        </div>
+        <div class="note-label">Farming Note (optional)</div>
+        <textarea id="note" placeholder="Add farming note (e.g. Good day for planting, soil moisture optimal...)"></textarea>
+        <button id="saveBtn" class="btn-save">💾 Save Weather</button>
+      </div>
 
     </div>
-        <!-- FORECAST CHART -->
-    <div class="card chart-card">
 
-      <h3>Forecast Trends</h3>
-      <div id="forecastContainer"></div>
-      <canvas id="tempChart"></canvas>
-
-    </div>
-    </div>
-
+    <!-- RIGHT COLUMN -->
     <div class="right-column">
-    <!-- WEATHER CARD -->
-    <div class="card weather-card">
 
-      <h3>Weather Checker</h3>
+      <!-- 5-Day Forecast -->
+      <div class="card forecast-card">
+        <h3>5-Day Forecast</h3>
+        <p class="forecast-meta" id="forecastMeta">--</p>
+        <div id="forecastContainer" class="forecast-grid"></div>
 
-      <div class="input-group">
-
-        <input
-          type="text"
-          id="search"
-          placeholder="Enter city"
-        >
-
-        <button id="getWeatherBtn">
-          Check Weather
-        </button>
-
+        <!-- Temperature Trend Chart -->
+        <div class="chart-section">
+          <div class="chart-header">
+            <span class="chart-title">Temperature Trend</span>
+            <div class="chart-legend">
+              <span class="cl-item"><span class="cl-dot green"></span> High</span>
+              <span class="cl-item"><span class="cl-dot blue"></span> Low</span>
+              <span class="cl-item"><span class="cl-dot yellow"></span> Humidity %</span>
+            </div>
+          </div>
+          <canvas id="tempChart" height="80"></canvas>
+        </div>
       </div>
 
-
-      <!-- WEATHER RESULT -->
-      <div id="weatherResult">
-
-        <h2 id="cityName"></h2>
-
-        <p id="locationDisplay"></p>
-
-        <p id="temp"></p>
-
-        <p id="humidity"></p>
-
-        <p id="wind"></p>
-
-        <p id="condition"></p>
-
+      <!-- Weather Checker -->
+      <div class="card weather-card">
+        <div class="weather-card-header">
+          <h3>Weather Checker</h3>
+          <p>Check real-time weather for any city</p>
+        </div>
+        <div class="weather-card-body">
+          <div class="input-group">
+            <input type="text" id="search" placeholder="Enter city (e.g. Nairobi, London...)">
+            <button id="getWeatherBtn">🔍 Check Weather</button>
+          </div>
+          <div id="weatherResult" class="weather-result-empty">
+            <div class="weather-placeholder">
+              <span style="font-size:2.5rem">🌍</span>
+              <p>Enter a city name and click "Check Weather"</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-
-      <!-- NOTES -->
-      <textarea
-        id="note"
-        placeholder="Add farming note..."
-      ></textarea>
-
-      <button id="saveBtn">
-        Save Weather
-      </button>
-
-    </div>
-
-    <!-- SAVED DATES -->
-    <div class="card saved-card">
-
-      <h3>Saved Dates</h3>
-
-      <div id="savedDates"></div>
+      <!-- Saved Records -->
+      <div class="card saved-card">
+        <div class="saved-card-header">
+          <div>
+            <h3>Saved Records</h3>
+            <p class="saved-card-sub">Your favorable weather dates</p>
+          </div>
+          <div class="saved-count" id="savedBadge">0</div>
+        </div>
+        <div id="savedDates"></div>
+      </div>
 
     </div>
+  </div>
 
-  </div>
-  </div>
   <footer>
-        <p>&copy; 2026 Farm-Weather. All rights reserved.</p>
-    </footer>
-    
-  <script src="js/dashboard.js"></script>
+    <p>Leaders-Union Farm Weather Dashboard · Agricultural Management System · © 2026</p>
+  </footer>
 
+  <script src="js/dashboard.js"></script>
 </body>
 </html>
 
