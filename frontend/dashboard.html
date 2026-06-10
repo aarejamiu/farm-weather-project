@@ -26,9 +26,9 @@
     </div>
 
     <div class="navbar-right">
-      <button class="icon-btn" title="Notifications">🔔</button>
+      <!-- <button class="icon-btn" title="Notifications">🔔</button> -->
       <div class="avatar-pill" id="navAvatar">JF</div>
-      <button id="logoutBtn" class="logout-btn">⇥ Logout</button>
+      <button id="logoutBtn" class="logout-btn"> Logout</button>
     </div>
   </nav>
 
@@ -37,7 +37,7 @@
     <div class="stat-card saved-stat">
       <div class="stat-top">
         <span class="stat-label">SAVED DATES</span>
-        <span class="stat-icon">📅</span>
+        <span class="stat-icon"></span>
       </div>
       <div class="stat-value" id="savedCount">0</div>
       <div class="stat-unit">records</div>
@@ -45,7 +45,7 @@
     <div class="stat-card temp-stat">
       <div class="stat-top">
         <span class="stat-label">TEMPERATURE</span>
-        <span class="stat-icon">🌡️</span>
+        <span class="stat-icon"></span>
       </div>
       <div class="stat-value"><span id="statTemp">--</span>°</div>
       <div class="stat-unit">Celsius</div>
@@ -53,7 +53,7 @@
     <div class="stat-card humidity-stat">
       <div class="stat-top">
         <span class="stat-label">HUMIDITY</span>
-        <span class="stat-icon">💧</span>
+        <span class="stat-icon"></span>
       </div>
       <div class="stat-value"><span id="statHumidity">--</span>%</div>
       <div class="stat-unit">Relative</div>
@@ -61,7 +61,7 @@
     <div class="stat-card wind-stat">
       <div class="stat-top">
         <span class="stat-label">WIND SPEED</span>
-        <span class="stat-icon">💨</span>
+        <span class="stat-icon"></span>
       </div>
       <div class="stat-value" id="statWind">--</div>
       <div class="stat-unit">km/h</div>
@@ -86,14 +86,14 @@
           </div>
           <h2 id="profileName" class="profile-name">--</h2>
           <div class="profile-meta">
-            <p>✉ <span id="profileEmail">--</span></p>
-            <p>📍 <span id="profileLocation" class="location-green">--</span></p>
+            <p> <span id="profileEmail">--</span></p>
+            <p> <span id="profileLocation" class="location-green">--</span></p>
           </div>
           <div class="farm-location-box">
             <div class="farm-label">FARM LOCATION</div>
             <div class="farm-location-row">
               <input type="text" id="newLocation" placeholder="Enter new location">
-              <button id="updateLocationBtn" class="btn-update">✏ Update</button>
+              <button id="updateLocationBtn" class="btn-update"> Update</button>
             </div>
           </div>
         </div>
@@ -122,7 +122,7 @@
       <!-- Date Detail Panel -->
       <div class="card date-detail-card" id="dateDetailPanel">
         <div class="placeholder-state" id="dateDetailPlaceholder">
-          <div class="placeholder-icon">📅</div>
+          <div class="placeholder-icon"></div>
           <p class="placeholder-text">Select a date</p>
           <p class="placeholder-sub">Click any date on the calendar to view details</p>
         </div>
@@ -156,7 +156,7 @@
         </div>
         <div class="note-label">Farming Note (optional)</div>
         <textarea id="note" placeholder="Add farming note (e.g. Good day for planting, soil moisture optimal...)"></textarea>
-        <button id="saveBtn" class="btn-save">💾 Save Weather</button>
+        <button id="saveBtn" class="btn-save"> Save Weather</button>
       </div>
 
     </div>
@@ -197,7 +197,7 @@
           </div>
           <div id="weatherResult" class="weather-result-empty">
             <div class="weather-placeholder">
-              <span style="font-size:2.5rem">🌍</span>
+              <span style="font-size:2.5rem"></span>
               <p>Enter a city name and click "Check Weather"</p>
             </div>
           </div>

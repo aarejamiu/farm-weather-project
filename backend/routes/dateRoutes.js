@@ -4,8 +4,8 @@ const { saveDate, getDates, deleteDate } = require('../controllers/dateControlle
 const authMiddleware = require('../middleware/authMiddleware');
 
 
-router.post('/save', authMiddleware, saveDate),
-router.get('/', authMiddleware, getDates),
-router.delete('/:id', authMiddleware, deleteDate)
+router.post('/save', authMiddleware, saveDate);
+router.get('/', authMiddleware, getDates);
+router.delete('/:id', authMiddleware, deleteDate);
 
 module.exports = router;
