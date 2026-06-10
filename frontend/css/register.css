@@ -1,0 +1,153 @@
+/* RESET */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Arial, sans-serif;
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+    linear-gradient(
+        rgba(27,67,50,0.75),
+        rgba(27,67,50,0.75)
+    ),
+    url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070');
+
+    background-size:cover;
+    background-position:center;
+}
+
+/* CONTAINER */
+.container{
+    width:90%;
+    max-width:420px;
+
+    background:white;
+
+    padding:40px 30px;
+
+    border-radius:20px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.2);
+
+    text-align:center;
+}
+
+/* LOGO */
+.container::before{
+    display:block;
+    font-size:3rem;
+    margin-bottom:10px;
+}
+
+/* HEADING */
+.container h2{
+    color:#1b4332;
+    margin-bottom:25px;
+    font-size:2rem;
+}
+
+/* FORM */
+form{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+/* INPUTS */
+input{
+    width:100%;
+    padding:14px;
+
+    border:1px solid #dcdcdc;
+    border-radius:10px;
+
+    font-size:1rem;
+
+    outline:none;
+
+    transition:0.3s;
+}
+
+input:focus{
+    border-color:#2e7d32;
+    box-shadow:
+    0 0 0 3px rgba(46,125,50,0.15);
+}
+
+/* BUTTON */
+button{
+    width:100%;
+
+    padding:14px;
+
+    background:#2e7d32;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:1rem;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+button:hover{
+    background:#1b5e20;
+    transform:translateY(-2px);
+}
+
+/* MESSAGE */
+#message{
+    margin-top:15px;
+    font-weight:500;
+    color:#d32f2f;
+}
+
+/* LINKS */
+.container p{
+    margin-top:20px;
+    color:#555;
+}
+
+.container a{
+    color:#2e7d32;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.container a:hover{
+    text-decoration:underline;
+}
+
+/* MOBILE */
+@media(max-width:480px){
+
+    .container{
+        padding:30px 20px;
+    }
+
+    .container h2{
+        font-size:1.7rem;
+    }
+
+    input,
+    button{
+        padding:12px;
+        font-size:0.95rem;
+    }
+}

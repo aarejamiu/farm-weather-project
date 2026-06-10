@@ -1,6 +1,6 @@
 const token = localStorage.getItem('token');
 if (!token) window.location.href = 'login.html';
-
+ 
 const handleUnauthorized = async (res) => {
     if (res.status === 401) {
         localStorage.removeItem('token');
@@ -9,9 +9,9 @@ const handleUnauthorized = async (res) => {
     }
     return false;
 };
-
+ 
 const BASE = 'https://leaders-union-farm-weather-site.onrender.com/api';
-
+ 
 /* ─── Helpers ─── */
 const conditionIcon = (cond = '') => {
     const c = cond.toLowerCase();
@@ -21,7 +21,7 @@ const conditionIcon = (cond = '') => {
     if (c.includes('overcast') || c.includes('cloud')) return '☁️';
     return '⛅';
 };
-
+ 
 const conditionClass = (cond = '') => {
     const c = cond.toLowerCase();
     if (c.includes('sunny') || c.includes('clear'))    return 'fc-sunny-col';
@@ -29,7 +29,7 @@ const conditionClass = (cond = '') => {
     if (c.includes('shower'))                          return 'fc-shower-col';
     return 'fc-today-col';
 };
-
+ 
 const condTextClass = (cond = '') => {
     const c = cond.toLowerCase();
     if (c.includes('sunny') || c.includes('clear')) return 'sunny';
@@ -37,7 +37,7 @@ const condTextClass = (cond = '') => {
     if (c.includes('shower')) return 'shower';
     return '';
 };
-
+ 
 const parseDate = (val) => {
     if (!val) return null;
     // Already a Date object
@@ -52,26 +52,26 @@ const parseDate = (val) => {
     if (!isNaN(d)) return d;
     return null;
 };
-
+ 
 const formatDate = (val) => {
     const d = parseDate(val);
     if (!d) return 'Unknown date';
     return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 };
-
+ 
 const dayName = (val) => {
     const d = parseDate(val);
     if (!d) return '---';
     return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
 };
-
+ 
 /* ─── Calendar ─── */
 let calendar;
-
+ 
 const initCalendar = () => {
     const el = document.getElementById('calendar');
     if (!el) return;
-
+ 
     calendar = new FullCalendar.Calendar(el, {
         initialView: 'dayGridMonth',
         height: 'auto',
@@ -79,14 +79,14 @@ const initCalendar = () => {
         showNonCurrentDates: false,
         headerToolbar: false,
         dayMaxEvents: 1,
-
+ 
         datesSet: (info) => {
             const title = document.getElementById('calMonthTitle');
             if (title) {
                 title.textContent = info.view.title;
             }
         },
-
+ 
         eventClick: (info) => {
             const w = info.event.extendedProps;
             const placeholder = document.getElementById('dateDetailPlaceholder');
@@ -102,30 +102,31 @@ const initCalendar = () => {
                 document.getElementById('detailNote').textContent      = w.note ? `📝 ${w.note}` : '';
             }
         },
-
+ 
         dateClick: async (info) => {
             const clickedDate = info.dateStr;
-            const location    = document.getElementById('profileLocation').textContent;
+            const locationFull = document.getElementById('profileLocation').textContent;
+            const location = locationFull.split(',')[0].trim();
             if (!location || location === 'Not set') return;
-
+ 
             // Store clicked date so Save uses it
             window._selectedDate = clickedDate;
-
+ 
             const today   = new Date().toISOString().split('T')[0];
             const isPast  = clickedDate < today;
             const saveCard = document.querySelector('.save-weather-card');
             const heading  = saveCard?.querySelector('h3');
             const sub      = saveCard?.querySelector('.save-sub');
             const noteEl   = document.getElementById('note');
-
+ 
             // Show loading state on save card
             if (heading) heading.textContent = `Save Weather — ${clickedDate}`;
             if (sub)     sub.innerHTML       = `⏳ Loading weather for ${clickedDate}...`;
             if (noteEl)  noteEl.value        = '';
-
+ 
             try {
                 let weather;
-
+ 
                 if (isPast) {
                     // Use historical endpoint for past dates
                     const res  = await fetch(`${BASE}/weather/historical?location=${encodeURIComponent(location)}&date=${clickedDate}`);
@@ -139,34 +140,34 @@ const initCalendar = () => {
                     const data = await res.json();
                     weather    = data.weather;
                 }
-
+ 
                 // Store as current weather so Save button works
                 window._currentWeather = weather;
-
+ 
                 // Update save card metric tiles
                 document.getElementById('saveTempVal').textContent  = weather.temp      ?? '--';
                 document.getElementById('saveHumVal').textContent   = weather.humidity  ?? '--';
                 document.getElementById('saveWindVal').textContent  = weather.wind      ?? '--';
-
+ 
                 // Update stats bar
                 document.getElementById('statTemp').textContent     = weather.temp      ?? '--';
                 document.getElementById('statHumidity').textContent = weather.humidity  ?? '--';
                 document.getElementById('statWind').textContent     = weather.wind      ?? '--';
-
+ 
                 // Update subtitle with condition
                 if (sub) {
                     sub.innerHTML = `${conditionIcon(weather.condition)} <strong>${weather.condition}</strong> &nbsp;&middot;&nbsp; ${weather.city || location}`;
                 }
                 if (noteEl) noteEl.placeholder = `Add note for ${clickedDate} (e.g. Good day for planting...)`;
-
+ 
                 // Also load forecast
                 await loadForecast(weather.city || location);
-
+ 
             } catch (e) {
-                console.error(e);
-                if (sub) sub.textContent = '⚠️ Could not load weather for this date.';
+                console.error('dateClick error:', e.message);
+                if (sub) sub.innerHTML = `⚠️ ${e.message || 'Could not load weather for this date.'}`;
             }
-
+ 
             // Scroll to and highlight save card
             if (saveCard) {
                 saveCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -180,19 +181,19 @@ const initCalendar = () => {
             }
         }
     });
-
+ 
     calendar.render();
-
+ 
     document.getElementById('calPrev')?.addEventListener('click', () => calendar.prev());
     document.getElementById('calNext')?.addEventListener('click', () => calendar.next());
 };
-
+ 
 /* ─── Logout ─── */
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
 });
-
+ 
 /* ─── Weather Checker ─── */
 document.getElementById('getWeatherBtn')?.addEventListener('click', async () => {
     const location = document.getElementById('search').value.trim();
@@ -207,7 +208,7 @@ document.getElementById('getWeatherBtn')?.addEventListener('click', async () => 
         alert(e.message || 'Failed to fetch weather');
     }
 });
-
+ 
 const renderWeatherResult = (weather) => {
     const el = document.getElementById('weatherResult');
     el.className = 'weather-result-filled';
@@ -233,7 +234,7 @@ const renderWeatherResult = (weather) => {
     /* Store for save */
     window._currentWeather = weather;
 };
-
+ 
 /* ─── Save Weather ─── */
 document.getElementById('saveBtn')?.addEventListener('click', async () => {
     const w = window._currentWeather;
@@ -250,7 +251,7 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
         if (await handleUnauthorized(res)) return;
         const data = await res.json();
         alert(data.message);
-
+ 
         // Reset save card heading and selected date after saving
         const saveCard = document.querySelector('.save-weather-card');
         if (saveCard) {
@@ -263,11 +264,11 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
             noteEl.value = '';
         }
         window._selectedDate = null;
-
+ 
         loadSavedDates();
     } catch (e) { console.error(e); }
 });
-
+ 
 /* ─── Saved Dates ─── */
 const loadSavedDates = async () => {
     try {
@@ -277,12 +278,12 @@ const loadSavedDates = async () => {
         if (await handleUnauthorized(res)) return;
         if (!res.ok) throw new Error('Failed to load dates');
         const data = await res.json();
-
+ 
         /* Update count badges */
         const count = data.length;
         document.getElementById('savedCount').textContent  = count;
         document.getElementById('savedBadge').textContent  = count;
-
+ 
         /* Render list */
         const container = document.getElementById('savedDates');
         container.innerHTML = '';
@@ -301,8 +302,7 @@ const loadSavedDates = async () => {
                         <div class="sr-loc">📍 ${item.location}</div>
                     </div>
                     <div class="sr-actions">
-                        <button class="btn-view" title="View" data-id="${item._id}">👁</button>
-                        <button class="btn-del"  title="Delete" data-id="${item._id}">🗑</button>
+                        <button class="btn-del"  title="Delete" data-id="${item._id}">Delete</button>
                     </div>
                 </div>
                 <div class="sr-stats">
@@ -315,7 +315,7 @@ const loadSavedDates = async () => {
             div.querySelector('.btn-del').addEventListener('click', () => deleteDate(item._id));
             container.appendChild(div);
         });
-
+ 
         /* Push events to calendar */
         if (calendar) {
             calendar.removeAllEvents();
@@ -334,7 +334,7 @@ const loadSavedDates = async () => {
         }
     } catch (e) { console.error(e); }
 };
-
+ 
 const deleteDate = async (id) => {
     if (!confirm('Delete this record?')) return;
     try {
@@ -346,7 +346,7 @@ const deleteDate = async (id) => {
         loadSavedDates();
     } catch (e) { console.error(e); }
 };
-
+ 
 /* ─── Profile ─── */
 const loadProfile = async () => {
     try {
@@ -355,15 +355,15 @@ const loadProfile = async () => {
         });
         if (await handleUnauthorized(res)) return;
         const data = await res.json();
-
+ 
         document.getElementById('profileName').textContent     = data.username;
         document.getElementById('profileEmail').textContent    = data.email;
         document.getElementById('profileLocation').textContent = data.farmLocation || 'Not set';
-
+ 
         /* Avatars: initials from username */
         const initials = (data.username || 'JF').slice(0,2).toUpperCase();
         document.querySelectorAll('.profile-avatar, #navAvatar, #navAvatar2').forEach(el => el.textContent = initials);
-
+ 
         if (data.farmLocation) {
             document.getElementById('newLocation').value = data.farmLocation;
             await loadWeather(data.farmLocation);
@@ -371,7 +371,7 @@ const loadProfile = async () => {
         }
     } catch (e) { console.error(e); }
 };
-
+ 
 /* ─── Current Weather (from profile location) ─── */
 const loadWeather = async (location) => {
     try {
@@ -380,31 +380,31 @@ const loadWeather = async (location) => {
         renderWeatherResult(data.weather);
     } catch (e) { console.error(e); }
 };
-
+ 
 /* ─── Forecast ─── */
 let tempChart;
-
+ 
 const loadForecast = async (location) => {
     try {
         const res = await fetch(`${BASE}/weather/forecast?location=${encodeURIComponent(location)}`);
         if (!res.ok) return;
         const data = await res.json();
         if (!data.forecast || !Array.isArray(data.forecast)) return;
-
+ 
         document.getElementById('forecastMeta').textContent =
             `${location} · Updated just now`;
-
+ 
         const container = document.getElementById('forecastContainer');
         container.innerHTML = '';
-
+ 
         const labels = [], highs = [], lows = [], hums = [];
-
+ 
         data.forecast.forEach((day, i) => {
             labels.push(i === 0 ? 'Today' : dayName(day.date));
             highs.push(day.temp);
             lows.push(day.tempMin ?? day.temp - 5);
             hums.push(day.humidity);
-
+ 
             const div = document.createElement('div');
             div.className = `forecast-day ${i === 0 ? 'fc-today-col' : conditionClass(day.condition)}`;
             div.innerHTML = `
@@ -420,16 +420,16 @@ const loadForecast = async (location) => {
             `;
             container.appendChild(div);
         });
-
+ 
         renderChart(labels, highs, lows, hums);
     } catch (e) { console.error(e); }
 };
-
+ 
 const renderChart = (labels, highs, lows, hums) => {
     const ctx = document.getElementById('tempChart');
     if (!ctx) return;
     if (tempChart) tempChart.destroy();
-
+ 
     tempChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -472,7 +472,7 @@ const renderChart = (labels, highs, lows, hums) => {
         }
     });
 };
-
+ 
 /* ─── Update Location ─── */
 document.getElementById('updateLocationBtn')?.addEventListener('click', async () => {
     const loc = document.getElementById('newLocation').value.trim();
@@ -489,7 +489,7 @@ document.getElementById('updateLocationBtn')?.addEventListener('click', async ()
         loadProfile();
     } catch (e) { console.error(e); }
 });
-
+ 
 /* ─── Init ─── */
 initCalendar();
 loadSavedDates();

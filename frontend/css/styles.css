@@ -477,6 +477,7 @@ html, body {
   font-size: 14px;
   line-height: 1.5;
   min-height: 100vh;
+  padding-top: 58px;
 }
 
 /* ── NAVBAR ── */
@@ -485,7 +486,8 @@ html, body {
   background: var(--white);
   border-bottom: 1px solid var(--border);
   padding: 0 24px; height: 58px;
-  position: sticky; top: 0; z-index: 100;
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
   box-shadow: 0 1px 4px rgba(0,0,0,.06);
 }
 .navbar-brand { display: flex; align-items: center; gap: 10px; }
@@ -529,7 +531,12 @@ html, body {
 .stats-bar {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 14px; padding: 18px 24px 0;
+  overflow: hidden;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
+
 .stat-card {
   background: var(--white); border-radius: var(--r-md);
   padding: 16px 18px; border: 1px solid var(--border);
@@ -839,10 +846,10 @@ html, body {
 #savedDates::-webkit-scrollbar-thumb { background: #c8e6c9; border-radius: 4px; }
 
 /* ── FOOTER ── */
-footer {
-  text-align: center; padding: 18px 24px;
-  font-size: .74rem; color: var(--text-3);
-  border-top: 1px solid var(--border); background: var(--white);
+footer{
+    background:#14452f;
+    color:white;
+    padding:60px 30px 20px;
 }
 
 /* ── RESPONSIVE ── */
@@ -857,4 +864,228 @@ footer {
   .navbar     { padding: 0 14px; }
   .navbar-center { display: none; }
   .forecast-grid { grid-template-columns: repeat(2,1fr); }
+}
+ 
+/* =============================================
+   RESPONSIVE STYLES
+   ============================================= */
+ 
+/* Global — prevent horizontal scroll on ALL sizes */
+html, body { overflow-x: hidden; width: 100%; }
+*, *::before, *::after { box-sizing: border-box; }
+ 
+/* ── 1200px ── */
+@media (max-width: 1200px) {
+  .dashboard { grid-template-columns: 320px minmax(0,1fr); padding: 16px 20px 24px; gap: 16px; }
+  .stats-bar { padding: 16px 20px 0; }
+  .forecast-grid { gap: 6px; }
+  .fd-name { font-size: .62rem; }
+  .fd-stats span { font-size: .6rem; }
+}
+ 
+/* ── 1024px ── */
+@media (max-width: 1024px) {
+  .dashboard { grid-template-columns: 300px minmax(0,1fr); padding: 14px 16px 22px; gap: 14px; }
+  .stats-bar { padding: 14px 16px 0; gap: 10px; }
+  .forecast-grid { grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .input-group { flex-wrap: nowrap; }
+  #getWeatherBtn { white-space: nowrap; flex-shrink: 0; }
+}
+ 
+/* ── 860px — single column ── */
+@media (max-width: 860px) {
+  .dashboard {
+    grid-template-columns: minmax(0,1fr);
+    padding: 14px 16px 22px;
+    gap: 14px;
+  }
+  .stats-bar {
+    grid-template-columns: repeat(4,1fr);
+    padding: 14px 16px 0;
+    gap: 10px;
+  }
+  .forecast-grid { grid-template-columns: repeat(5,1fr); gap: 6px; }
+  .fd-name { font-size: .6rem; }
+  .fd-stats span { font-size: .58rem; }
+}
+ 
+/* ── 680px ── */
+@media (max-width: 680px) {
+  .stats-bar { grid-template-columns: repeat(2,1fr); gap: 8px; padding: 12px 14px 0; }
+  .forecast-grid { grid-template-columns: repeat(3,1fr); gap: 6px; }
+  .navbar-center { display: none; }
+  .brand-sub { display: none; }
+}
+ 
+/* ── 600px — mobile ── */
+@media (max-width: 600px) {
+ 
+  /* NAVBAR */
+  .navbar { padding: 0 12px; height: 48px; }
+  .brand-sub     { display: none; }
+  .brand-name    { font-size: .82rem; }
+  .brand-icon    { width: 28px; height: 28px; font-size: .85rem; }
+  .navbar-center { display: none; }
+  .avatar-pill   { width: 28px; height: 28px; font-size: .7rem; }
+  .logout-btn    { font-size: .75rem; padding: 5px 8px; }
+  .icon-btn      { display: none; }
+ 
+  /* STATS BAR */
+  .stats-bar {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px 12px 0;
+  }
+  .stat-card  { padding: 12px; min-width: 0; }
+  .stat-value { font-size: 1.5rem; }
+  .stat-label { font-size: .6rem; }
+  .stat-unit  { font-size: .68rem; }
+  .stat-icon  { font-size: .85rem; }
+ 
+  /* LAYOUT — block so nothing clips */
+  .dashboard {
+    display: block;
+    padding: 10px 12px 20px;
+  }
+  .left-column {
+    display: flex; flex-direction: column;
+    gap: 10px; width: 100%; min-width: 0;
+  }
+  .right-column {
+    display: flex; flex-direction: column;
+    gap: 10px; width: 100%; min-width: 0;
+    margin-top: 10px;
+  }
+  .card {
+    border-radius: 10px;
+    width: 100%;
+    min-width: 0;
+    overflow: visible;
+  }
+ 
+  /* PROFILE CARD */
+  .profile-card   { overflow: hidden; }
+  .profile-header { height: 70px; }
+  .tractor-icon   { font-size: 1.8rem; }
+  .profile-body   { padding: 0 14px 16px; }
+  .profile-avatar { width: 44px; height: 44px; font-size: .85rem; }
+  .active-badge   { font-size: .65rem; padding: 2px 8px; margin-top: 18px; }
+  .profile-name   { font-size: 1rem; margin-bottom: 6px; margin-top: 2px; }
+  .profile-meta p { font-size: .75rem; }
+  .farm-label     { font-size: .58rem; }
+  .farm-location-row {
+    flex-direction: column;
+    gap: 6px;
+    flex-wrap: unset;
+  }
+  .farm-location-row input { width: 100%; padding: 8px 10px; font-size: .8rem; }
+  .btn-update { width: 100%; padding: 10px; font-size: .82rem; text-align: center; }
+ 
+  /* CALENDAR */
+  .calendar-card {
+    padding: 12px;
+    overflow: visible;
+  }
+  .calendar-card-header { margin-bottom: 8px; }
+  .month-title   { font-size: .85rem; }
+  .month-sub     { font-size: .65rem; }
+  .calendar-nav button { width: 24px; height: 24px; font-size: .8rem; }
+ 
+  /* Force calendar to fill container — fixes cut-off columns */
+  #calendar,
+  .fc,
+  .fc-view-harness,
+  .fc-view-harness-active { width: 100% !important; overflow: visible !important; }
+  .fc-scrollgrid,
+  .fc-scrollgrid-sync-table,
+  .fc table { width: 100% !important; table-layout: fixed !important; }
+  .fc td, .fc th { overflow: hidden; }
+  .fc .fc-col-header-cell { font-size: .6rem; padding: 3px 0; }
+  .fc .fc-daygrid-day-number {
+    font-size: .68rem; width: 20px; height: 20px;
+    padding: 1px; margin: 1px auto;
+  }
+  .calendar-legend { gap: 8px; margin-top: 8px; padding-top: 8px; flex-wrap: wrap; }
+  .legend-item { font-size: .65rem; }
+  .legend-dot  { width: 8px; height: 8px; }
+ 
+  /* DATE DETAIL */
+  .date-detail-card { padding: 14px; }
+  .placeholder-icon { font-size: 1.6rem; }
+  .placeholder-text { font-size: .78rem; }
+  .placeholder-sub  { font-size: .7rem; }
+ 
+  /* SAVE WEATHER */
+  .save-weather-card    { padding: 14px; }
+  .save-weather-card h3 { font-size: .88rem; }
+  .save-sub  { font-size: .72rem; margin-bottom: 10px; }
+  .save-metrics {
+    grid-template-columns: repeat(3,1fr);
+    gap: 6px; margin-bottom: 12px;
+  }
+  .save-metric { padding: 10px 4px; min-width: 0; overflow: hidden; }
+  .sm-value { font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sm-label { font-size: .6rem; }
+  .note-label { font-size: .74rem; }
+  #note { font-size: .8rem; min-height: 60px; margin-bottom: 10px; }
+  .btn-save { padding: 11px; font-size: .85rem; }
+ 
+  /* 5-DAY FORECAST */
+  .forecast-card    { padding: 14px; overflow: hidden; }
+  .forecast-card h3 { font-size: .88rem; margin-bottom: 2px; }
+  .forecast-meta    { font-size: .7rem; margin-bottom: 10px; }
+  .forecast-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px; margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .forecast-day  { padding: 10px 4px; min-width: 0; }
+  .fd-name       { font-size: .58rem; margin-bottom: 4px; }
+  .fd-icon       { font-size: 1.2rem; margin-bottom: 3px; }
+  .fd-temp       { font-size: .85rem; }
+  .fd-cond       { font-size: .58rem; margin-bottom: 4px; }
+  .fd-stats span { font-size: .55rem; }
+  .chart-header  { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .chart-title   { font-size: .78rem; }
+  .chart-legend  { gap: 8px; flex-wrap: wrap; }
+  .cl-item       { font-size: .65rem; }
+ 
+  /* WEATHER CHECKER */
+  .weather-card-header    { padding: 14px; }
+  .weather-card-header h3 { font-size: .85rem; }
+  .weather-card-header p  { font-size: .7rem; }
+  .weather-card-body      { padding: 14px; overflow: hidden; }
+  .input-group   { flex-direction: column; gap: 6px; }
+  .input-group input  { width: 100%; padding: 9px 10px; font-size: .82rem; }
+  #getWeatherBtn { width: 100%; padding: 10px; font-size: .82rem; }
+  .weather-result-empty { padding: 20px 10px; }
+  .weather-placeholder p { font-size: .75rem; }
+ 
+  /* SAVED RECORDS */
+  .saved-card-header    { padding: 12px 12px 0; margin-bottom: 8px; }
+  .saved-card-header h3 { font-size: .88rem; }
+  .saved-card-sub       { font-size: .7rem; }
+  .saved-count          { font-size: .68rem; min-width: 22px; height: 22px; }
+  #savedDates           { padding: 0 10px 12px; gap: 6px; max-height: none; }
+  .saved-record         { padding: 10px; }
+  .sr-icon  { font-size: 1rem; }
+  .sr-date  { font-size: .76rem; }
+  .sr-cond  { font-size: .6rem; }
+  .sr-loc   { font-size: .68rem; }
+  .sr-stats { gap: 6px; font-size: .68rem; flex-wrap: wrap; }
+  .sr-note  { font-size: .68rem; }
+ 
+  /* FOOTER */
+  footer { padding: 12px; font-size: .68rem; }
+}
+ 
+/* ── 360px ── */
+@media (max-width: 360px) {
+  .stats-bar  { gap: 6px; padding: 8px 10px 0; }
+  .stat-value { font-size: 1.2rem; }
+  .save-metrics { gap: 4px; }
+  .sm-value   { font-size: .75rem; }
+  .brand-name { font-size: .72rem; }
+  .logout-btn { font-size: .68rem; padding: 4px 6px; }
+  .dashboard  { padding: 8px 10px 16px; }
 }
