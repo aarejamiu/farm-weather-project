@@ -7,25 +7,27 @@ const askAI = async (req, res) => {
         return res.status(400).json({ message: 'Question is required' });
     }
 
+    const systemPrompt = `You are an intelligent farm assistant for a Nigerian smart farm called Leaders-Union Smart Farm. Only answer farming-related questions. Keep answers concise (3-5 sentences max). Use this farm context to give specific actionable advice: ${context || 'No context available.'}`;
+
     try {
         const response = await axios.post(
-            'https://api.anthropic.com/v1/messages',
+            'https://api.groq.com/openai/v1/chat/completions',
             {
-                model: 'claude-sonnet-4-6',
-                max_tokens: 1000,
-                system: `You are an intelligent farm assistant for a Nigerian smart farm called Leaders-Union Smart Farm. You only answer farming-related questions. Keep answers concise (3–5 sentences max). Use the farm context below to give specific, actionable advice. Never make up data not in the context.\n\nFarm context: ${context || 'No context available.'}`,
-                messages: [{ role: 'user', content: question }]
+                model: 'llama3-8b-8192',
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: question }
+                ]
             },
             {
                 headers: {
-                    'x-api-key': process.env.ANTHROPIC_API_KEY,
-                    'anthropic-version': '2023-06-01',
+                    'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
                     'Content-Type': 'application/json'
                 }
             }
         );
 
-        const reply = response.data.content?.[0]?.text || 'No response generated.';
+        const reply = response.data.choices?.[0]?.message?.content || 'No response generated.';
         res.json({ reply });
 
     } catch (error) {
