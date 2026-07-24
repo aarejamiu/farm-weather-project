@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farm Planner — Leaders-Union Smart Farm</title>
+<link rel="stylesheet" href="farmer.css">
+<link rel="stylesheet" href="planner.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-wrapper">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="view-as-label">VIEW AS</span>
+                <button class="view-btn view-btn--active">Farmer Admin</button>
+                <a href="../customer/home.html" class="view-btn">Customer</a>
+            </div>
+            <div class="topbar-right">
+                <span class="live-dot"></span>
+                <span class="live-label">Leaders-Union Farm &middot; Live</span>
+                <div class="top-avatar" id="topAvatar">EO</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <div class="page-heading">
+                <div>
+                    <h1 class="page-title">Farm Planner</h1>
+                    <p class="page-sub">Schedule tasks, treatments, and harvests</p>
+                </div>
+                <button class="add-task-btn" id="openModalBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Task
+                </button>
+            </div>
+
+            <div class="calendar-card">
+                <div class="calendar-nav">
+                    <button class="cal-nav-btn" id="prevMonth">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <h2 class="cal-month-label" id="calMonthLabel">July 2026</h2>
+                    <button class="cal-nav-btn" id="nextMonth">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                </div>
+
+                <div class="cal-grid-header">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+
+                <div class="cal-grid" id="calGrid"></div>
+            </div>
+
+            <div class="task-legend">
+                <div class="legend-item">
+                    <span class="legend-pill legend-pill--blue"></span> Irrigation
+                </div>
+                <div class="legend-item">
+                    <span class="legend-pill legend-pill--green"></span> Crop Care / Harvest
+                </div>
+                <div class="legend-item">
+                    <span class="legend-pill legend-pill--yellow"></span> Logistics
+                </div>
+                <div class="legend-item">
+                    <span class="legend-pill legend-pill--red"></span> Pest Treatment
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Add Task</h3>
+            <button class="modal-close" id="closeModalBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Task Name</label>
+                <input type="text" class="form-input" id="taskName" placeholder="e.g. Irrigation — Zone A">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select class="form-input" id="taskCategory">
+                    <option value="irrigation">Irrigation</option>
+                    <option value="harvest">Crop Care / Harvest</option>
+                    <option value="logistics">Logistics</option>
+                    <option value="pest">Pest Treatment</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="taskDate">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Note (optional)</label>
+                <textarea class="form-input form-textarea" id="taskNote" placeholder="Any additional details..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-cancel" id="cancelModalBtn">Cancel</button>
+            <button class="modal-save" id="saveTaskBtn">Save Task</button>
+        </div>
+    </div>
+</div>
+
+<!-- TASK DETAIL MODAL -->
+<div class="modal-backdrop" id="detailBackdrop">
+    <div class="modal modal--sm">
+        <div class="modal-header">
+            <h3 class="modal-title" id="detailTitle">Task</h3>
+            <button class="modal-close" id="closeDetailBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p class="detail-date" id="detailDate"></p>
+            <p class="detail-note" id="detailNote"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-cancel modal-delete" id="deleteTaskBtn">Delete Task</button>
+        </div>
+    </div>
+</div>
+
+<script src="sidebar.js"></script>
+<script>SidebarComponent.init('farm-planner');</script>
+<script src="planner.js"></script>
+</body>
+</html>

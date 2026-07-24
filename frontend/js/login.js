@@ -44,7 +44,7 @@ if (loginForm) {
                 loginBtn.textContent = 'Success ✓';
 
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = './farmer/dashboard.html';
                 }, 1000);
 
             } else {

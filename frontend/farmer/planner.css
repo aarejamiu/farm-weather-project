@@ -1,0 +1,358 @@
+.add-task-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-700);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.add-task-btn:hover {
+    background: var(--green-800);
+}
+
+.calendar-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.cal-month-label {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.cal-nav-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-sub);
+    transition: background 0.15s;
+}
+
+.cal-nav-btn:hover {
+    background: var(--bg);
+}
+
+.cal-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--border);
+}
+
+.cal-grid-header div {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub);
+    padding: 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.cal-cell {
+    min-height: 100px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 8px;
+    position: relative;
+    cursor: default;
+}
+
+.cal-cell:nth-child(7n) {
+    border-right: none;
+}
+
+.cal-cell--other-month .cal-date {
+    color: var(--text-light);
+}
+
+.cal-cell--today {
+    background: #f0faf1;
+}
+
+.cal-date {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 4px;
+}
+
+.cal-cell--today .cal-date {
+    background: var(--green-700);
+    color: #fff;
+}
+
+.cal-cell--sat .cal-date,
+.cal-cell--sun .cal-date {
+    color: #f87171;
+}
+
+.cal-cell--today .cal-date {
+    color: #fff;
+}
+
+.cal-task {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 3px 7px;
+    border-radius: 4px;
+    margin-bottom: 3px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.15s;
+}
+
+.cal-task:hover {
+    opacity: 0.8;
+}
+
+.cal-task--irrigation {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-left-color: #3b82f6;
+}
+
+.cal-task--harvest {
+    background: #f0fdf4;
+    color: #15803d;
+    border-left-color: #22c55e;
+}
+
+.cal-task--logistics {
+    background: #fffbeb;
+    color: #b45309;
+    border-left-color: #f59e0b;
+}
+
+.cal-task--pest {
+    background: #fff1f2;
+    color: #be123c;
+    border-left-color: #f43f5e;
+}
+
+/* LEGEND */
+.task-legend {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 4px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-sub);
+}
+
+.legend-pill {
+    width: 28px;
+    height: 4px;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.legend-pill--blue   { background: #3b82f6; }
+.legend-pill--green  { background: #22c55e; }
+.legend-pill--yellow { background: #f59e0b; }
+.legend-pill--red    { background: #f43f5e; }
+
+/* MODAL */
+.modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop.open {
+    display: flex;
+}
+
+.modal {
+    background: #fff;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    overflow: hidden;
+}
+
+.modal--sm {
+    max-width: 360px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-sub);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+.modal-close:hover {
+    background: var(--bg);
+}
+
+.modal-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-sub);
+}
+
+.form-input {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.15s;
+    background: #fff;
+}
+
+.form-input:focus {
+    border-color: var(--green-600);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 72px;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-cancel {
+    padding: 9px 18px;
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.modal-cancel:hover {
+    background: var(--bg);
+}
+
+.modal-save {
+    padding: 9px 20px;
+    background: var(--green-700);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.modal-save:hover {
+    background: var(--green-800);
+}
+
+.modal-delete {
+    color: #be123c;
+    border-color: #fecdd3;
+}
+
+.modal-delete:hover {
+    background: #fff1f2;
+}
+
+.detail-date {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 6px;
+}
+
+.detail-note {
+    font-size: 13.5px;
+    color: var(--text);
+}

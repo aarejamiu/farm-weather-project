@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart AI — Leaders-Union Smart Farm</title>
+<link rel="stylesheet" href="farmer.css">
+<link rel="stylesheet" href="smartai.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-wrapper">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="view-as-label">VIEW AS</span>
+                <button class="view-btn view-btn--active">Farmer Admin</button>
+                <a href="../customer/home.html" class="view-btn">Customer</a>
+            </div>
+            <div class="topbar-right">
+                <span class="live-dot"></span>
+                <span class="live-label">Leaders-Union Farm &middot; Live</span>
+                <div class="top-avatar" id="topAvatar">EO</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <div class="page-heading">
+                <div>
+                    <h1 class="page-title">Smart Farming AI</h1>
+                    <p class="page-sub">AI-powered crop insights and recommendations</p>
+                </div>
+            </div>
+
+            <div class="ai-layout">
+
+                <!-- LEFT: INSIGHTS -->
+                <div class="ai-left">
+                    <div class="insights-header">
+                        <h2 class="section-title">Active Insights</h2>
+                        <span class="insights-meta" id="insightsMeta">Loading...</span>
+                    </div>
+
+                    <div class="insights-list" id="insightsList">
+                        <div class="insights-loading">
+                            <div class="loading-spinner"></div>
+                            Analysing weather and farm data...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: CHAT + STATS -->
+                <div class="ai-right">
+
+                    <div class="chat-card card--dark">
+                        <div class="chat-header">
+                            <div class="chat-header-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+                            </div>
+                            <div>
+                                <div class="chat-title">Farm AI Assistant</div>
+                                <div class="chat-status">
+                                    <span class="chat-dot"></span> Connected
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-msg chat-msg--ai">
+                                Hello! I'm your Farm AI. I've analysed today's weather and farm data. What would you like to explore?
+                            </div>
+                        </div>
+
+                        <div class="chat-input-row">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Ask about crops, soil, weather...">
+                            <button class="chat-send" id="chatSend">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ai-stat-row">
+                        <div class="ai-stat-card">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <div class="ai-stat-value" id="statFollowed">--</div>
+                            <div class="ai-stat-label">Recommendations followed</div>
+                        </div>
+                        <div class="ai-stat-card">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <div class="ai-stat-value" id="statAlerts">--</div>
+                            <div class="ai-stat-label">Active alerts</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="sidebar.js"></script>
+<script>SidebarComponent.init('smart-ai');</script>
+<script src="smartai.js"></script>
+</body>
+</html>

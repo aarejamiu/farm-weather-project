@@ -14,12 +14,23 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    role: {
+        type: String,
+        enum: ['farmer', 'customer'],
+        default: 'customer'
+    },
+    phone: {
+        type: String,
+        default: ''
+    },
+    address: {
+        type: String,
+        default: ''
+    },
     farmLocation: {
         type: String,
-        required: false,
-        default: ""  
+        default: ''
     }
-}, {timestamps: true});
+}, { timestamps: true });
 
-const User = mongoose.model('User', UserSchema);
-module.exports = User;
+module.exports = mongoose.model('User', UserSchema);
