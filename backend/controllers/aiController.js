@@ -7,33 +7,41 @@ const askAI = async (req, res) => {
         return res.status(400).json({ message: 'Question is required' });
     }
 
-    const prompt = `You are an intelligent farm assistant for a Nigerian smart farm called Leaders-Union Smart Farm. Only answer farming-related questions. Keep answers concise (3-5 sentences). Use this farm context: ${context || 'No context available.'}\n\nFarmer question: ${question}`;
+    const systemPrompt = `You are an intelligent farm assistant for a Nigerian smart farm called Leaders-Union Smart Farm. Only answer farming-related questions. Keep answers concise (3-5 sentences). Use this farm context to give specific actionable advice: ${context || 'No context available.'}`;
 
     try {
         const response = await axios.post(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+            'https://openrouter.ai/api/v1/chat/completions',
             {
-                contents: [{ parts: [{ text: prompt }] }]
+                model: 'meta-llama/llama-3.1-8b-instruct:free',
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: question }
+                ]
             },
             {
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'HTTP-Referer': 'https://leaders-union-farm-weather-site.onrender.com',
+                    'X-Title': 'Leaders-Union Smart Farm'
+                }
             }
         );
 
-        const reply = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+        const reply = response.data.choices?.[0]?.message?.content;
 
         if (!reply) {
-            console.error('Gemini empty response:', JSON.stringify(response.data));
-            return res.status(500).json({ message: 'AI service unavailable', detail: 'Empty response from Gemini' });
+            console.error('OpenRouter empty response:', JSON.stringify(response.data));
+            return res.status(500).json({ message: 'AI service unavailable', detail: 'Empty response' });
         }
 
         res.json({ reply });
 
     } catch (error) {
-        console.error('Gemini status:', error.response?.status);
-        console.error('Gemini error:', JSON.stringify(error.response?.data));
-        console.error('Key exists:', !!process.env.GEMINI_API_KEY);
-        console.error('Key prefix:', process.env.GEMINI_API_KEY?.slice(0, 8));
+        console.error('OpenRouter status:', error.response?.status);
+        console.error('OpenRouter error:', JSON.stringify(error.response?.data));
+        console.error('Key exists:', !!process.env.OPENROUTER_API_KEY);
 
         res.status(500).json({
             message: 'AI service unavailable',
