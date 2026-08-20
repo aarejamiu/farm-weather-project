@@ -11,28 +11,33 @@ const askAI = async (req, res) => {
 
     try {
         const response = await axios.post(
-            'https://api.groq.com/openai/v1/chat/completions',
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
             {
-                model: 'llama-3.3-70b-versatile',
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: question }
+                contents: [
+                    {
+                        parts: [
+                            { text: systemPrompt + '\n\nFarmer question: ' + question }
+                        ]
+                    }
                 ]
             },
             {
-                headers: {
-                    'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             }
         );
 
-        const reply = response.data.choices?.[0]?.message?.content || 'No response generated.';
+        const reply = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
         res.json({ reply });
 
     } catch (error) {
-        console.error('AI error:', error.response?.data || error.message);
-        res.status(500).json({ message: 'AI service unavailable' });
+        console.error('Gemini error status:', error.response?.status);
+        console.error('Gemini error data:', JSON.stringify(error.response?.data));
+        console.error('Gemini key exists:', !!process.env.GEMINI_API_KEY);
+
+        res.status(500).json({
+            message: 'AI service unavailable',
+            detail: error.response?.data?.error?.message || error.message
+        });
     }
 };
 
