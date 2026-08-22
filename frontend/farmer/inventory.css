@@ -1,0 +1,296 @@
+.inv-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.inv-stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+}
+
+.inv-stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.inv-stat-value--red { color: #ef4444; }
+
+.inv-stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+}
+
+.inv-stat-label--red { color: #ef4444; }
+
+.inv-stat-sub {
+    font-size: 11.5px;
+    color: var(--text-sub);
+}
+
+.inv-table-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.inv-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.add-item-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-700);
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.add-item-btn:hover { background: var(--green-800); }
+
+.inv-table-wrap { overflow-x: auto; }
+
+.inv-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.inv-table thead tr {
+    border-bottom: 1px solid var(--border);
+}
+
+.inv-table th {
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-sub);
+    padding: 10px 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.inv-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--text);
+    vertical-align: middle;
+}
+
+.inv-table tbody tr:last-child td { border-bottom: none; }
+.inv-table tbody tr:hover td { background: var(--bg); }
+
+.inv-item-name { font-weight: 700; }
+.inv-category { color: var(--text-sub); font-size: 12.5px; }
+
+.inv-current { font-weight: 600; }
+.inv-current span {
+    color: var(--text-sub);
+    font-weight: 400;
+    margin-left: 2px;
+    font-size: 12px;
+}
+
+.inv-minimum { color: var(--text-sub); font-size: 12.5px; }
+
+.level-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 100px;
+}
+
+.level-bar-bg {
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.level-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.level-bar-fill--good     { background: var(--green-600); }
+.level-bar-fill--low      { background: #f59e0b; }
+.level-bar-fill--critical { background: #ef4444; }
+
+.level-pct { font-size: 11px; color: var(--text-sub); }
+
+.inv-status {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.inv-status--good     { background: #dcfce7; color: #15803d; }
+.inv-status--low      { background: #fef3c7; color: #b45309; }
+.inv-status--critical { background: #fee2e2; color: #b91c1c; }
+
+.inv-actions { display: flex; gap: 6px; }
+
+.inv-action-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-sub);
+    transition: background 0.15s;
+}
+
+.inv-action-btn:hover { background: var(--bg); }
+.inv-action-btn--delete:hover { background: #fee2e2; color: #ef4444; border-color: #fecaca; }
+
+.inv-loading {
+    text-align: center;
+    color: var(--text-sub);
+    padding: 32px;
+    font-size: 13px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.modal-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+
+.form-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-sub);
+}
+
+.form-input {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+    background: #fff;
+    transition: border-color 0.15s;
+}
+
+.form-input:focus { border-color: var(--green-600); }
+
+.modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop.open { display: flex; }
+
+.modal {
+    background: #fff;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-title { font-size: 15px; font-weight: 700; }
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-sub);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+}
+
+.modal-close:hover { background: var(--bg); }
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-cancel {
+    padding: 9px 18px;
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    cursor: pointer;
+}
+
+.modal-cancel:hover { background: var(--bg); }
+
+.modal-save {
+    padding: 9px 20px;
+    background: var(--green-700);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.modal-save:hover { background: var(--green-800); }
+
+@media (max-width: 768px) {
+    .inv-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+}

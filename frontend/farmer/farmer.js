@@ -642,6 +642,11 @@ const renderRevenueChart = (data) => {
 
 const initTaskProgress = () => {
     const all  = document.querySelectorAll('.task-item input[type="checkbox"]');
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'tasks') {
+            renderDashboard();
+        }
+    });
     const done = [...all].filter(c => c.checked).length;
     document.getElementById('taskProgress').textContent = `${done} / ${all.length} done`;
     document.getElementById('taskFill').style.width = `${(done / all.length) * 100}%`;
