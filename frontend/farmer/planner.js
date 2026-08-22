@@ -9,7 +9,10 @@ let currentMonth = new Date().getMonth();
 let tasks        = JSON.parse(localStorage.getItem('farmTasks') || '[]');
 let selectedTask = null;
 
-const saveTasks = () => localStorage.setItem('farmTasks', JSON.stringify(tasks));
+function saveTasks() {
+    localStorage.setItem('farmTasks', JSON.stringify(tasks));
+    window.dispatchEvent(new StorageEvent('storage', { key: 'farmTasks', newValue: JSON.stringify(tasks) }));
+}
 
 const categoryIcons = {
     irrigation: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
@@ -108,7 +111,7 @@ const saveTask = () => {
         return;
     }
 
-    tasks.push({ id: Date.now().toString(), name, category, date, note });
+    tasks.push({ id: Date.now().toString(), name, category, date, note, done: false });
     saveTasks();
     closeModal();
     renderCalendar();

@@ -640,25 +640,73 @@ const renderRevenueChart = (data) => {
     });
 };
 
-const initTaskProgress = () => {
-    const all  = document.querySelectorAll('.task-item input[type="checkbox"]');
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'tasks') {
-            renderDashboard();
-        }
-    });
-    const done = [...all].filter(c => c.checked).length;
-    document.getElementById('taskProgress').textContent = `${done} / ${all.length} done`;
-    document.getElementById('taskFill').style.width = `${(done / all.length) * 100}%`;
+const getDashboardTasks = () => {
+    try {
+        return JSON.parse(localStorage.getItem('farmTasks') || '[]');
+    } catch (error) {
+        console.error('Failed to parse dashboard tasks:', error);
+        return [];
+    }
+};
 
-    all.forEach(cb => {
-        cb.addEventListener('change', () => {
-            const d = [...all].filter(c => c.checked).length;
-            document.getElementById('taskProgress').textContent = `${d} / ${all.length} done`;
-            document.getElementById('taskFill').style.width = `${(d / all.length) * 100}%`;
-            const label = cb.closest('.task-item').querySelector('span:not(.dot)');
-            cb.checked ? label.classList.add('task-done') : label.classList.remove('task-done');
+const renderDashboardTasks = () => {
+    const list = document.querySelector('.task-list');
+    if (!list) return;
+
+    const tasks = getDashboardTasks();
+
+    if (!tasks.length) {
+        list.innerHTML = '<div class="task-empty">No tasks added yet. Create tasks in the Farm Planner to see them here.</div>';
+        document.getElementById('taskProgress').textContent = '0 / 0 done';
+        document.getElementById('taskFill').style.width = '0%';
+        return;
+    }
+
+    const colorMap = {
+        irrigation: 'red',
+        harvest: 'yellow',
+        logistics: 'green',
+        pest: 'red'
+    };
+
+    list.innerHTML = tasks.map(task => {
+        const dotClass = colorMap[task.category] || 'green';
+        const checked = task.done ? 'checked' : '';
+        const doneClass = task.done ? 'task-done' : '';
+        return `
+            <div class="task-item">
+                <input type="checkbox" data-task-id="${task.id}" ${checked}>
+                <span class="${doneClass}">${task.name}${task.date ? ` — ${task.date}` : ''}</span>
+                <span class="dot dot--${dotClass}"></span>
+            </div>
+        `;
+    }).join('');
+
+    const inputs = list.querySelectorAll('input[type="checkbox"]');
+    const doneCount = tasks.filter(task => task.done).length;
+
+    document.getElementById('taskProgress').textContent = `${doneCount} / ${tasks.length} done`;
+    document.getElementById('taskFill').style.width = `${(doneCount / tasks.length) * 100}%`;
+
+    inputs.forEach(input => {
+        input.addEventListener('change', () => {
+            const allTasks = getDashboardTasks();
+            const matchingTask = allTasks.find(task => task.id === input.dataset.taskId);
+            if (!matchingTask) return;
+
+            matchingTask.done = input.checked;
+            localStorage.setItem('farmTasks', JSON.stringify(allTasks));
+            renderDashboardTasks();
         });
+    });
+};
+
+const initTaskProgress = () => {
+    renderDashboardTasks();
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'farmTasks') {
+            renderDashboardTasks();
+        }
     });
 };
 
