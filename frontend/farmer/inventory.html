@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory — Leaders-Union Smart Farm</title>
+<link rel="stylesheet" href="./farmer.css">
+<link rel="stylesheet" href="./inventory.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-wrapper">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="view-as-label">VIEW AS</span>
+                <button class="view-btn view-btn--active">Farmer Admin</button>
+                <a href="../customer/home.html" class="view-btn">Customer</a>
+            </div>
+            <div class="topbar-right">
+                <span class="live-dot"></span>
+                <span class="live-label">Leaders-Union Farm &middot; Live</span>
+                <div class="top-avatar" id="topAvatar">EO</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <div class="page-heading">
+                <div>
+                    <h1 class="page-title">Inventory</h1>
+                    <p class="page-sub">Track stock levels across crops and inputs</p>
+                </div>
+            </div>
+
+            <div class="inv-stat-grid">
+                <div class="inv-stat-card">
+                    <div class="inv-stat-value" id="totalItems">--</div>
+                    <div class="inv-stat-label">Total Items</div>
+                    <div class="inv-stat-sub">tracked</div>
+                </div>
+                <div class="inv-stat-card">
+                    <div class="inv-stat-value" id="totalValue">--</div>
+                    <div class="inv-stat-label">Total Value</div>
+                    <div class="inv-stat-sub">estimated</div>
+                </div>
+                <div class="inv-stat-card">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <div class="inv-stat-value inv-stat-value--red" id="criticalCount">--</div>
+                    <div class="inv-stat-label inv-stat-label--red">Critical Stock</div>
+                    <div class="inv-stat-sub">need restock</div>
+                </div>
+                <div class="inv-stat-card">
+                    <div class="inv-stat-value" id="lowCount">--</div>
+                    <div class="inv-stat-label">Low Stock</div>
+                    <div class="inv-stat-sub">monitor</div>
+                </div>
+            </div>
+
+            <div class="inv-table-card">
+                <div class="inv-table-header">
+                    <h2 class="card-title">Stock Levels</h2>
+                    <button class="add-item-btn" id="openModalBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Item
+                    </button>
+                </div>
+
+                <div class="inv-table-wrap">
+                    <table class="inv-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Current</th>
+                                <th>Level</th>
+                                <th>Minimum</th>
+                                <th>Value</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryBody">
+                            <tr><td colspan="8" class="inv-loading">Loading inventory...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Add Item</h3>
+            <button class="modal-close" id="closeModalBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editId">
+            <div class="form-group">
+                <label class="form-label">Item Name</label>
+                <input type="text" class="form-input" id="itemName" placeholder="e.g. Organic Tomatoes">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select class="form-input" id="itemCategory">
+                        <option value="Crop">Crop</option>
+                        <option value="Input">Input</option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Packaging">Packaging</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Unit</label>
+                    <select class="form-input" id="itemUnit">
+                        <option value="kg">kg</option>
+                        <option value="g">g</option>
+                        <option value="litres">litres</option>
+                        <option value="units">units</option>
+                        <option value="bags">bags</option>
+                        <option value="crates">crates</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Current Quantity</label>
+                    <input type="number" class="form-input" id="itemCurrent" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Minimum Quantity</label>
+                    <input type="number" class="form-input" id="itemMinimum" placeholder="0" min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Maximum Quantity</label>
+                    <input type="number" class="form-input" id="itemMaximum" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Unit Price (&#8358;)</label>
+                    <input type="number" class="form-input" id="itemPrice" placeholder="0" min="0">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-cancel" id="cancelModalBtn">Cancel</button>
+            <button class="modal-save" id="saveItemBtn">Save Item</button>
+        </div>
+    </div>
+</div>
+
+<script src="../js/sidebar.js"></script>
+<script src="../js/inventory.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        SidebarComponent.init('inventory');
+    });
+</script>
+</body>
+</html>
