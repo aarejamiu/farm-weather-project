@@ -496,7 +496,10 @@
 // loadProfile();
 
 const token = localStorage.getItem('token');
+const user  = JSON.parse(localStorage.getItem('userData') || '{}');
+
 if (!token) window.location.href = '../login.html';
+if (user.role === 'customer') window.location.href = '../customer/home.html';
 
 const BASE = 'https://leaders-union-farm-weather-site.onrender.com/api';
 

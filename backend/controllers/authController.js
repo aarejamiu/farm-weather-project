@@ -6,84 +6,98 @@
 //     const { username, email, password } = req.body;
 
 //     try {
-//         let userExists = await User.findOne({ email });
+//         const userExists = await User.findOne({ email });
 //         if (userExists) {
-//             console.log('User already exists:', email);
 //             return res.status(400).json({ message: 'User already exists' });
 //         }
+
 //         const salt = await bcrypt.genSalt(10);
 //         const hashedPassword = await bcrypt.hash(password, salt);
+
+//         const role = email === process.env.FARMER_EMAIL ? 'farmer' : 'customer';
 
 //         const user = await User.create({
 //             username,
 //             email,
-//             password: hashedPassword
+//             password: hashedPassword,
+//             role
 //         });
 
-//         console.log('User registered successfully:', user._id);
-//         res.status(201).json({ message: 'User registered successfully',
+//         res.status(201).json({
+//             message: 'User registered successfully',
 //             user: {
 //                 id: user._id,
 //                 username: user.username,
-//                 email: user.email
+//                 email: user.email,
+//                 role: user.role
 //             }
 //         });
 
 //     } catch (error) {
-//   console.error("REGISTER ERROR:", error);
-//   res.status(500).json({ message: error.message });
-// }
+//         res.status(500).json({ message: error.message });
+//     }
 // };
 
 // const loginUser = async (req, res) => {
 //     const { email, password } = req.body;
 
-//     try{
-//         const user = await User.findOne({email});
+//     try {
+//         const user = await User.findOne({ email });
 //         if (!user) {
-//             return res.status(400).json({message: 'Invalid email'});
+//             return res.status(400).json({ message: 'Invalid email' });
 //         }
 
 //         const isMatch = await bcrypt.compare(password, user.password);
 //         if (!isMatch) {
-//             return res.status(400).json({message: 'Invalid password'});
+//             return res.status(400).json({ message: 'Invalid password' });
 //         }
 
 //         const token = jwt.sign(
-//         { id: user._id },
-//         process.env.JWT_SECRET,
-//         { expiresIn: "1hr" }
+//             { id: user._id, role: user.role },
+//             process.env.JWT_SECRET,
+//             { expiresIn: '7d' }
 //         );
 
 //         res.json({
-//             message: 'Login Successful', 
-//             token, 
+//             message: 'Login successful',
+//             token,
 //             user: {
-//             id: user._id,
-//             username: user.username,
-//             email: user.email
-//         }});
-//     }catch (error) {
-//         console.error('Error:', error);
+//                 id: user._id,
+//                 username: user.username,
+//                 email: user.email,
+//                 role: user.role
+//             }
+//         });
+
+//     } catch (error) {
 //         res.status(500).json({ message: 'Server error' });
 //     }
-// }
-
-
-
-// module.exports = { 
-//     registerUser, 
-//     loginUser 
 // };
+
+// module.exports = { registerUser, loginUser };
 
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const normalizeEmail = (email) => email.trim().toLowerCase();
+
+const getFarmerEmail = () => {
+    const farmerEmail = process.env.FARMER_EMAIL?.trim().toLowerCase();
+
+    if (!farmerEmail) {
+        throw new Error('FARMER_EMAIL is not configured');
+    }
+
+    return farmerEmail;
+};
+
 const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
+    const email = normalizeEmail(req.body.email);
 
     try {
+        const farmerEmail = getFarmerEmail();
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ message: 'User already exists' });
@@ -91,8 +105,7 @@ const registerUser = async (req, res) => {
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-
-        const role = email === process.env.FARMER_EMAIL ? 'farmer' : 'customer';
+        const role = email === farmerEmail ? 'farmer' : 'customer';
 
         const user = await User.create({
             username,
@@ -101,8 +114,15 @@ const registerUser = async (req, res) => {
             role
         });
 
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+
         res.status(201).json({
             message: 'User registered successfully',
+            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -117,7 +137,8 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { password } = req.body;
+    const email = normalizeEmail(req.body.email);
 
     try {
         const user = await User.findOne({ email });
