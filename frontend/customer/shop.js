@@ -76,7 +76,7 @@ const renderProducts = () => {
     }
 
     grid.innerHTML = filtered.map(item => {
-        const imgSrc  = images[item.id] || '';
+        const imgSrc  = item.image || images[item.id] || '';
         const imgHTML = imgSrc
             ? `<img src="${imgSrc}" alt="${item.name}">`
             : `<div class="shop-card-img-placeholder">
@@ -115,9 +115,33 @@ const loadProfile = async () => {
     } catch (e) { console.error(e); }
 };
 
-const init = () => {
-    const inventory = JSON.parse(localStorage.getItem('farmInventory') || '[]');
-    allProducts     = inventory.filter(i => i.active !== false && i.current > 0);
+const loadProducts = async () => {
+    const localInventory = JSON.parse(localStorage.getItem('farmInventory') || '[]');
+
+    try {
+        const res = await fetch(`${BASE}/products/public`);
+        if (!res.ok) throw new Error(`Products request failed: ${res.status}`);
+
+        const products = await res.json();
+        if (products.length) {
+            allProducts = products
+                .map(product => ({
+                    ...product,
+                    id: product._id || product.id,
+                    current: product.quantity,
+                    unit: product.unit || 'unit',
+                    active: product.available,
+                    image: product.image || ''
+                }))
+                .filter(product => product.active !== false && product.current > 0);
+        } else {
+            allProducts = localInventory.filter(i => i.active !== false && i.current > 0);
+        }
+    } catch (error) {
+        console.error('Unable to load products from the server:', error);
+        allProducts = localInventory.filter(i => i.active !== false && i.current > 0);
+    }
+
     buildCategories(allProducts);
     renderProducts();
 };
@@ -126,4 +150,4 @@ document.getElementById('searchInput').addEventListener('input', renderProducts)
 
 updateCartBadge();
 loadProfile();
-init();
+loadProducts();

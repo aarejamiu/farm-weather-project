@@ -95,7 +95,7 @@ const closeModal = () => {
     editingId = null;
 };
 
-const saveItem = () => {
+const saveItem = async () => {
     const name     = document.getElementById('itemName').value.trim();
     const category = document.getElementById('itemCategory').value;
     const unit     = document.getElementById('itemUnit').value;
@@ -103,19 +103,48 @@ const saveItem = () => {
     const minimum  = parseFloat(document.getElementById('itemMinimum').value) || 0;
     const maximum  = parseFloat(document.getElementById('itemMaximum').value) || 0;
     const price    = parseFloat(document.getElementById('itemPrice').value) || 0;
+    const itemId   = editingId;
 
     if (!name) { document.getElementById('itemName').focus(); return; }
 
+    const itemData = { name, category, unit, current, minimum, maximum, price };
+
     if (editingId) {
         const idx = inventory.findIndex(i => i.id === editingId);
-        if (idx > -1) inventory[idx] = { ...inventory[idx], name, category, unit, current, minimum, maximum, price };
+        if (idx > -1) inventory[idx] = { ...inventory[idx], ...itemData };
     } else {
-        inventory.push({ id: Date.now().toString(), name, category, unit, current, minimum, maximum, price });
+        inventory.push({ id: Date.now().toString(), ...itemData });
     }
 
     saveInventory();
     closeModal();
     renderTable();
+
+    const savedItem = inventory.find(item => item.id === itemId) || inventory[inventory.length - 1];
+    const isExistingApiProduct = itemId && /^[a-f\d]{24}$/i.test(itemId);
+    const endpoint = isExistingApiProduct ? `${BASE}/products/${itemId}` : `${BASE}/products`;
+
+    try {
+        const res = await fetch(endpoint, {
+            method: isExistingApiProduct ? 'PUT' : 'POST',
+            headers: { ...authHeaders, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name, category, unit, price,
+                quantity: current,
+                available: savedItem.active !== false,
+                lowStockThreshold: minimum
+            })
+        });
+        if (!res.ok) throw new Error(`Product sync failed: ${res.status}`);
+
+        const data = await res.json();
+        if (!isExistingApiProduct && data.product?._id) {
+            savedItem.id = data.product._id;
+            saveInventory();
+        }
+    } catch (error) {
+        console.error('Unable to sync product with the server:', error);
+    }
 };
 
 window.editItem = (id) => {
@@ -151,6 +180,37 @@ const loadProfile = async () => {
     } catch (e) { console.error(e); }
 };
 
+const syncExistingInventory = async () => {
+    const unsyncedItems = inventory.filter(item => !/^[a-f\d]{24}$/i.test(item.id));
+
+    for (const item of unsyncedItems) {
+        try {
+            const res = await fetch(`${BASE}/products`, {
+                method: 'POST',
+                headers: { ...authHeaders, 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: item.name,
+                    category: item.category,
+                    unit: item.unit,
+                    price: item.price,
+                    quantity: item.current,
+                    available: item.active !== false,
+                    lowStockThreshold: item.minimum
+                })
+            });
+            if (!res.ok) throw new Error(`Product sync failed: ${res.status}`);
+
+            const data = await res.json();
+            if (data.product?._id) item.id = data.product._id;
+        } catch (error) {
+            console.error('Unable to sync existing inventory:', error);
+            break;
+        }
+    }
+
+    saveInventory();
+};
+
 document.getElementById('openModalBtn').addEventListener('click', () => openModal('Add Item'));
 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
 document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
@@ -162,3 +222,4 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal
 
 loadProfile();
 renderTable();
+syncExistingInventory();

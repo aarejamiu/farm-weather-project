@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 
 const createProduct = async (req, res) => {
-    const { name, description, price, quantity, category, image, available, lowStockThreshold } = req.body;
+    const { name, description, price, quantity, category, unit, image, available, lowStockThreshold } = req.body;
 
     if (!name || !price || quantity === undefined) {
         return res.status(400).json({ message: 'Name, price, and quantity are required' });
@@ -9,7 +9,7 @@ const createProduct = async (req, res) => {
 
     try {
         const product = await Product.create({
-            name, description, price, quantity,
+            name, description, price, quantity, unit,
             category, image, available, lowStockThreshold
         });
         res.status(201).json({ message: 'Product created', product });

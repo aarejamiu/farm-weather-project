@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — Leaders-Union Farm Shop</title>
+<link rel="stylesheet" href="./home.css">
+<link rel="stylesheet" href="./shop.css">
+</head>
+<body>
+
+<nav class="cust-nav">
+    <a href="home.html" class="cust-brand">
+        <div class="cust-brand-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2C6.48 2 2 6.48 2 12"/><path d="M12 22V12"/><path d="M2 12h10"/><path d="M12 12l7-7"/></svg>
+        </div>
+        <div>
+            <div class="cust-brand-name">Leaders-Union</div>
+            <div class="cust-brand-sub">FARM SHOP</div>
+        </div>
+    </a>
+
+    <div class="cust-nav-links">
+        <a href="home.html" class="cust-nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Home
+        </a>
+        <a href="shop.html" class="cust-nav-link cust-nav-link--active">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            Shop
+        </a>
+        <a href="cart.html" class="cust-nav-link" style="position:relative">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Cart
+            <span class="cust-cart-badge" id="cartBadge" style="display:none"></span>
+        </a>
+        <a href="orders.html" class="cust-nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            My Orders
+        </a>
+        <a href="receipts.html" class="cust-nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Receipts
+        </a>
+        <a href="messages.html" class="cust-nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Messages
+        </a>
+        <a href="profile.html" class="cust-nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+        </a>
+    </div>
+
+    <div class="cust-nav-avatar" id="navAvatar">SM</div>
+</nav>
+
+<div class="shop-layout">
+
+    <div class="shop-toolbar">
+        <div class="search-wrap">
+            <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search produce...">
+        </div>
+        <div class="shop-filters" id="filterTabs">
+            <button class="filter-tab filter-tab--active" data-cat="All">All</button>
+        </div>
+    </div>
+
+    <div class="shop-grid" id="shopGrid">
+        <div class="shop-loading">Loading products...</div>
+    </div>
+
+</div>
+
+<script src="./shop.js"></script>
+</body>
+</html>

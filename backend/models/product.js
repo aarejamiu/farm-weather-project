@@ -23,6 +23,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         default: 'General'
     },
+    unit: {
+        type: String,
+        default: 'unit'
+    },
     image: {
         type: String,
         default: ''
