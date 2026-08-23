@@ -141,6 +141,7 @@ const loginUser = async (req, res) => {
     const email = normalizeEmail(req.body.email);
 
     try {
+        const farmerEmail = getFarmerEmail();
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Invalid email' });
@@ -149,6 +150,10 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid password' });
+        }
+
+        if (user.role === 'farmer' && email !== farmerEmail) {
+            return res.status(403).json({ message: 'This account is not authorized as a farmer' });
         }
 
         const token = jwt.sign(

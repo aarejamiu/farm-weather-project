@@ -1,8 +1,8 @@
+require('dotenv').config();
 require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]);
 const express = require('express');
 const app = require('./backend/app');
 const mongoose = require('mongoose');
-require('dotenv').config();
 
 const PORT = process.env.PORT || 5000;
 

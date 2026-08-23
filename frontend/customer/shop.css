@@ -1,0 +1,205 @@
+.shop-layout {
+    padding: 24px 32px 40px;
+}
+
+.shop-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.search-wrap {
+    flex: 1;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-sub);
+}
+
+.search-input {
+    width: 100%;
+    padding: 11px 14px 11px 40px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    color: var(--text);
+    background: var(--card-bg);
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.15s;
+}
+
+.search-input:focus { border-color: var(--green-600); }
+
+.shop-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+}
+
+.filter-tab:hover {
+    background: var(--green-50);
+    color: var(--green-700);
+    border-color: var(--green-600);
+}
+
+.filter-tab--active {
+    background: var(--green-700);
+    color: #fff;
+    border-color: var(--green-700);
+}
+
+/* SHOP GRID */
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.shop-loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 13px;
+    padding: 60px;
+}
+
+.shop-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 13px;
+    padding: 60px;
+}
+
+/* SHOP PRODUCT CARD */
+.shop-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.shop-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+
+.shop-card-img {
+    position: relative;
+    height: 170px;
+    background: #f3f4f6;
+    overflow: hidden;
+}
+
+.shop-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.shop-card-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d1d5db;
+}
+
+.shop-cat-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+}
+
+.shop-card-body {
+    padding: 14px;
+}
+
+.shop-card-name {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.shop-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.shop-card-stock {
+    font-size: 11.5px;
+    color: var(--text-sub);
+}
+
+.shop-card-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.shop-card-price {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.shop-card-price span {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-sub);
+}
+
+.shop-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--green-700);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: inherit;
+}
+
+.shop-add-btn:hover { background: var(--green-800); }
+.shop-add-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+@media (max-width: 1024px) { .shop-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .shop-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .shop-grid { grid-template-columns: 1fr; } .shop-layout { padding: 16px; } }
