@@ -80,6 +80,7 @@ const renderProducts = (items) => {
         inventory[idx].active = !inventory[idx].active;
         localStorage.setItem('farmInventory', JSON.stringify(inventory));
         filterProducts();
+        syncProduct(inventory[idx]);
     }
 };
 
@@ -98,6 +99,43 @@ window.deleteProduct = (id) => {
     localStorage.setItem('farmInventory', JSON.stringify(inventory));
     saveImages();
     filterProducts();
+};
+
+const syncProduct = async (item) => {
+    const isExistingApiProduct = /^[a-f\d]{24}$/i.test(item.id);
+    const endpoint = isExistingApiProduct ? `${BASE}/products/${item.id}` : `${BASE}/products`;
+
+    try {
+        const res = await fetch(endpoint, {
+            method: isExistingApiProduct ? 'PUT' : 'POST',
+            headers: { ...authHeaders, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: item.name,
+                category: item.category,
+                unit: item.unit,
+                price: item.price,
+                quantity: item.current,
+                image: images[item.id] || '',
+                available: item.active !== false,
+                lowStockThreshold: item.minimum
+            })
+        });
+        if (!res.ok) throw new Error(`Product sync failed: ${res.status}`);
+
+        const data = await res.json();
+        if (!isExistingApiProduct && data.product?._id) {
+            item.id = data.product._id;
+            localStorage.setItem('farmInventory', JSON.stringify(inventory));
+        }
+    } catch (error) {
+        console.error('Unable to sync product with the server:', error);
+    }
+};
+
+const syncInventory = async () => {
+    for (const item of inventory) {
+        await syncProduct(item);
+    }
 };
 
 window.openImageModal = (id, name) => {
@@ -178,3 +216,4 @@ const loadProfile = async () => {
 
 loadProfile();
 filterProducts();
+syncInventory();
