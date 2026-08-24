@@ -92,7 +92,7 @@ const renderProducts = () => {
             <div class="shop-card-body">
                 <div class="shop-card-name">${item.name}</div>
                 <div class="shop-card-meta">
-                    <span class="shop-card-stock">${item.current} ${item.unit} in stock</span>
+                    <span class="shop-card-stock">${item.current} ${item.unit || 'kg'} in stock</span>
                 </div>
                 <div class="shop-card-price-row">
                     <div class="shop-card-price">${formatPrice(item.price)} <span>/${item.unit}</span></div>
@@ -116,34 +116,33 @@ const loadProfile = async () => {
 };
 
 const loadProducts = async () => {
-    const localInventory = JSON.parse(localStorage.getItem('farmInventory') || '[]');
+    const grid = document.getElementById('shopGrid');
 
     try {
         const res = await fetch(`${BASE}/products/public`);
-        if (!res.ok) throw new Error(`Products request failed: ${res.status}`);
+        if (!res.ok) throw new Error('Failed to load products');
 
         const products = await res.json();
-        if (products.length) {
-            allProducts = products
-                .map(product => ({
-                    ...product,
-                    id: product._id || product.id,
-                    current: product.quantity,
-                    unit: product.unit || 'unit',
-                    active: product.available,
-                    image: product.image || ''
-                }))
-                .filter(product => product.active !== false && product.current > 0);
-        } else {
-            allProducts = localInventory.filter(i => i.active !== false && i.current > 0);
-        }
-    } catch (error) {
-        console.error('Unable to load products from the server:', error);
-        allProducts = localInventory.filter(i => i.active !== false && i.current > 0);
-    }
 
-    buildCategories(allProducts);
-    renderProducts();
+        const images = JSON.parse(localStorage.getItem('productImages') || '{}');
+
+        allProducts = products.map(p => ({
+            id:       p._id,
+            name:     p.name,
+            category: p.category,
+            price:    p.price,
+            current:  p.quantity,
+            unit:     p.unit || 'kg',
+            image:    p.image || images[p._id] || ''
+        }));
+
+        buildCategories(allProducts);
+        renderProducts();
+
+    } catch (error) {
+        console.error('Shop load error:', error);
+        grid.innerHTML = `<div class="shop-empty">Unable to load products. Please try again.</div>`;
+    }
 };
 
 document.getElementById('searchInput').addEventListener('input', renderProducts);
