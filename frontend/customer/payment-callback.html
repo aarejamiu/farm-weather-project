@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirming payment - Leaders-Union Farm Shop</title>
+<link rel="stylesheet" href="./home.css">
+<style>
+    .payment-status { max-width: 520px; margin: 120px auto; padding: 40px 24px; text-align: center; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); }
+    .payment-status h1 { margin-bottom: 10px; }
+    .payment-status p { color: var(--text-sub); }
+    .payment-status a { display: inline-block; margin-top: 22px; color: var(--green-700); font-weight: 700; }
+</style>
+</head>
+<body>
+<main class="payment-status">
+    <h1 id="paymentTitle">Confirming payment...</h1>
+    <p id="paymentMessage">Please wait while we verify your payment.</p>
+    <a id="paymentLink" href="orders.html" hidden>View My Orders</a>
+</main>
+<script src="./payment-callback.js"></script>
+</body>
+</html>

@@ -13,6 +13,7 @@ const messageRoutes     = require('./routes/messageRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const analyticsRoutes    = require('./routes/analyticsRoutes');
 const aiRoutes          = require('./routes/aiRoutes');
+const paymentRoutes     = require('./routes/paymentRoutes');
 
 app.use(cors({
     origin: '*',
@@ -32,5 +33,6 @@ app.use('/api/messages',      messageRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/analytics',    analyticsRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/payments', paymentRoutes);
 
 module.exports = app;

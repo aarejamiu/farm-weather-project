@@ -2,6 +2,40 @@ const Order = require('../models/order');
 const Product = require('../models/product');
 const Notification = require('../models/notification');
 
+const createOrderFromPayment = async (payment) => {
+    let total = 0;
+    const enrichedItems = [];
+
+    for (const item of payment.items) {
+        const product = await Product.findById(item.productId);
+        if (!product || !product.available) throw new Error('A product is no longer available');
+        if (product.quantity < item.quantity) throw new Error(`Insufficient stock for ${product.name}`);
+
+        product.quantity -= item.quantity;
+        await product.save();
+        total += product.price * item.quantity;
+        enrichedItems.push({ product: product._id, name: product.name, price: product.price, quantity: item.quantity });
+    }
+
+    const order = await Order.create({
+        customer: payment.customer,
+        items: enrichedItems,
+        total,
+        deliveryAddress: payment.deliveryAddress,
+        receiptId: 'RCP-' + Date.now(),
+        status: 'paid',
+        paymentStatus: 'paid',
+        paymentRef: payment.reference
+    });
+
+    await Notification.create({
+        user: payment.customer,
+        message: `New order #${order.receiptId} placed for ₦${total}`,
+        type: 'order'
+    });
+    return order;
+};
+
 const placeOrder = async (req, res) => {
     const { items, deliveryAddress, note } = req.body;
 
@@ -125,6 +159,7 @@ const getOrderById = async (req, res) => {
 
 module.exports = {
     placeOrder,
+    createOrderFromPayment,
     getCustomerOrders,
     getAllOrders,
     updateOrderStatus,
