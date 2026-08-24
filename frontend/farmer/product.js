@@ -4,7 +4,10 @@ const user  = JSON.parse(localStorage.getItem('userData') || '{}');
 if (!token) window.location.href = '../login.html';
 if (user.role === 'customer') window.location.href = '../customer/home.html';
 
-const BASE = 'https://leaders-union-farm-weather-site.onrender.com/api';
+const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? 'http://127.0.0.1:5000'
+    : 'https://leaders-union-farm-weather-site.onrender.com';
+const BASE = `${API_HOST}/api`;
 const authHeaders = { 'Authorization': `Bearer ${token}` };
 
 let inventory  = JSON.parse(localStorage.getItem('farmInventory') || '[]');
