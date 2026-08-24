@@ -119,7 +119,7 @@ const loadProducts = async () => {
     const grid = document.getElementById('shopGrid');
 
     try {
-        const res = await fetch(`${BASE}/products/public`);
+        const res = await fetch(`${BASE}/product/public`);
         if (!res.ok) throw new Error('Failed to load products');
 
         const products = await res.json();
