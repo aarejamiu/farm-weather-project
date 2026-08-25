@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receipts - Leaders-Union Farm Shop</title>
+<link rel="stylesheet" href="./home.css">
+<link rel="stylesheet" href="./receipts.css">
+</head>
+<body>
+<nav class="cust-nav">
+    <a href="home.html" class="cust-brand">
+        <div class="cust-brand-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2C6.48 2 2 6.48 2 12"/><path d="M12 22V12"/><path d="M2 12h10"/><path d="M12 12l7-7"/></svg></div>
+        <div><div class="cust-brand-name">Leaders-Union</div><div class="cust-brand-sub">FARM SHOP</div></div>
+    </a>
+    <div class="cust-nav-links">
+        <a href="home.html" class="cust-nav-link">Home</a>
+        <a href="shop.html" class="cust-nav-link">Shop</a>
+        <a href="cart.html" class="cust-nav-link">Cart <span class="cust-cart-badge" id="cartBadge"></span></a>
+        <a href="orders.html" class="cust-nav-link">My Orders</a>
+        <a href="receipts.html" class="cust-nav-link cust-nav-link--active">Receipts</a>
+        <a href="messages.html" class="cust-nav-link">Messages</a>
+        <a href="profile.html" class="cust-nav-link">Profile</a>
+    </div>
+    <div class="cust-nav-avatar" id="navAvatar">SM</div>
+</nav>
+
+<main class="receipts-page">
+    <h1>Receipts</h1>
+    <div id="receiptsList"><div class="receipts-loading">Loading receipts...</div></div>
+    <section class="spending-summary" aria-labelledby="spendingTitle">
+        <h2 id="spendingTitle">Spending Summary</h2>
+        <div class="spending-grid">
+            <div><strong id="totalSpent">₦0.00</strong><span>Total Spent</span></div>
+            <div><strong id="totalOrders">0</strong><span>Total Orders</span></div>
+            <div><strong id="averageOrder">₦0.00</strong><span>Avg Order Value</span></div>
+        </div>
+    </section>
+</main>
+<script src="./receipts.js"></script>
+</body>
+</html>

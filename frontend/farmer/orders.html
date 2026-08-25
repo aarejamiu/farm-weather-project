@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders — Leaders-Union Smart Farm</title>
+<link rel="stylesheet" href="./farmer.css">
+<link rel="stylesheet" href="./orders.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-wrapper">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="view-as-label">VIEW AS</span>
+                <button class="view-btn view-btn--active">Farmer Admin</button>
+                <a href="../customer/home.html" class="view-btn">Customer</a>
+            </div>
+            <div class="topbar-right">
+                <span class="live-dot"></span>
+                <span class="live-label">Leaders-Union Farm &middot; Live</span>
+                <div class="top-avatar" id="topAvatar">EO</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <div class="page-heading">
+                <div>
+                    <h1 class="page-title">Orders</h1>
+                    <p class="page-sub">Manage and fulfil customer orders</p>
+                </div>
+            </div>
+
+            <!-- STAT CARDS -->
+            <div class="orders-stat-grid">
+                <div class="orders-stat-card">
+                    <div class="orders-stat-value" id="statTotal">--</div>
+                    <div class="orders-stat-label">Total Today</div>
+                    <div class="orders-stat-sub" id="statRevenue">-- revenue</div>
+                </div>
+                <div class="orders-stat-card">
+                    <div class="orders-stat-value" id="statReady">--</div>
+                    <div class="orders-stat-label orders-stat-label--green">Ready for Pickup</div>
+                    <div class="orders-stat-sub">awaiting customer</div>
+                </div>
+                <div class="orders-stat-card">
+                    <div class="orders-stat-value" id="statProcessing">--</div>
+                    <div class="orders-stat-label orders-stat-label--blue">Processing</div>
+                    <div class="orders-stat-sub">in preparation</div>
+                </div>
+                <div class="orders-stat-card">
+                    <div class="orders-stat-value" id="statAvg">--</div>
+                    <div class="orders-stat-label">Avg. Order Value</div>
+                    <div class="orders-stat-sub">this week</div>
+                </div>
+            </div>
+
+            <!-- TABLE CARD -->
+            <div class="orders-table-card">
+                <div class="orders-toolbar">
+                    <div class="search-wrap">
+                        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search customer or order ID...">
+                    </div>
+                    <div class="orders-filters" id="filterTabs">
+                        <button class="filter-tab filter-tab--active" data-status="all">All</button>
+                        <button class="filter-tab" data-status="pending">Pending</button>
+                        <button class="filter-tab" data-status="paid">Processing</button>
+                        <button class="filter-tab" data-status="ready_for_pickup">Ready</button>
+                        <button class="filter-tab" data-status="completed">Delivered</button>
+                    </div>
+                </div>
+
+                <div class="orders-table-wrap">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr><td colspan="8" class="orders-loading">Loading orders...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div class="modal-backdrop" id="detailBackdrop">
+    <div class="modal modal--lg">
+        <div class="modal-header">
+            <div>
+                <h3 class="modal-title" id="detailOrderId">Order</h3>
+                <p class="modal-sub" id="detailDate"></p>
+            </div>
+            <button class="modal-close" id="closeDetailBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-grid">
+                <div>
+                    <div class="detail-section-title">Customer</div>
+                    <div class="detail-value" id="detailCustomer">--</div>
+                    <div class="detail-sub" id="detailEmail">--</div>
+                    <div class="detail-sub" id="detailPhone">--</div>
+                </div>
+                <div>
+                    <div class="detail-section-title">Delivery Address</div>
+                    <div class="detail-value" id="detailAddress">--</div>
+                </div>
+                <div>
+                    <div class="detail-section-title">Note</div>
+                    <div class="detail-value" id="detailNote">--</div>
+                </div>
+            </div>
+
+            <div class="detail-items" id="detailItems"></div>
+
+            <div class="detail-total-row">
+                <span>Total</span>
+                <span class="detail-total" id="detailTotal">--</span>
+            </div>
+
+            <div class="detail-status-row">
+                <div class="detail-section-title">Update Status</div>
+                <div class="status-btn-group">
+                    <button class="status-btn" data-status="pending">Pending</button>
+                    <button class="status-btn" data-status="paid">Processing</button>
+                    <button class="status-btn" data-status="ready_for_pickup">Ready</button>
+                    <button class="status-btn" data-status="completed">Delivered</button>
+                    <button class="status-btn status-btn--cancel" data-status="cancelled">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="./sidebar.js"></script>
+<script src="./orders.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        SidebarComponent.init('orders');
+    });
+</script>
+</body>
+</html>

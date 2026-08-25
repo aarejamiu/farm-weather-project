@@ -1,0 +1,23 @@
+.profile-page { max-width: 1150px; margin: 0 auto; padding: 32px 22px 50px; }
+.profile-hero { display: flex; align-items: center; gap: 22px; padding: 32px 30px 27px; border-radius: 16px; background: linear-gradient(110deg, #0e3424, #286444); color: #fff; }
+.profile-avatar-large { width: 68px; height: 68px; border-radius: 15px; display: grid; place-items: center; background: rgba(255,255,255,.12); color: #d5f4d7; font-size: 26px; font-weight: 800; }
+.profile-identity h1 { font-size: 23px; margin-bottom: 3px; }
+.profile-identity p { color: #75d18e; font-size: 13px; }
+.profile-pills { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.profile-pills span { padding: 6px 13px; border-radius: 7px; background: rgba(255,255,255,.1); color: #e6f5e8; font-size: 12px; font-weight: 700; }
+.profile-tabs { display: flex; width: max-content; margin: 22px 0; padding: 3px; border: 1px solid var(--border); border-radius: 11px; background: #fff; }
+.profile-tab { border: 0; background: transparent; color: var(--text-sub); padding: 10px 20px; border-radius: 8px; cursor: pointer; font: inherit; }
+.profile-tab--active { background: var(--green-700); color: #fff; font-weight: 700; }
+.profile-panel { padding: 26px 28px; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
+.profile-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; }
+.profile-panel label { display: flex; flex-direction: column; gap: 7px; color: var(--text-sub); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.profile-panel input, .profile-panel textarea { width: 100%; padding: 11px 13px; border: 1px solid #dedbd4; border-radius: 9px; background: #fff; color: var(--text); font: inherit; text-transform: none; letter-spacing: 0; outline: 0; }
+.profile-panel input:focus, .profile-panel textarea:focus { border-color: var(--green-600); }
+.profile-form-actions { display: flex; align-items: center; gap: 16px; border-top: 1px solid #eeeae4; margin-top: 22px; padding-top: 17px; }
+.profile-form-actions button, .profile-secondary button { border: 0; border-radius: 9px; padding: 11px 18px; background: var(--green-700); color: #fff; font-weight: 700; cursor: pointer; }
+.profile-form-actions span { color: var(--green-700); font-size: 12px; }
+.profile-secondary { display: grid; gap: 18px; max-width: 700px; }
+.profile-secondary h2 { font-size: 16px; }
+.preference-row { flex-direction: row !important; align-items: center; text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; color: var(--text) !important; }
+.preference-row input { width: auto; }
+@media (max-width: 680px) { .profile-page { padding: 22px 16px 40px; } .profile-hero { align-items: flex-start; padding: 24px 20px; } .profile-form-grid { grid-template-columns: 1fr; } .profile-tabs { width: 100%; } .profile-tab { flex: 1; padding: 10px 8px; } }

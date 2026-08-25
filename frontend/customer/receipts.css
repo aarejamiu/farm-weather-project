@@ -1,0 +1,25 @@
+.receipts-page { max-width: 1150px; margin: 0 auto; padding: 34px 32px 48px; }
+.receipts-page > h1 { font-size: 21px; margin: 0 0 24px; }
+.receipt-card, .spending-summary { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); }
+.receipt-card { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto auto; gap: 16px; align-items: center; padding: 16px 22px; margin-bottom: 20px; box-shadow: 0 3px 8px rgba(25, 42, 30, .04); }
+.receipt-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px; background: var(--green-50); color: var(--text); }
+.receipt-title { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.receipt-title strong { color: var(--green-700); font-family: monospace; }
+.receipt-title span { color: var(--text-sub); font-size: 12px; }
+.receipt-title b { color: var(--green-700); background: #dcfce7; border-radius: 20px; padding: 3px 10px; font-size: 10px; }
+.receipt-meta { color: var(--text-sub); font-size: 12px; margin-top: 7px; }
+.receipt-meta span { margin-left: 16px; }
+.receipt-total { color: var(--green-700); font-family: monospace; font-size: 17px; white-space: nowrap; }
+.receipt-actions { display: flex; gap: 14px; align-items: center; }
+.receipt-actions button { border: 1px solid var(--border); background: #fff; color: var(--text-sub); border-radius: var(--radius-sm); min-height: 36px; padding: 0 11px; cursor: pointer; font-weight: 700; }
+.receipt-actions button:hover { background: var(--green-50); color: var(--green-700); }
+.receipt-actions .pdf-button { background: var(--green-700); color: #fff; border-color: var(--green-700); }
+.spending-summary { padding: 22px 24px; margin-top: 20px; }
+.spending-summary h2 { font-size: 14px; margin: 0 0 16px; }
+.spending-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.spending-grid > div { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 90px; border-radius: 12px; background: #f5f4f0; }
+.spending-grid strong { color: var(--green-700); font-size: 24px; }
+.spending-grid span { color: var(--text-sub); font-size: 12px; margin-top: 5px; }
+.receipts-loading, .receipts-empty { text-align: center; color: var(--text-sub); padding: 55px 20px; }
+.print-body { padding: 20px; background: #fff; }
+@media (max-width: 700px) { .receipts-page { padding: 28px 16px; } .receipt-card { grid-template-columns: 42px 1fr auto; gap: 10px; padding: 14px; } .receipt-total { grid-column: 3; grid-row: 1; font-size: 14px; } .receipt-actions { grid-column: 2 / -1; justify-content: flex-end; } .receipt-meta span { margin-left: 8px; } .spending-grid { grid-template-columns: 1fr; } }
