@@ -79,4 +79,13 @@ const getFarmerContact = async (req, res) => {
     }
 };
 
-module.exports = { sendMessage, getConversation, getInbox, getFarmerContact };
+const getUnreadCount = async (req, res) => {
+    try {
+        const unreadCount = await Message.countDocuments({ receiver: req.user.id, read: false });
+        res.json({ unreadCount });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { sendMessage, getConversation, getInbox, getUnreadCount, getFarmerContact };

@@ -7,6 +7,23 @@ let pollTimer;
 
 const initials = name => name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
 const time = value => new Date(value).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+const loadProfile = async () => {
+    const avatar = document.getElementById('navAvatar');
+    if (user.username) avatar.textContent = initials(user.username);
+
+    try {
+        const response = await fetch(`${BASE}/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        if (response.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '../login.html';
+            return;
+        }
+        if (!response.ok) return;
+        const profile = await response.json();
+        avatar.textContent = initials(profile.username || user.username || 'Customer');
+    } catch (error) { console.error('Profile error:', error); }
+};
 const show = (messages = []) => {
     const box = document.getElementById('chatMessages');
     box.innerHTML = messages.length ? messages.map(message => {
@@ -52,4 +69,5 @@ document.getElementById('messageForm').addEventListener('submit', async event =>
     } catch (error) { input.value = content; console.error('Send error:', error); }
 });
 
+loadProfile();
 load();

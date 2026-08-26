@@ -27,6 +27,18 @@ const formatInboxTime = (d) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
+const updateUnreadBadge = async () => {
+    try {
+        const res = await fetch(`${BASE}/messages/unread-count`, { headers: authHeaders });
+        if (!res.ok) return;
+        const { unreadCount } = await res.json();
+        const badge = document.getElementById('messagesBadge');
+        if (!badge) return;
+        badge.textContent = unreadCount || '';
+        badge.style.display = unreadCount ? 'inline-block' : 'none';
+    } catch (e) { console.error('Unread count error:', e); }
+};
+
 const renderInbox = (threads) => {
     const list = document.getElementById('inboxList');
     const q    = document.getElementById('inboxSearch').value.toLowerCase();
@@ -90,6 +102,7 @@ window.openThread = async (userId, name) => {
     });
 
     await loadThread(userId);
+    await updateUnreadBadge();
 
     if (pollingInterval) clearInterval(pollingInterval);
     pollingInterval = setInterval(() => loadThread(userId), 5000);
@@ -129,6 +142,7 @@ const loadInbox = async () => {
         const res     = await fetch(`${BASE}/messages/inbox`, { headers: authHeaders });
         const threads = await res.json();
         renderInbox(threads);
+        await updateUnreadBadge();
     } catch (e) { console.error('Inbox load error:', e); }
 };
 
