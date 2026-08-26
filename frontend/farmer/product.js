@@ -141,6 +141,34 @@ const syncInventory = async () => {
     }
 };
 
+const loadProducts = async () => {
+    try {
+        await syncInventory();
+        const response = await fetch(`${BASE}/products`, { headers: authHeaders });
+        if (!response.ok) throw new Error(`Products request failed: ${response.status}`);
+        const products = await response.json();
+
+        if (products.length) {
+            inventory = products.map(product => ({
+                id: product._id,
+                name: product.name,
+                category: product.category,
+                unit: product.unit || 'unit',
+                current: product.quantity,
+                minimum: product.lowStockThreshold || 0,
+                maximum: product.maximum || product.quantity,
+                price: product.price,
+                active: product.available !== false
+            }));
+            localStorage.setItem('farmInventory', JSON.stringify(inventory));
+        }
+        filterProducts();
+    } catch (error) {
+        console.error('Unable to load products from the server:', error);
+        filterProducts();
+    }
+};
+
 window.openImageModal = (id, name) => {
     currentId = id;
     document.getElementById('imageModalTitle').textContent = `Image — ${name}`;
@@ -218,5 +246,4 @@ const loadProfile = async () => {
 };
 
 loadProfile();
-filterProducts();
-syncInventory();
+loadProducts();

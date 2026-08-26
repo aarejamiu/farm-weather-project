@@ -4,7 +4,10 @@ const user  = JSON.parse(localStorage.getItem('userData') || '{}');
 if (!token) window.location.href = '../login.html';
 if (user.role === 'customer') window.location.href = '../customer/home.html';
 
-const BASE = 'https://leaders-union-farm-weather-site.onrender.com/api';
+const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? 'http://127.0.0.1:5000'
+    : 'https://leaders-union-farm-weather-site.onrender.com';
+const BASE = `${API_HOST}/api`;
 const authHeaders = { 'Authorization': `Bearer ${token}` };
 
 let inventory = JSON.parse(localStorage.getItem('farmInventory') || '[]');
@@ -211,6 +214,34 @@ const syncExistingInventory = async () => {
     saveInventory();
 };
 
+const loadInventory = async () => {
+    try {
+        await syncExistingInventory();
+        const response = await fetch(`${BASE}/products`, { headers: authHeaders });
+        if (!response.ok) throw new Error(`Inventory request failed: ${response.status}`);
+        const products = await response.json();
+
+        if (products.length) {
+            inventory = products.map(product => ({
+                id: product._id,
+                name: product.name,
+                category: product.category,
+                unit: product.unit || 'unit',
+                current: product.quantity,
+                minimum: product.lowStockThreshold || 0,
+                maximum: product.maximum || product.quantity,
+                price: product.price,
+                active: product.available !== false
+            }));
+            saveInventory();
+        }
+        renderTable();
+    } catch (error) {
+        console.error('Unable to load inventory from the server:', error);
+        renderTable();
+    }
+};
+
 document.getElementById('openModalBtn').addEventListener('click', () => openModal('Add Item'));
 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
 document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
@@ -221,5 +252,4 @@ document.getElementById('modalBackdrop').addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
 loadProfile();
-renderTable();
-syncExistingInventory();
+loadInventory();
