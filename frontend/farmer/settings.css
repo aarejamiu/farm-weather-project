@@ -1,9 +1,12 @@
 .settings-card { max-width: 900px; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+.settings-section + .settings-section { border-top: 1px solid var(--border); margin-top: 28px; padding-top: 28px; }
 .settings-card-heading { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 26px; }
 .settings-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px; color: var(--green-700); background: var(--green-50); flex-shrink: 0; }
 .settings-card h2 { font-size: 16px; margin-bottom: 4px; }
 .settings-card-heading p { color: var(--text-sub); font-size: 13px; }
 .settings-card form { max-width: 620px; }
+.settings-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; max-width: 760px; }
+.settings-full { grid-column: 1 / -1; }
 .settings-card label { display: block; color: var(--text-sub); font-size: 11px; font-weight: 700; letter-spacing: .06em; margin-bottom: 8px; text-transform: uppercase; }
 .settings-card input { width: 100%; padding: 12px 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text); font: inherit; outline: none; }
 .settings-card input:focus { border-color: var(--green-600); }
@@ -12,4 +15,4 @@
 .settings-actions button { border: 0; border-radius: var(--radius-sm); background: var(--green-700); color: #fff; cursor: pointer; font-weight: 700; padding: 11px 18px; }
 .settings-actions button:disabled { cursor: wait; opacity: .7; }
 .settings-actions span { color: var(--green-700); font-size: 12px; }
-@media (max-width: 600px) { .settings-card { padding: 20px; } .settings-card-heading { flex-direction: column; } }
+@media (max-width: 600px) { .settings-card { padding: 20px; } .settings-card-heading { flex-direction: column; } .settings-form-grid { grid-template-columns: 1fr; } .settings-full { grid-column: auto; } }

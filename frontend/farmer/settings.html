@@ -18,8 +18,14 @@
         <main class="main-content">
             <div class="page-heading"><div><h1 class="page-title">Settings</h1><p class="page-sub">Profile and farm information</p></div></div>
             <section class="settings-card">
-                <div class="settings-card-heading"><div class="settings-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div><div><h2>Farm Information</h2><p>Set the location used for weather forecasts and farm insights.</p></div></div>
+                <div class="settings-section">
+                    <div class="settings-card-heading"><div class="settings-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg></div><div><h2>Profile Information</h2><p>Update your name and contact details.</p></div></div>
+                    <form id="profileForm"><div class="settings-form-grid"><div><label for="firstName">First name</label><input id="firstName" type="text" required></div><div><label for="lastName">Last name</label><input id="lastName" type="text"></div><div><label for="email">Email address</label><input id="email" type="email" required></div><div><label for="phone">Phone number</label><input id="phone" type="tel"></div><div class="settings-full"><label for="address">Street address</label><input id="address" type="text"></div></div><div class="settings-actions"><button type="submit" id="saveProfile">Save Changes</button><span id="profileMessage" role="status"></span></div></form>
+                </div>
+                <div class="settings-section settings-section--farm">
+                    <div class="settings-card-heading"><div class="settings-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div><div><h2>Farm Information</h2><p>Set the location used for weather forecasts and farm insights.</p></div></div>
                 <form id="locationForm"><label for="farmLocation">Farm location</label><input id="farmLocation" name="farmLocation" type="text" placeholder="e.g. Ibadan, Nigeria" autocomplete="address-level2" required><p class="field-help">Use a town, city, or region that OpenWeatherMap can find.</p><div class="settings-actions"><button type="submit" id="saveLocation">Save Changes</button><span id="settingsMessage" role="status"></span></div></form>
+                </div>
             </section>
         </main>
     </div>

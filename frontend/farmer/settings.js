@@ -7,6 +7,8 @@ const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application
 
 const initials = name => (name || 'Farmer').split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
 const message = document.getElementById('settingsMessage');
+const profileMessage = document.getElementById('profileMessage');
+const splitName = name => { const parts = (name || '').trim().split(/\s+/); return { first: parts.shift() || '', last: parts.join(' ') }; };
 
 const loadSettings = async () => {
     try {
@@ -18,6 +20,12 @@ const loadSettings = async () => {
         }
         if (!response.ok) throw new Error('Unable to load settings');
         const user = await response.json();
+        const name = splitName(user.username);
+        document.getElementById('firstName').value = name.first;
+        document.getElementById('lastName').value = name.last;
+        document.getElementById('email').value = user.email || '';
+        document.getElementById('phone').value = user.phone || '';
+        document.getElementById('address').value = user.address || '';
         document.getElementById('farmLocation').value = user.farmLocation || '';
         document.getElementById('topAvatar').textContent = initials(user.username);
         document.getElementById('sidebarAvatar').textContent = initials(user.username);
@@ -26,6 +34,37 @@ const loadSettings = async () => {
         message.textContent = error.message;
     }
 };
+
+document.getElementById('profileForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    const button = document.getElementById('saveProfile');
+    const profile = {
+        username: `${document.getElementById('firstName').value.trim()} ${document.getElementById('lastName').value.trim()}`.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim()
+    };
+    const address = document.getElementById('address').value.trim();
+    button.disabled = true;
+    profileMessage.textContent = 'Saving...';
+    try {
+        const [profileResponse, addressResponse] = await Promise.all([
+            fetch(`${BASE}/profile`, { method: 'PUT', headers, body: JSON.stringify(profile) }),
+            fetch(`${BASE}/profile/address`, { method: 'PUT', headers, body: JSON.stringify({ address }) })
+        ]);
+        const profileData = await profileResponse.json();
+        const addressData = await addressResponse.json();
+        if (!profileResponse.ok) throw new Error(profileData.message || 'Unable to save profile');
+        if (!addressResponse.ok) throw new Error(addressData.message || 'Unable to save address');
+        profileMessage.textContent = 'Profile saved';
+        document.getElementById('topAvatar').textContent = initials(profile.username);
+        document.getElementById('sidebarAvatar').textContent = initials(profile.username);
+        document.getElementById('sidebarName').textContent = profile.username;
+    } catch (error) {
+        profileMessage.textContent = error.message;
+    } finally {
+        button.disabled = false;
+    }
+});
 
 document.getElementById('locationForm').addEventListener('submit', async event => {
     event.preventDefault();
