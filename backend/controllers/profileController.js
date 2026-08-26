@@ -31,7 +31,7 @@ const updateProfile = async (req, res) => {
 
 const updateAddress = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.user.id, { address: req.body.address || '' }, { new: true }).select('-password');
+        const user = await User.findByIdAndUpdate(req.user.id, { address: req.body.address || '' }, { returnDocument: 'after' }).select('-password');
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.json({ message: 'Address updated successfully', user });
     } catch (error) {

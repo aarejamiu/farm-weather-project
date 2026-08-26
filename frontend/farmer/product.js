@@ -71,7 +71,7 @@ const renderProducts = (items) => {
                         Edit
                     </a>
                     <button class="product-toggle-btn product-toggle-btn--${item.active === false ? 'off' : 'on'}" onclick="toggleProduct('${item.id}')">
-                        ${item.active === false ? 'Deactivate' : 'Activate'}
+                        ${item.active === false ? 'Activate' : 'Deactivate'}
                     </button>
                 </div>
             </div>
