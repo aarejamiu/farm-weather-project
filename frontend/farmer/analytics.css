@@ -1,0 +1,124 @@
+.an-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.an-stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+}
+
+.an-stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.an-stat-label {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+}
+
+.an-stat-delta {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.an-stat-delta--up   { background: #dcfce7; color: #15803d; }
+.an-stat-delta--down { background: #fee2e2; color: #b91c1c; }
+
+.chart-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-top: 6px;
+}
+
+.legend-line {
+    display: inline-block;
+    width: 28px;
+    height: 2.5px;
+    border-radius: 2px;
+}
+
+.legend-line--dark   { background: var(--green-800); }
+.legend-line--red    { background: #ef4444; border-style: dashed; }
+.legend-line--yellow { background: #d97706; }
+
+.chart-wrap--tall {
+    height: 260px;
+}
+
+.an-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.donut-layout {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 8px;
+}
+
+.donut-wrap {
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0;
+}
+
+.donut-legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.donut-legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.donut-legend-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+}
+
+.donut-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.donut-pct {
+    font-weight: 700;
+    color: var(--text);
+}
+
+@media (max-width: 1100px) {
+    .an-stat-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .an-stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .an-two-col   { grid-template-columns: 1fr; }
+    .donut-layout { flex-direction: column; }
+}

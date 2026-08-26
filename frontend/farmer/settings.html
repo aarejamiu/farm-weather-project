@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings - Leaders-Union Smart Farm</title>
+<link rel="stylesheet" href="./farmer.css">
+<link rel="stylesheet" href="./settings.css">
+</head>
+<body>
+<div class="app-layout">
+    <div id="sidebar-placeholder"></div>
+    <div class="main-wrapper">
+        <header class="topbar">
+            <div class="topbar-left"><span class="view-as-label">VIEW AS</span><button class="view-btn view-btn--active">Farmer Admin</button><a href="../customer/home.html" class="view-btn">Customer</a></div>
+            <div class="topbar-right"><span class="live-dot"></span><span class="live-label">Leaders-Union Farm · Live</span><div class="top-avatar" id="topAvatar">--</div></div>
+        </header>
+        <main class="main-content">
+            <div class="page-heading"><div><h1 class="page-title">Settings</h1><p class="page-sub">Profile and farm information</p></div></div>
+            <section class="settings-card">
+                <div class="settings-card-heading"><div class="settings-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></div><div><h2>Farm Information</h2><p>Set the location used for weather forecasts and farm insights.</p></div></div>
+                <form id="locationForm"><label for="farmLocation">Farm location</label><input id="farmLocation" name="farmLocation" type="text" placeholder="e.g. Ibadan, Nigeria" autocomplete="address-level2" required><p class="field-help">Use a town, city, or region that OpenWeatherMap can find.</p><div class="settings-actions"><button type="submit" id="saveLocation">Save Changes</button><span id="settingsMessage" role="status"></span></div></form>
+            </section>
+        </main>
+    </div>
+</div>
+<script src="./sidebar.js"></script>
+<script>document.addEventListener('DOMContentLoaded', () => SidebarComponent.init('settings'));</script>
+<script src="./settings.js"></script>
+</body>
+</html>

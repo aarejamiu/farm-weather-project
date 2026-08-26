@@ -15,7 +15,7 @@ const getDashboardStats = async (req, res) => {
             recentOrders,
             allOrders
         ] = await Promise.all([
-            Order.countDocuments({ createdAt: { $gte: today } }),
+            Order.countDocuments({ paymentStatus: 'paid', createdAt: { $gte: today } }),
             Order.countDocuments(),
             User.countDocuments({ role: 'customer' }),
             Product.countDocuments(),
@@ -32,6 +32,15 @@ const getDashboardStats = async (req, res) => {
         });
         const monthlyRevenue = monthlyOrders.reduce((sum, o) => sum + o.total, 0);
 
+        const startOfPreviousMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        const currentCustomers = new Set(monthlyOrders.map(order => order.customer.toString()));
+        const previousCustomers = await Order.find({
+            paymentStatus: 'paid',
+            createdAt: { $gte: startOfPreviousMonth, $lt: startOfMonth }
+        }).distinct('customer');
+        const retainedCustomers = [...currentCustomers].filter(id => previousCustomers.some(previousId => previousId.toString() === id)).length;
+        const retentionRate = previousCustomers.length ? Math.round((retainedCustomers / previousCustomers.length) * 100) : 0;
+
         const lowStockProducts = await Product.find({
             $expr: { $lte: ['$quantity', '$lowStockThreshold'] }
         }).select('name quantity lowStockThreshold');
@@ -43,6 +52,7 @@ const getDashboardStats = async (req, res) => {
             totalProducts,
             totalRevenue,
             monthlyRevenue,
+            retentionRate,
             recentOrders,
             lowStockProducts
         });
@@ -61,7 +71,7 @@ const getMonthlySales = async (req, res) => {
                     paymentStatus: 'paid',
                     createdAt: {
                         $gte: new Date(`${year}-01-01`),
-                        $lte: new Date(`${year}-12-31`)
+                        $lt: new Date(`${year + 1}-01-01`)
                     }
                 }
             },
@@ -93,6 +103,7 @@ const getMonthlySales = async (req, res) => {
 const getTopProducts = async (req, res) => {
     try {
         const data = await Order.aggregate([
+            { $match: { paymentStatus: 'paid' } },
             { $unwind: '$items' },
             {
                 $group: {

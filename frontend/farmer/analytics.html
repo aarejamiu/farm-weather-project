@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics — Leaders-Union Smart Farm</title>
+<link rel="stylesheet" href="./farmer.css">
+<link rel="stylesheet" href="./analytics.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="app-layout">
+
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-wrapper">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="view-as-label">VIEW AS</span>
+                <button class="view-btn view-btn--active">Farmer Admin</button>
+                <a href="../customer/home.html" class="view-btn">Customer</a>
+            </div>
+            <div class="topbar-right">
+                <span class="live-dot"></span>
+                <span class="live-label">Leaders-Union Farm &middot; Live</span>
+                <div class="top-avatar" id="topAvatar">EO</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <div class="page-heading">
+                <div>
+                    <h1 class="page-title">Analytics</h1>
+                    <p class="page-sub">Financial and operational performance</p>
+                </div>
+            </div>
+
+            <!-- STAT CARDS -->
+            <div class="an-stat-grid">
+                <div class="an-stat-card">
+                    <div class="an-stat-value" id="statRevenue">--</div>
+                    <div class="an-stat-label" id="statRevenueLabel">Revenue</div>
+                    <div class="an-stat-delta an-stat-delta--up" id="statRevenueDelta">--</div>
+                </div>
+                <div class="an-stat-card">
+                    <div class="an-stat-value" id="statProfit">--</div>
+                    <div class="an-stat-label" id="statProfitLabel">Net Profit</div>
+                    <div class="an-stat-delta an-stat-delta--up" id="statProfitDelta">--</div>
+                </div>
+                <div class="an-stat-card">
+                    <div class="an-stat-value" id="statOrders">--</div>
+                    <div class="an-stat-label">Orders This Month</div>
+                    <div class="an-stat-delta an-stat-delta--up" id="statOrdersDelta">--</div>
+                </div>
+                <div class="an-stat-card">
+                    <div class="an-stat-value" id="statAvg">--</div>
+                    <div class="an-stat-label">Avg. Order Value</div>
+                    <div class="an-stat-delta an-stat-delta--up" id="statAvgDelta">--</div>
+                </div>
+                <div class="an-stat-card">
+                    <div class="an-stat-value" id="statRetention">--</div>
+                    <div class="an-stat-label">Customer Retention</div>
+                    <div class="an-stat-delta an-stat-delta--up" id="statRetentionDelta">--</div>
+                </div>
+            </div>
+
+            <!-- REVENUE LINE CHART -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2 class="card-title" id="revenueChartTitle">Revenue &middot; Expenses &middot; Profit — <span id="chartYear"></span></h2>
+                        <div class="chart-legend-row">
+                            <span class="legend-line legend-line--dark"></span> Revenue
+                            <span class="legend-line legend-line--red"></span> Expenses
+                            <span class="legend-line legend-line--yellow"></span> Profit
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-wrap chart-wrap--tall">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- BOTTOM ROW -->
+            <div class="an-two-col">
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Weekly Orders</h2>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Sales by Product</h2>
+                    </div>
+                    <div class="donut-layout">
+                        <div class="donut-wrap">
+                            <canvas id="donutChart"></canvas>
+                        </div>
+                        <div class="donut-legend" id="donutLegend"></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="./sidebar.js"></script>
+<script src="./analytics.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        SidebarComponent.init('analytics');
+    });
+</script>
+</body>
+</html>
