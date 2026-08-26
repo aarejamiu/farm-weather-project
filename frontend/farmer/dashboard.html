@@ -16,9 +16,6 @@
     <div class="main-wrapper">
         <header class="topbar">
             <div class="topbar-left">
-                <span class="view-as-label">VIEW AS</span>
-                <button class="view-btn view-btn--active">Farmer Admin</button>
-                <a href="../customer/home.html" class="view-btn">Customer</a>
             </div>
             <div class="topbar-right">
                 <span class="live-dot"></span>
@@ -86,28 +83,8 @@
                     <div class="card-header">
                         <h2 class="card-title card-title--light">AI Recommendations</h2>
                     </div>
-                    <div class="ai-list">
-                        <div class="ai-item">
-                            <div class="ai-item-dot ai-item-dot--blue"></div>
-                            <div>
-                                <div class="ai-item-title">Increase irrigation +20%</div>
-                                <div class="ai-item-sub">Soil moisture at 34% — below optimal for tomato flowering stage.</div>
-                            </div>
-                        </div>
-                        <div class="ai-item">
-                            <div class="ai-item-dot ai-item-dot--green"></div>
-                            <div>
-                                <div class="ai-item-title">Apply nitrogen fertilizer</div>
-                                <div class="ai-item-sub">Leaf color analysis shows N deficiency in maize rows 4–8.</div>
-                            </div>
-                        </div>
-                        <div class="ai-item ai-item--warn">
-                            <div class="ai-item-dot ai-item-dot--orange"></div>
-                            <div>
-                                <div class="ai-item-title">Aphid outbreak risk</div>
-                                <div class="ai-item-sub">Warm humid week ahead — pre-treat cucumber greenhouse Thursday.</div>
-                            </div>
-                        </div>
+                    <div class="ai-list" id="aiRecommendations">
+                        <div class="ai-item"><div class="ai-item-sub">Generating recommendations...</div></div>
                     </div>
                 </div>
             </div>

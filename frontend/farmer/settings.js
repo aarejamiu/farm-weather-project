@@ -30,6 +30,7 @@ const loadSettings = async () => {
         document.getElementById('topAvatar').textContent = initials(user.username);
         document.getElementById('sidebarAvatar').textContent = initials(user.username);
         document.getElementById('sidebarName').textContent = user.username || 'Farmer';
+        localStorage.setItem('userData', JSON.stringify({ ...JSON.parse(localStorage.getItem('userData') || '{}'), ...user }));
     } catch (error) {
         message.textContent = error.message;
     }
@@ -59,6 +60,7 @@ document.getElementById('profileForm').addEventListener('submit', async event =>
         document.getElementById('topAvatar').textContent = initials(profile.username);
         document.getElementById('sidebarAvatar').textContent = initials(profile.username);
         document.getElementById('sidebarName').textContent = profile.username;
+        localStorage.setItem('userData', JSON.stringify({ ...JSON.parse(localStorage.getItem('userData') || '{}'), ...profile, address }));
     } catch (error) {
         profileMessage.textContent = error.message;
     } finally {

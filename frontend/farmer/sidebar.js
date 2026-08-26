@@ -76,9 +76,37 @@ const SidebarComponent = {
         const target = document.getElementById('sidebar-placeholder');
         if (target) target.outerHTML = this.render(activePage);
 
+        const menuButton = document.createElement('button');
+        menuButton.className = 'mobile-menu-btn';
+        menuButton.type = 'button';
+        menuButton.setAttribute('aria-label', 'Open navigation');
+        menuButton.setAttribute('aria-expanded', 'false');
+        menuButton.innerHTML = '<span></span><span></span><span></span>';
+        document.body.appendChild(menuButton);
+
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(overlay);
+
+        const sidebar = document.getElementById('sidebar');
+        const closeMenu = () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            menuButton.setAttribute('aria-expanded', 'false');
+        };
+
+        menuButton.addEventListener('click', () => {
+            const isOpen = sidebar.classList.toggle('open');
+            overlay.classList.toggle('open', isOpen);
+            menuButton.setAttribute('aria-expanded', String(isOpen));
+        });
+        overlay.addEventListener('click', closeMenu);
+        sidebar.querySelectorAll('.nav-item').forEach(link => link.addEventListener('click', closeMenu));
+
         document.getElementById('collapseBtn')?.addEventListener('click', () => {
-            document.querySelector('.sidebar').classList.toggle('collapsed');
-            document.querySelector('.main-wrapper').classList.toggle('sidebar-collapsed');
+            const collapsed = document.querySelector('.sidebar').classList.toggle('collapsed');
+            document.getElementById('collapseBtn').setAttribute('aria-expanded', String(!collapsed));
         });
     }
 };
