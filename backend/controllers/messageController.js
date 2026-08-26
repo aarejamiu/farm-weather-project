@@ -69,4 +69,14 @@ const getInbox = async (req, res) => {
     }
 };
 
-module.exports = { sendMessage, getConversation, getInbox };
+const getFarmerContact = async (req, res) => {
+    try {
+        const farmer = await User.findOne({ role: 'farmer' }).select('username email role');
+        if (!farmer) return res.status(404).json({ message: 'Farm contact not found' });
+        res.json(farmer);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { sendMessage, getConversation, getInbox, getFarmerContact };

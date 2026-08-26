@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages — Leaders-Union Smart Farm</title>
+<link rel="stylesheet" href="./farmer.css">
+<link rel="stylesheet" href="./messages.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <div id="sidebar-placeholder"></div>
+
+    <div class="main-wrapper">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <span class="view-as-label">VIEW AS</span>
+                <button class="view-btn view-btn--active">Farmer Admin</button>
+                <a href="../customer/home.html" class="view-btn">Customer</a>
+            </div>
+            <div class="topbar-right">
+                <span class="live-dot"></span>
+                <span class="live-label">Leaders-Union Farm &middot; Live</span>
+                <div class="top-avatar" id="topAvatar">EO</div>
+            </div>
+        </header>
+
+        <main class="main-content main-content--messages">
+
+            <div class="page-heading">
+                <div>
+                    <h1 class="page-title">Messages</h1>
+                    <p class="page-sub">Direct customer communication</p>
+                </div>
+            </div>
+
+            <div class="messages-layout">
+
+                <!-- LEFT: INBOX -->
+                <div class="inbox-panel">
+                    <div class="inbox-search-wrap">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" class="inbox-search" id="inboxSearch" placeholder="Search...">
+                    </div>
+                    <div class="inbox-list" id="inboxList">
+                        <div class="inbox-loading">Loading conversations...</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: CHAT -->
+                <div class="chat-panel" id="chatPanel">
+                    <div class="chat-empty" id="chatEmpty">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <p>Select a conversation to start messaging</p>
+                    </div>
+
+                    <div class="chat-active" id="chatActive" style="display:none">
+                        <div class="chat-header">
+                            <div class="chat-header-avatar" id="chatAvatar">SM</div>
+                            <div>
+                                <div class="chat-header-name" id="chatName">--</div>
+                                <div class="chat-header-status">
+                                    <span class="online-dot"></span> Online
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-messages" id="chatMessages"></div>
+
+                        <div class="chat-input-row">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+                            <button class="chat-send-btn" id="sendBtn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="./sidebar.js"></script>
+<script src="./messages.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        SidebarComponent.init('messages');
+    });
+</script>
+</body>
+</html>

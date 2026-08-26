@@ -24,7 +24,6 @@ const showProfile = (user, orders) => {
     document.getElementById('lastName').value = nameParts.last;
     document.getElementById('email').value = user.email || '';
     document.getElementById('phone').value = user.phone || '';
-    document.getElementById('address').value = user.address || '';
 };
 
 const load = async () => {
@@ -54,17 +53,6 @@ document.getElementById('profileForm').addEventListener('submit', async event =>
         showProfile(data.user, await (await fetch(`${BASE}/orders/my`, { headers })).json());
         message.textContent = 'Saved';
     } catch (error) { message.textContent = error.message; }
-});
-
-document.querySelectorAll('.profile-tab').forEach(tab => tab.addEventListener('click', () => {
-    document.querySelectorAll('.profile-tab').forEach(item => item.classList.remove('profile-tab--active'));
-    tab.classList.add('profile-tab--active');
-    document.querySelectorAll('.profile-panel').forEach(panel => { panel.hidden = panel.id !== `${tab.dataset.tab}Panel`; });
-}));
-
-document.getElementById('saveAddress').addEventListener('click', async () => {
-    const response = await fetch(`${BASE}/profile/address`, { method: 'PUT', headers, body: JSON.stringify({ address: document.getElementById('address').value.trim() }) });
-    if (response.ok) document.getElementById('saveAddress').textContent = 'Saved';
 });
 
 load();

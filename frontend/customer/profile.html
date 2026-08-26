@@ -21,12 +21,9 @@
         <div class="profile-avatar-large" id="profileAvatar">SM</div>
         <div class="profile-identity"><h1 id="profileName">Loading...</h1><p id="profileEmail"></p><div class="profile-pills"><span id="ordersPill">0 Orders</span><span id="spentPill">₦0 Spent</span><span>☆ Gold Member</span></div></div>
     </section>
-    <div class="profile-tabs"><button class="profile-tab profile-tab--active" data-tab="profile">Profile</button><button class="profile-tab" data-tab="delivery">Delivery</button><button class="profile-tab" data-tab="preferences">Preferences</button></div>
     <section class="profile-panel" id="profilePanel">
         <form id="profileForm"><div class="profile-form-grid"><label>First Name<input id="firstName" required></label><label>Last Name<input id="lastName"></label><label>Email<input id="email" type="email" required></label><label>Phone<input id="phone" type="tel"></label></div><div class="profile-form-actions"><button type="submit">▣ Save Changes</button><span id="profileMessage" role="status"></span></div></form>
     </section>
-    <section class="profile-panel profile-secondary" id="deliveryPanel" hidden><h2>Delivery</h2><label>Default delivery address<textarea id="address" rows="3"></textarea></label><button type="button" id="saveAddress">Save Address</button></section>
-    <section class="profile-panel profile-secondary" id="preferencesPanel" hidden><h2>Preferences</h2><label class="preference-row"><input type="checkbox" checked> Order updates by email</label><label class="preference-row"><input type="checkbox" checked> Fresh produce notifications</label></section>
 </main>
 <script src="./profile.js"></script>
 </body>
