@@ -41,7 +41,7 @@ const renderProducts = (items) => {
 
     grid.innerHTML = items.map(item => {
         const status   = getStatus(item.current, item.minimum);
-        const imgSrc   = images[item.id] || '';
+        const imgSrc   = item.image || images[item.id] || '';
         const imgHTML  = imgSrc
             ? `<img class="product-img" src="${imgSrc}" alt="${item.name}">`
             : `<div class="product-img-placeholder" onclick="openImageModal('${item.id}', '${item.name}')">
@@ -118,7 +118,7 @@ const syncProduct = async (item) => {
                 unit: item.unit,
                 price: item.price,
                 quantity: item.current,
-                image: images[item.id] || '',
+                image: item.image || images[item.id] || '',
                 available: item.active !== false,
                 lowStockThreshold: item.minimum
             })
@@ -158,7 +158,8 @@ const loadProducts = async () => {
                 minimum: product.lowStockThreshold || 0,
                 maximum: product.maximum || product.quantity,
                 price: product.price,
-                active: product.available !== false
+                active: product.available !== false,
+                image: product.image || ''
             }));
             localStorage.setItem('farmInventory', JSON.stringify(inventory));
         }
@@ -171,13 +172,14 @@ const loadProducts = async () => {
 
 window.openImageModal = (id, name) => {
     currentId = id;
+    const item = inventory.find(product => product.id === id);
     document.getElementById('imageModalTitle').textContent = `Image — ${name}`;
-    document.getElementById('imageUrl').value  = images[id] || '';
+    document.getElementById('imageUrl').value  = item?.image || images[id] || '';
     document.getElementById('imageFile').value = '';
 
     const preview = document.getElementById('imgPreviewWrap');
-    if (images[id]) {
-        document.getElementById('imgPreview').src = images[id];
+    if (item?.image || images[id]) {
+        document.getElementById('imgPreview').src = item?.image || images[id];
         preview.style.display = 'block';
     } else {
         preview.style.display = 'none';
@@ -219,7 +221,10 @@ document.getElementById('saveImageBtn').addEventListener('click', () => {
 
     if (finalSrc) {
         images[currentId] = finalSrc;
+        const item = inventory.find(product => product.id === currentId);
+        if (item) item.image = finalSrc;
         saveImages();
+        if (item) syncProduct(item);
     }
 
     closeImageModal();
