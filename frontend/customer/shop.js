@@ -8,7 +8,7 @@ const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? 'http://127.0.0.1:5000'
     : 'https://leaders-union-farm-weather-site.onrender.com';
 const BASE = `${API_HOST}/api`;
-const authHeaders = { 'Authorization': `Bearer ${token}` };
+const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
 
 const formatPrice = (n) => '₦' + Number(n).toLocaleString('en-NG');
 
@@ -26,12 +26,23 @@ const updateCartBadge = () => {
     else badge.style.display = 'none';
 };
 
-const addToCart = (id, name, price, unit, btn) => {
+const addToCart = async (id, name, price, unit, btn) => {
     const cart     = getCart();
     const existing = cart.find(i => i.id === id);
     if (existing) existing.quantity++;
     else cart.push({ id, name, price, unit, quantity: 1 });
     saveCart(cart);
+
+    try {
+        const response = await fetch(`${BASE}/cart/add`, {
+            method: 'POST',
+            headers: authHeaders,
+            body: JSON.stringify({ productId: id, quantity: 1 })
+        });
+        if (!response.ok) throw new Error('Unable to sync cart');
+    } catch (error) {
+        console.error('Cart sync error:', error);
+    }
 
     if (btn) {
         btn.textContent = 'Added!';

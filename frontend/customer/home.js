@@ -28,7 +28,7 @@ const updateCartBadge = () => {
     });
 };
 
-const addToCart = (id, name, price, unit) => {
+const addToCart = async (id, name, price, unit) => {
     const cart    = getCart();
     const existing = cart.find(i => i.id === id);
     if (existing) {
@@ -37,6 +37,17 @@ const addToCart = (id, name, price, unit) => {
         cart.push({ id, name, price, unit, quantity: 1 });
     }
     saveCart(cart);
+
+    try {
+        const response = await fetch(`${BASE}/cart/add`, {
+            method: 'POST',
+            headers: authHeaders,
+            body: JSON.stringify({ productId: id, quantity: 1 })
+        });
+        if (!response.ok) throw new Error('Unable to sync cart');
+    } catch (error) {
+        console.error('Cart sync error:', error);
+    }
 
     const btn = document.querySelector(`[data-id="${id}"]`);
     if (btn) {

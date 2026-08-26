@@ -4,7 +4,7 @@ const Product = require('../models/product');
 const getCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ customer: req.user.id })
-            .populate('items.product', 'name price image available quantity');
+            .populate('items.product', 'name price image available quantity unit');
         if (!cart) return res.json({ items: [], total: 0 });
 
         const total = cart.items.reduce((sum, item) => {

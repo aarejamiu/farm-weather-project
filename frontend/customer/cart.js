@@ -5,9 +5,41 @@ const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? 'http://127.0.0.1:5000'
     : 'https://leaders-union-farm-weather-site.onrender.com';
 const BASE = `${API_HOST}/api`;
-// const deliveryFee = 500;
+const authHeaders = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 const getCart = () => JSON.parse(localStorage.getItem('customerCart') || '[]');
 const saveCart = (cart) => localStorage.setItem('customerCart', JSON.stringify(cart));
+
+const loadRemoteCart = async () => {
+    try {
+        const response = await fetch(`${BASE}/cart`, { headers: authHeaders });
+        if (!response.ok) throw new Error('Unable to load cart');
+        const data = await response.json();
+        const remoteCart = (data.items || []).filter(item => item.product).map(item => ({
+            id: item.product._id,
+            name: item.product.name,
+            price: item.product.price,
+            unit: item.product.unit || 'unit',
+            image: item.product.image || '',
+            quantity: item.quantity
+        }));
+        const localCart = getCart();
+        if (!remoteCart.length && localCart.length) {
+            for (const item of localCart) {
+                await fetch(`${BASE}/cart/add`, {
+                    method: 'POST',
+                    headers: authHeaders,
+                    body: JSON.stringify({ productId: item.id, quantity: Number(item.quantity) })
+                });
+            }
+            return loadRemoteCart();
+        }
+        const cart = remoteCart;
+        saveCart(cart);
+        renderCart();
+    } catch (error) {
+        console.error('Remote cart error:', error);
+    }
+};
 
 const renderCart = () => {
     const cart = getCart();
@@ -74,11 +106,22 @@ document.getElementById('cartContent').addEventListener('click', (event) => {
     const cart = getCart();
     const index = Number(button.dataset.index);
     const action = button.dataset.action;
+    const productId = cart[index]?.id;
+    const nextQuantity = Number(cart[index]?.quantity || 0) + (action === 'increase' ? 1 : action === 'decrease' ? -1 : 0);
     if (action === 'increase') cart[index].quantity++;
     if (action === 'decrease') cart[index].quantity--;
     if (action === 'remove' || cart[index]?.quantity <= 0) cart.splice(index, 1);
     saveCart(cart);
     renderCart();
+
+    if (productId) {
+        fetch(`${BASE}/cart/item/${productId}`, {
+            method: action === 'remove' || nextQuantity <= 0 ? 'DELETE' : 'PUT',
+            headers: authHeaders,
+            body: action === 'remove' || nextQuantity <= 0 ? undefined : JSON.stringify({ quantity: nextQuantity })
+        }).catch(error => console.error('Cart update error:', error));
+    }
 });
 
 renderCart();
+loadRemoteCart();
