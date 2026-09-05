@@ -1,8 +1,6 @@
 const token = localStorage.getItem('token');
-const user  = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (user.role === 'customer') window.location.href = '../customer/home.html';
 
 const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? 'http://127.0.0.1:5000'
@@ -10,10 +8,10 @@ const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
 const BASE = `${API_HOST}/api`;
 const authHeaders = { 'Authorization': `Bearer ${token}` };
 
-let inventory = JSON.parse(localStorage.getItem('farmInventory') || '[]');
+let inventory = [];
 let editingId = null;
 
-const saveInventory = () => localStorage.setItem('farmInventory', JSON.stringify(inventory));
+const saveInventory = () => {};
 
 const getStatus = (current, minimum, maximum) => {
     const pct = maximum > 0 ? (current / maximum) * 100 : (current > 0 ? 100 : 0);

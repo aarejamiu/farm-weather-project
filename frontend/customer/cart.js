@@ -1,13 +1,13 @@
 const formatPrice = (value) => '₦' + Number(value).toLocaleString('en-NG');
 const token = localStorage.getItem('token');
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? 'http://127.0.0.1:5000'
     : 'https://leaders-union-farm-weather-site.onrender.com';
 const BASE = `${API_HOST}/api`;
 const authHeaders = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
-const getCart = () => JSON.parse(localStorage.getItem('customerCart') || '[]');
-const saveCart = (cart) => localStorage.setItem('customerCart', JSON.stringify(cart));
+let cart = [];
+const getCart = () => cart;
+const saveCart = (nextCart) => { cart = nextCart; };
 
 const loadRemoteCart = async () => {
     try {
@@ -22,19 +22,7 @@ const loadRemoteCart = async () => {
             image: item.product.image || '',
             quantity: item.quantity
         }));
-        const localCart = getCart();
-        if (!remoteCart.length && localCart.length) {
-            for (const item of localCart) {
-                await fetch(`${BASE}/cart/add`, {
-                    method: 'POST',
-                    headers: authHeaders,
-                    body: JSON.stringify({ productId: item.id, quantity: Number(item.quantity) })
-                });
-            }
-            return loadRemoteCart();
-        }
-        const cart = remoteCart;
-        saveCart(cart);
+        saveCart(remoteCart);
         renderCart();
     } catch (error) {
         console.error('Remote cart error:', error);
@@ -57,9 +45,8 @@ const renderCart = () => {
 
     const subtotal = cart.reduce((total, item) => total + Number(item.price) * Number(item.quantity), 0);
     const total = subtotal //+ deliveryFee;
-    const images = JSON.parse(localStorage.getItem('productImages') || '{}');
     content.innerHTML = `<div class="cart-layout"><section class="cart-items">${cart.map((item, index) => {
-        const image = item.image || images[item.id] || '';
+        const image = item.image || '';
         const imageHTML = image ? `<img src="${image}" alt="${item.name}">` : `<div class="cart-image-placeholder" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
         return `<div class="cart-row"><div class="cart-item-image">${imageHTML}</div><div class="cart-item-info"><div class="cart-item-name">${item.name}</div><div class="cart-item-meta">${formatPrice(item.price)} / ${item.unit || 'unit'}</div></div><div class="quantity-control"><button type="button" aria-label="Decrease ${item.name}" data-action="decrease" data-index="${index}">−</button><strong>${item.quantity}</strong><button type="button" aria-label="Increase ${item.name}" data-action="increase" data-index="${index}">+</button></div><div class="cart-item-total">${formatPrice(Number(item.price) * Number(item.quantity))}</div><button class="remove-item" type="button" aria-label="Remove ${item.name}" data-action="remove" data-index="${index}">⌫</button></div>`;
     }).join('')}</section><aside class="cart-summary"><h2>Order Summary</h2>${cart.map(item => `<div class="summary-line"><span>${item.name} × ${item.quantity}</span><span>${formatPrice(Number(item.price) * Number(item.quantity))}</span></div>`).join('')}<div class="summary-divider"></div><div class="summary-line"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div><div class="summary-line"></div><div class="summary-line summary-total"><span>Total</span><span>${formatPrice(total)}</span></div><button class="checkout-btn" type="button" data-action="place-order"><span>▣</span> Pay &amp; Place Order <span>→</span></button><a class="summary-shopping" href="shop.html">Continue Shopping</a><p class="checkout-message" id="checkoutMessage" role="status"></p></aside></div>`;
@@ -81,7 +68,7 @@ const startPayment = async () => {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 items: cart.map(item => ({ productId: item.id, quantity: Number(item.quantity) })),
-                deliveryAddress: userData.address || '',
+                deliveryAddress: '',
                 callbackUrl: new URL('payment-callback.html', window.location.href).href
             })
         });

@@ -6,7 +6,11 @@ const BASE = `${API_HOST}/api`;
 
 const formatPrice = value => '₦' + Number(value || 0).toLocaleString('en-NG', { minimumFractionDigits: 2 });
 const formatDate = value => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-const getCartCount = () => JSON.parse(localStorage.getItem('customerCart') || '[]').reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+const getCartCount = async () => {
+    const response = await fetch(`${BASE}/cart`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await response.json();
+    return (data.items || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+};
 
 const updateAvatar = async () => {
     try {
@@ -77,8 +81,10 @@ const loadReceipts = async () => {
     }
 };
 
-document.getElementById('cartBadge').textContent = getCartCount() || '';
-document.getElementById('cartBadge').style.display = getCartCount() ? 'flex' : 'none';
+getCartCount().then(count => {
+    document.getElementById('cartBadge').textContent = count || '';
+    document.getElementById('cartBadge').style.display = count ? 'flex' : 'none';
+}).catch(() => {});
 document.getElementById('receiptsList').addEventListener('click', event => {
     const button = event.target.closest('[data-action]');
     if (!button) return;

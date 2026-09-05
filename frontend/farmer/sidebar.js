@@ -1,4 +1,7 @@
 const SidebarComponent = {
+    pageScripts: new Map(),
+    pageCache: new Map(),
+
     render(activePage = '') {
         return `
         <aside class="sidebar" id="sidebar">
@@ -60,11 +63,14 @@ const SidebarComponent = {
 
             <div class="sidebar-footer">
                 <div class="sidebar-user">
-                    <div class="user-avatar" id="sidebarAvatar">--</div>
+                    <button class="user-avatar" id="sidebarAvatar" type="button" aria-label="Open account menu" aria-expanded="false">--</button>
                     <div class="user-info">
                         <span class="user-name" id="sidebarName">Loading...</span>
                         <span class="user-role">Farm Admin</span>
                     </div>
+                </div>
+                <div class="logout-menu" id="logoutMenu" hidden>
+                    <button class="logout-btn" id="logoutBtn" type="button">Log out</button>
                 </div>
                 <button class="collapse-btn" id="collapseBtn">&#8249; Collapse</button>
             </div>
@@ -73,6 +79,11 @@ const SidebarComponent = {
     },
 
     init(activePage = '') {
+        if (document.getElementById('sidebar')) {
+            this.setActive(activePage);
+            return;
+        }
+
         const target = document.getElementById('sidebar-placeholder');
         if (target) target.outerHTML = this.render(activePage);
 
@@ -108,5 +119,242 @@ const SidebarComponent = {
             const collapsed = document.querySelector('.sidebar').classList.toggle('collapsed');
             document.getElementById('collapseBtn').setAttribute('aria-expanded', String(!collapsed));
         });
+
+        const avatar = document.getElementById('sidebarAvatar');
+        const logoutMenu = document.getElementById('logoutMenu');
+        const logoutButton = document.getElementById('logoutBtn');
+        avatar?.addEventListener('click', () => {
+            const isOpen = logoutMenu.hidden;
+            logoutMenu.hidden = !isOpen;
+            avatar.setAttribute('aria-expanded', String(isOpen));
+        });
+        logoutButton?.addEventListener('click', () => {
+            this.logout();
+        });
+        this.initTopAccountMenu();
+        document.addEventListener('click', event => {
+            const topMenu = document.querySelector('.top-logout-menu');
+            const topAvatar = document.getElementById('topAvatar');
+            if (!logoutMenu.hidden && !logoutMenu.contains(event.target) && event.target !== avatar && event.target !== topAvatar) {
+                logoutMenu.hidden = true;
+                avatar.setAttribute('aria-expanded', 'false');
+            }
+            if (topMenu && !topMenu.hidden && !topMenu.contains(event.target) && event.target !== avatar && event.target !== topAvatar) {
+                topMenu.hidden = true;
+                topAvatar.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        this.markOutsideContent();
+        this.initRouter();
+        this.cachePage(window.location.href, document);
+    },
+
+    setActive(activePage) {
+        document.querySelectorAll('.sidebar .nav-item').forEach(link => {
+            const page = link.getAttribute('href')?.replace(/\.html$/, '');
+            link.classList.toggle('active', page === activePage);
+        });
+    },
+
+    initTopAccountMenu() {
+        const avatar = document.getElementById('topAvatar');
+        const container = avatar?.parentElement;
+        if (!avatar || !container) return;
+
+        avatar.setAttribute('role', 'button');
+        avatar.setAttribute('tabindex', '0');
+        avatar.setAttribute('aria-label', 'Open account menu');
+        avatar.setAttribute('aria-expanded', 'false');
+
+        let menu = container.querySelector('.top-logout-menu');
+        if (!menu) {
+            menu = document.createElement('div');
+            menu.className = 'top-logout-menu';
+            menu.hidden = true;
+            menu.innerHTML = '<button type="button" class="top-logout-btn">Log out</button>';
+            container.appendChild(menu);
+        }
+
+        menu.querySelector('.top-logout-btn').onclick = () => this.logout();
+        avatar.onclick = () => {
+            const isOpen = menu.hidden;
+            menu.hidden = !isOpen;
+            avatar.setAttribute('aria-expanded', String(isOpen));
+        };
+    },
+
+    logout() {
+        localStorage.removeItem('token');
+        window.location.href = '../login.html';
+    },
+
+    initRouter() {
+        document.querySelector('.sidebar-nav')?.addEventListener('click', event => {
+            const link = event.target.closest('a.nav-item');
+            if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+            event.preventDefault();
+            this.navigate(link.href);
+        });
+
+        document.addEventListener('click', event => {
+            const link = event.target.closest('a');
+            if (!link || link.closest('.sidebar-nav') || link.target === '_blank') return;
+
+            const url = new URL(link.href, window.location.href);
+            if (url.origin === window.location.origin && url.pathname.endsWith('.html') && url.pathname.includes('/farmer/')) {
+                event.preventDefault();
+                this.navigate(url.href);
+            }
+        });
+
+        window.addEventListener('popstate', () => this.navigate(window.location.href, false));
+    },
+
+    async navigate(href, pushState = true) {
+        const url = new URL(href, window.location.href);
+        if (url.pathname === window.location.pathname && url.search === window.location.search) return;
+
+        const cachedPage = this.pageCache.get(url.href);
+        if (cachedPage) {
+            this.restoreCachedPage(cachedPage);
+            document.title = cachedPage.title;
+            this.setActive(url.pathname.split('/').pop().replace(/\.html$/, ''));
+            this.initTopAccountMenu();
+            if (pushState) window.history.pushState({}, '', url.href);
+            await this.loadScripts(cachedPage.scripts);
+            this.cachePage(url.href, document, cachedPage.scripts);
+            window.scrollTo(0, 0);
+            return;
+        }
+
+        const response = await fetch(url.href, { headers: { 'X-Requested-With': 'sidebar-router' } });
+        if (!response.ok) {
+            window.location.href = url.href;
+            return;
+        }
+
+        const html = await response.text();
+        const nextDocument = new DOMParser().parseFromString(html, 'text/html');
+        const nextWrapper = nextDocument.querySelector('.main-wrapper');
+        const currentWrapper = document.querySelector('.main-wrapper');
+        if (!nextWrapper || !currentWrapper) {
+            window.location.href = url.href;
+            return;
+        }
+
+        document.title = nextDocument.title;
+        this.loadStyles(nextDocument, url);
+        currentWrapper.replaceWith(document.importNode(nextWrapper, true));
+        this.replaceOutsideContent(nextDocument);
+        this.setActive(url.pathname.split('/').pop().replace(/\.html$/, ''));
+        this.initTopAccountMenu();
+
+        if (pushState) window.history.pushState({}, '', url.href);
+        await this.loadPageScripts(nextDocument, url);
+        this.cachePage(url.href, document, this.getPageScripts(nextDocument, url.href));
+        window.scrollTo(0, 0);
+    },
+
+    loadStyles(nextDocument, url) {
+        document.querySelectorAll('link[data-router-style]').forEach(link => link.remove());
+        nextDocument.querySelectorAll('link[rel="stylesheet"]').forEach(source => {
+            const href = new URL(source.getAttribute('href'), url.href);
+            if (href.pathname.endsWith('/farmer.css')) return;
+
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href.href;
+            link.dataset.routerStyle = 'true';
+            document.head.appendChild(link);
+        });
+    },
+
+    markOutsideContent() {
+        document.body.querySelectorAll(':scope > *').forEach(element => {
+            if (element.classList.contains('app-layout') || element.tagName === 'SCRIPT') return;
+            element.dataset.routerContent = 'true';
+        });
+    },
+
+    replaceOutsideContent(nextDocument) {
+        document.querySelectorAll('[data-router-content]').forEach(element => element.remove());
+
+        nextDocument.body.querySelectorAll(':scope > *').forEach(element => {
+            if (element.classList.contains('app-layout') || element.tagName === 'SCRIPT') return;
+
+            const content = document.importNode(element, true);
+            content.dataset.routerContent = 'true';
+            document.body.appendChild(content);
+        });
+    },
+
+    restoreCachedPage(cachedPage) {
+        document.querySelector('.main-wrapper')?.replaceWith(cachedPage.wrapper.cloneNode(true));
+        document.querySelectorAll('[data-router-content]').forEach(element => element.remove());
+        cachedPage.outside.forEach(element => document.body.appendChild(element.cloneNode(true)));
+        this.loadStylesFromHrefs(cachedPage.styles);
+    },
+
+    cachePage(href, sourceDocument, scripts = this.getPageScripts(sourceDocument)) {
+        const wrapper = sourceDocument.querySelector('.main-wrapper');
+        if (!wrapper) return;
+
+        this.pageCache.set(href, {
+            title: sourceDocument.title,
+            wrapper: wrapper.cloneNode(true),
+            outside: [...sourceDocument.querySelectorAll('[data-router-content]')].map(element => element.cloneNode(true)),
+            styles: [...sourceDocument.querySelectorAll('link[data-router-style]')].map(link => link.href),
+            scripts
+        });
+    },
+
+    getPageScripts(sourceDocument, baseUrl = window.location.href) {
+        return [...sourceDocument.querySelectorAll('script[src]')]
+            .map(script => new URL(script.getAttribute('src'), baseUrl))
+            .filter(scriptUrl => !scriptUrl.pathname.endsWith('/sidebar.js'))
+            .map(scriptUrl => scriptUrl.href);
+    },
+
+    loadStylesFromHrefs(hrefs) {
+        document.querySelectorAll('link[data-router-style]').forEach(link => link.remove());
+        hrefs.forEach(href => {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href;
+            link.dataset.routerStyle = 'true';
+            document.head.appendChild(link);
+        });
+    },
+
+    async loadPageScripts(nextDocument, url) {
+        await this.loadScripts(this.getPageScripts(nextDocument, url.href));
+    },
+
+    async loadScripts(scriptHrefs) {
+        const scripts = scriptHrefs.map(scriptHref => new URL(scriptHref, window.location.href));
+
+        for (const scriptUrl of scripts) {
+            if (scriptUrl.origin !== window.location.origin) {
+                if (this.pageScripts.has(scriptUrl.href)) continue;
+
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = scriptUrl.href;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.body.appendChild(script);
+                });
+            } else {
+                let source = this.pageScripts.get(scriptUrl.href);
+                if (!source) {
+                    source = await fetch(scriptUrl.href).then(response => response.text());
+                    this.pageScripts.set(scriptUrl.href, source);
+                }
+                new Function(source).call(window);
+            }
+            if (scriptUrl.origin !== window.location.origin) this.pageScripts.set(scriptUrl.href, true);
+        }
     }
 };

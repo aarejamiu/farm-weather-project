@@ -1,8 +1,6 @@
 const token = localStorage.getItem('token');
-const user  = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (user.role === 'customer') window.location.href = '../customer/home.html';
 
 const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? 'http://127.0.0.1:5000'
@@ -10,11 +8,9 @@ const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
 const BASE = `${API_HOST}/api`;
 const authHeaders = { 'Authorization': `Bearer ${token}` };
 
-let inventory  = JSON.parse(localStorage.getItem('farmInventory') || '[]');
-let images     = JSON.parse(localStorage.getItem('productImages') || '{}');
+let inventory  = [];
 let currentId  = null;
 
-const saveImages = () => localStorage.setItem('productImages', JSON.stringify(images));
 
 const getStatus = (current, minimum, active) => {
     if (active === false) return 'inactive';
@@ -41,7 +37,7 @@ const renderProducts = (items) => {
 
     grid.innerHTML = items.map(item => {
         const status   = getStatus(item.current, item.minimum);
-        const imgSrc   = item.image || images[item.id] || '';
+        const imgSrc   = item.image || '';
         const imgHTML  = imgSrc
             ? `<img class="product-img" src="${imgSrc}" alt="${item.name}">`
             : `<div class="product-img-placeholder" onclick="openImageModal('${item.id}', '${item.name}')">
@@ -81,7 +77,6 @@ const renderProducts = (items) => {
         const idx = inventory.findIndex(i => i.id === id);
         if (idx === -1) return;
         inventory[idx].active = !inventory[idx].active;
-        localStorage.setItem('farmInventory', JSON.stringify(inventory));
         filterProducts();
         syncProduct(inventory[idx]);
     }
@@ -98,9 +93,8 @@ const filterProducts = () => {
 window.deleteProduct = (id) => {
     if (!confirm('Remove this product from the shop? It will also be deleted from inventory.')) return;
     inventory = inventory.filter(i => i.id !== id);
-    delete images[id];
-    localStorage.setItem('farmInventory', JSON.stringify(inventory));
-    saveImages();
+    fetch(`${BASE}/products/${id}`, { method: 'DELETE', headers: authHeaders })
+        .catch(error => console.error('Product delete error:', error));
     filterProducts();
 };
 
@@ -118,7 +112,7 @@ const syncProduct = async (item) => {
                 unit: item.unit,
                 price: item.price,
                 quantity: item.current,
-                image: item.image || images[item.id] || '',
+                image: item.image || '',
                 available: item.active !== false,
                 lowStockThreshold: item.minimum
             })
@@ -128,7 +122,6 @@ const syncProduct = async (item) => {
         const data = await res.json();
         if (!isExistingApiProduct && data.product?._id) {
             item.id = data.product._id;
-            localStorage.setItem('farmInventory', JSON.stringify(inventory));
         }
     } catch (error) {
         console.error('Unable to sync product with the server:', error);
@@ -161,7 +154,6 @@ const loadProducts = async () => {
                 active: product.available !== false,
                 image: product.image || ''
             }));
-            localStorage.setItem('farmInventory', JSON.stringify(inventory));
         }
         filterProducts();
     } catch (error) {
@@ -174,12 +166,12 @@ window.openImageModal = (id, name) => {
     currentId = id;
     const item = inventory.find(product => product.id === id);
     document.getElementById('imageModalTitle').textContent = `Image — ${name}`;
-    document.getElementById('imageUrl').value  = item?.image || images[id] || '';
+    document.getElementById('imageUrl').value  = item?.image || '';
     document.getElementById('imageFile').value = '';
 
     const preview = document.getElementById('imgPreviewWrap');
-    if (item?.image || images[id]) {
-        document.getElementById('imgPreview').src = item?.image || images[id];
+    if (item?.image) {
+        document.getElementById('imgPreview').src = item.image;
         preview.style.display = 'block';
     } else {
         preview.style.display = 'none';
@@ -220,10 +212,8 @@ document.getElementById('saveImageBtn').addEventListener('click', () => {
     const finalSrc = url || (preview !== window.location.href ? preview : '');
 
     if (finalSrc) {
-        images[currentId] = finalSrc;
         const item = inventory.find(product => product.id === currentId);
         if (item) item.image = finalSrc;
-        saveImages();
         if (item) syncProduct(item);
     }
 

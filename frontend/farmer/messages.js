@@ -1,8 +1,6 @@
 const token    = localStorage.getItem('token');
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (userData.role === 'customer') window.location.href = '../customer/home.html';
 
 const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? 'http://127.0.0.1:5000'
@@ -74,7 +72,7 @@ const renderInbox = (threads) => {
 
 const renderMessages = (messages) => {
     const box = document.getElementById('chatMessages');
-    const myId = userData.id;
+    const myId = currentUserId;
 
     box.innerHTML = messages.map(m => {
         const isMine = m.sender?._id === myId || m.sender?.id === myId || m.sender === myId;
@@ -151,6 +149,7 @@ const loadProfile = async () => {
         const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
         if (res.status === 401) { localStorage.removeItem('token'); window.location.href = '../login.html'; return; }
         const user = await res.json();
+        currentUserId = user._id || user.id;
         const ini  = initials(user.username);
         document.getElementById('topAvatar').textContent     = ini;
         document.getElementById('sidebarAvatar').textContent = ini;

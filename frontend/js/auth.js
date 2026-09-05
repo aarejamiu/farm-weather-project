@@ -71,7 +71,6 @@ form.addEventListener('submit', async (e) => {
 
         if (res.ok) {
             localStorage.setItem('token', data.token);
-            localStorage.setItem('userData', JSON.stringify(data.user));
 
             message.textContent = 'Registration successful! Redirecting...';
             message.style.color = '#2e7d32';

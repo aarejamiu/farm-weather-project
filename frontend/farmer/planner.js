@@ -1,21 +1,33 @@
 const token = localStorage.getItem('token');
-const user  = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (user.role === 'customer') window.location.href = '../customer/home.html';
 
 const BASE = 'https://leaders-union-farm-weather-site.onrender.com/api';
 const authHeaders = { 'Authorization': `Bearer ${token}` };
 
 let currentYear  = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
-let tasks        = JSON.parse(localStorage.getItem('farmTasks') || '[]');
+let tasks        = [];
 let selectedTask = null;
 
-function saveTasks() {
-    localStorage.setItem('farmTasks', JSON.stringify(tasks));
-    window.dispatchEvent(new StorageEvent('storage', { key: 'farmTasks', newValue: JSON.stringify(tasks) }));
-}
+const saveTaskToServer = async task => {
+    const response = await fetch(`${BASE}/tasks`, {
+        method: 'POST',
+        headers: { ...authHeaders, 'Content-Type': 'application/json' },
+        body: JSON.stringify(task)
+    });
+    if (!response.ok) throw new Error('Unable to save task');
+    return response.json();
+};
+
+const updateTaskOnServer = async task => {
+    const response = await fetch(`${BASE}/tasks/${task.id}`, {
+        method: 'PUT',
+        headers: { ...authHeaders, 'Content-Type': 'application/json' },
+        body: JSON.stringify(task)
+    });
+    if (!response.ok) throw new Error('Unable to update task');
+};
 
 const categoryIcons = {
     irrigation: `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
@@ -103,7 +115,7 @@ const openDetailModal = (task) => {
 };
 const closeDetailModal = () => document.getElementById('detailBackdrop').classList.remove('open');
 
-const saveTask = () => {
+const saveTask = async () => {
     const name     = document.getElementById('taskName').value.trim();
     const category = document.getElementById('taskCategory').value;
     const date     = document.getElementById('taskDate').value;
@@ -114,18 +126,38 @@ const saveTask = () => {
         return;
     }
 
-    tasks.push({ id: Date.now().toString(), name, category, date, note, done: false });
-    saveTasks();
-    closeModal();
-    renderCalendar();
+    try {
+        const task = await saveTaskToServer({ name, category, date, note, done: false });
+        tasks.push({ ...task, id: task._id });
+        closeModal();
+        renderCalendar();
+    } catch (error) {
+        console.error('Task save error:', error);
+    }
 };
 
-const deleteTask = () => {
+const deleteTask = async () => {
     if (!selectedTask) return;
-    tasks = tasks.filter(t => t.id !== selectedTask.id);
-    saveTasks();
-    closeDetailModal();
-    renderCalendar();
+    try {
+        const response = await fetch(`${BASE}/tasks/${selectedTask.id}`, { method: 'DELETE', headers: authHeaders });
+        if (!response.ok) throw new Error('Unable to delete task');
+        tasks = tasks.filter(t => t.id !== selectedTask.id);
+        closeDetailModal();
+        renderCalendar();
+    } catch (error) {
+        console.error('Task delete error:', error);
+    }
+};
+
+const loadTasks = async () => {
+    try {
+        const response = await fetch(`${BASE}/tasks`, { headers: authHeaders });
+        if (!response.ok) throw new Error('Unable to load tasks');
+        tasks = (await response.json()).map(task => ({ ...task, id: task._id }));
+        renderCalendar();
+    } catch (error) {
+        console.error('Task load error:', error);
+    }
 };
 
 const loadProfile = async () => {
@@ -173,4 +205,4 @@ document.addEventListener('keydown', (e) => {
 });
 
 loadProfile();
-renderCalendar();
+loadTasks();

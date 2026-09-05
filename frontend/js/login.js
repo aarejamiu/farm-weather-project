@@ -104,7 +104,6 @@ if (loginForm) {
 
             if (res.ok) {
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('userData', JSON.stringify(data.user));
 
                 loginMessage.textContent = 'Login successful!';
                 loginMessage.style.color = '#2e7d32';

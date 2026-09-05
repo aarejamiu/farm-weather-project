@@ -159,6 +159,7 @@ body {
 .sidebar-footer {
     padding: 14px 12px;
     border-top: 1px solid rgba(255,255,255,0.08);
+    position: relative;
 }
 
 .sidebar-user {
@@ -180,6 +181,16 @@ body {
     font-weight: 700;
     color: #fff;
     flex-shrink: 0;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.user-avatar:hover,
+.user-avatar:focus-visible {
+    outline: 2px solid rgba(255,255,255,0.75);
+    outline-offset: 2px;
 }
 
 .user-info {
@@ -196,6 +207,38 @@ body {
 .user-role {
     font-size: 11px;
     color: rgba(255,255,255,0.45);
+}
+
+.logout-menu {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 56px;
+    padding: 6px;
+    background: #fff;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.logout-btn {
+    width: 100%;
+    border: 0;
+    border-radius: 5px;
+    padding: 9px 10px;
+    background: transparent;
+    color: #b91c1c;
+    text-align: left;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-btn:hover,
+.logout-btn:focus-visible {
+    background: #fef2f2;
+    outline: none;
 }
 
 .collapse-btn {
@@ -296,6 +339,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
 }
 
 .live-dot {
@@ -328,6 +372,43 @@ body {
     font-weight: 700;
     color: #fff;
     cursor: pointer;
+}
+
+.top-avatar:focus-visible {
+    outline: 2px solid rgba(255,255,255,0.8);
+    outline-offset: 2px;
+}
+
+.top-logout-menu {
+    position: absolute;
+    top: 38px;
+    right: 0;
+    min-width: 110px;
+    padding: 6px;
+    background: #fff;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.top-logout-btn {
+    width: 100%;
+    border: 0;
+    border-radius: 5px;
+    padding: 8px 10px;
+    background: transparent;
+    color: #b91c1c;
+    text-align: left;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.top-logout-btn:hover,
+.top-logout-btn:focus-visible {
+    background: #fef2f2;
+    outline: none;
 }
 
 /* ── MAIN CONTENT ── */
@@ -468,8 +549,10 @@ body {
 
 /* ── FORECAST STRIP ── */
 .forecast-strip {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 8px;
+    align-items: stretch;
 }
 
 .forecast-loading {
@@ -478,12 +561,17 @@ body {
 }
 
 .fc-day {
-    flex: 1;
+    min-width: 0;
+    min-height: 132px;
+    box-sizing: border-box;
     border-radius: 10px;
     padding: 12px 8px;
     text-align: center;
     background: var(--bg);
     border: 1px solid var(--border);
+    display: grid;
+    grid-template-rows: 24px 34px 20px 16px 16px;
+    align-items: center;
 }
 
 .fc-day--today {
@@ -495,7 +583,10 @@ body {
     font-size: 11px;
     font-weight: 600;
     color: var(--text-sub);
-    margin-bottom: 8px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .fc-day--today .fc-day-name {
@@ -504,7 +595,7 @@ body {
 
 .fc-icon {
     font-size: 22px;
-    margin-bottom: 8px;
+    line-height: 1;
 }
 
 .fc-high {
@@ -522,7 +613,7 @@ body {
 .fc-rain {
     font-size: 10px;
     color: var(--blue);
-    margin-top: 4px;
+    white-space: nowrap;
 }
 
 /* ── AI LIST ── */
@@ -793,5 +884,11 @@ body {
     }
     .forecast-strip {
         overflow-x: auto;
+        grid-template-columns: repeat(5, 116px);
+        justify-content: start;
+        padding-bottom: 4px;
+    }
+    .fc-day {
+        min-height: 124px;
     }
 }

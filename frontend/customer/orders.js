@@ -3,10 +3,8 @@ const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     : 'https://leaders-union-farm-weather-site.onrender.com';
 const BASE = `${API_HOST}/api`;
 const token = localStorage.getItem('token');
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
 
 const formatPrice = value => '₦' + Number(value || 0).toLocaleString('en-NG');
 const formatDate = value => new Date(value).toLocaleDateString('en-US', {

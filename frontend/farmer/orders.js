@@ -1,8 +1,6 @@
 const token    = localStorage.getItem('token');
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (userData.role === 'customer') window.location.href = '../customer/home.html';
 
 const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? 'http://127.0.0.1:5000'

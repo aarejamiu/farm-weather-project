@@ -1,8 +1,6 @@
 const token = localStorage.getItem('token');
-const user  = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (user.role === 'farmer') window.location.href = '../farmer/dashboard.html';
 
 const BASE = 'https://leaders-union-farm-weather-site.onrender.com/api';
 const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
@@ -12,9 +10,10 @@ const formatPrice = (n) => '₦' + Number(n).toLocaleString('en-NG');
 const labels = ['Bestseller', 'Fresh', 'Popular', 'New'];
 const labelClass = { Bestseller: 'label--bestseller', Fresh: 'label--fresh', Popular: 'label--popular', New: 'label--new' };
 
-const getCart = () => JSON.parse(localStorage.getItem('customerCart') || '[]');
-const saveCart = (cart) => {
-    localStorage.setItem('customerCart', JSON.stringify(cart));
+let cart = [];
+const getCart = () => cart;
+const saveCart = (nextCart) => {
+    cart = nextCart;
     updateCartBadge();
 };
 
@@ -58,8 +57,7 @@ const addToCart = async (id, name, price, unit) => {
 };
 
 const productCardHTML = (item, index) => {
-    const images  = JSON.parse(localStorage.getItem('productImages') || '{}');
-    const imgSrc  = images[item.id] || '';
+    const imgSrc  = item.image || '';
     const label   = labels[index % labels.length];
     const imgHTML = imgSrc
         ? `<img class="cust-product-img" src="${imgSrc}" alt="${item.name}">`
@@ -86,17 +84,20 @@ const productCardHTML = (item, index) => {
 };
 
 const loadFeatured = () => {
-    const inventory = JSON.parse(localStorage.getItem('farmInventory') || '[]');
-    const active    = inventory.filter(i => i.active !== false && i.current > 0);
     const grid      = document.getElementById('featuredGrid');
     if (!grid) return;
 
-    if (!active.length) {
-        grid.innerHTML = `<div class="featured-loading">No products available yet.</div>`;
-        return;
-    }
+    fetch(`${BASE}/products/public`)
+        .then(response => response.json())
+        .then(products => {
+            const active = products.filter(item => item.available !== false && item.quantity > 0).slice(0, 3);
+            grid.innerHTML = active.length
+                ? active.map((item, i) => productCardHTML({ ...item, id: item._id, current: item.quantity, unit: item.unit || 'unit' }, i)).join('')
+                : '<div class="featured-loading">No products available yet.</div>';
+        })
+        .catch(error => { console.error('Featured products error:', error); grid.innerHTML = '<div class="featured-loading">Unable to load products.</div>'; });
+    return;
 
-    grid.innerHTML = active.slice(0, 3).map((item, i) => productCardHTML(item, i)).join('');
 };
 
 const loadProfile = async () => {

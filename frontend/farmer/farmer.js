@@ -1,8 +1,6 @@
 const token = localStorage.getItem('token');
-const user  = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (user.role === 'customer') window.location.href = '../customer/home.html';
 
 const BASE = 'https://leaders-union-farm-weather-site.onrender.com/api';
 
@@ -10,6 +8,8 @@ const authHeaders = {
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
 };
+
+let dashboardTasks = [];
 
 const greet = () => {
     const h = new Date().getHours();
@@ -199,12 +199,7 @@ const renderRevenueChart = (data) => {
 };
 
 const getDashboardTasks = () => {
-    try {
-        return JSON.parse(localStorage.getItem('farmTasks') || '[]');
-    } catch (error) {
-        console.error('Failed to parse dashboard tasks:', error);
-        return [];
-    }
+    return dashboardTasks;
 };
 
 const renderDashboardTasks = () => {
@@ -253,7 +248,11 @@ const renderDashboardTasks = () => {
             if (!matchingTask) return;
 
             matchingTask.done = input.checked;
-            localStorage.setItem('farmTasks', JSON.stringify(allTasks));
+            fetch(`${BASE}/tasks/${matchingTask.id}`, {
+                method: 'PUT',
+                headers: authHeaders,
+                body: JSON.stringify({ done: matchingTask.done })
+            }).catch(error => console.error('Task update error:', error));
             renderDashboardTasks();
         });
     });
@@ -261,11 +260,18 @@ const renderDashboardTasks = () => {
 
 const initTaskProgress = () => {
     renderDashboardTasks();
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'farmTasks') {
+};
+
+const loadDashboardTasks = async () => {
+    try {
+        const response = await fetch(`${BASE}/tasks`, { headers: authHeaders });
+        if (response.ok) {
+            dashboardTasks = (await response.json()).map(task => ({ ...task, id: task._id }));
             renderDashboardTasks();
         }
-    });
+    } catch (error) {
+        console.error('Task load error:', error);
+    }
 };
 
 const loadDashboard = async () => {
@@ -277,12 +283,13 @@ const loadDashboard = async () => {
 
         const location = user.farmLocation || '';
 
-        const [weatherRes, forecastRes, statsRes, chartRes, notifRes] = await Promise.all([
+        const [weatherRes, forecastRes, statsRes, chartRes, notifRes, productsRes] = await Promise.all([
             location ? fetch(`${BASE}/weather/weather?location=${encodeURIComponent(location)}`) : null,
             location ? fetch(`${BASE}/weather/forecast?location=${encodeURIComponent(location)}`) : null,
             fetch(`${BASE}/analytics/stats`,   { headers: authHeaders }),
             fetch(`${BASE}/analytics/monthly`, { headers: authHeaders }),
-            fetch(`${BASE}/notifications`,     { headers: authHeaders })
+            fetch(`${BASE}/notifications`,     { headers: authHeaders }),
+            fetch(`${BASE}/products`,          { headers: authHeaders })
         ]);
 
         let weatherContext = null;
@@ -310,12 +317,14 @@ const loadDashboard = async () => {
         const msgBadge  = document.getElementById('messagesBadge');
         if (notifData.unreadCount > 0) msgBadge.textContent = notifData.unreadCount;
 
-        const inventory = JSON.parse(localStorage.getItem('farmInventory') || '[]');
+        await loadDashboardTasks();
+
+        const products = productsRes.ok ? await productsRes.json() : [];
         loadAIRecommendations(JSON.stringify({
             farmLocation: location || 'Not provided',
             weather: weatherContext,
             forecast: forecastContext,
-            inventory: inventory.map(item => ({ name: item.name, category: item.category, quantity: item.current, unit: item.unit })),
+            inventory: products.map(item => ({ name: item.name, category: item.category, quantity: item.quantity, unit: item.unit })),
             tasks: getDashboardTasks().filter(task => !task.done)
         }));
 

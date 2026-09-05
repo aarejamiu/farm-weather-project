@@ -1,7 +1,7 @@
 const token = localStorage.getItem('token');
 const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://127.0.0.1:5000' : 'https://leaders-union-farm-weather-site.onrender.com';
 const BASE = `${API_HOST}/api`;
-const user = JSON.parse(localStorage.getItem('userData') || '{}');
+let currentUserId = null;
 let farmerId = null;
 let pollTimer;
 
@@ -10,8 +10,6 @@ const time = value => new Date(value).toLocaleTimeString('en-US', { hour: '2-dig
 
 const loadProfile = async () => {
     const avatar = document.getElementById('navAvatar');
-    if (user.username) avatar.textContent = initials(user.username);
-
     try {
         const response = await fetch(`${BASE}/profile`, { headers: { Authorization: `Bearer ${token}` } });
         if (response.status === 401) {
@@ -21,13 +19,14 @@ const loadProfile = async () => {
         }
         if (!response.ok) return;
         const profile = await response.json();
-        avatar.textContent = initials(profile.username || user.username || 'Customer');
+        currentUserId = profile._id || profile.id;
+        avatar.textContent = initials(profile.username || 'Customer');
     } catch (error) { console.error('Profile error:', error); }
 };
 const show = (messages = []) => {
     const box = document.getElementById('chatMessages');
     box.innerHTML = messages.length ? messages.map(message => {
-        const mine = message.sender?._id === user.id || message.sender?.id === user.id || message.sender === user.id;
+        const mine = message.sender?._id === currentUserId || message.sender?.id === currentUserId || message.sender === currentUserId;
         return `<div class="message-wrap message-wrap--${mine ? 'mine' : 'theirs'}"><div class="message-bubble">${message.content}</div><span class="message-time">${time(message.createdAt)}</span></div>`;
     }).join('') : '<p class="chat-empty">No messages yet. Ask the farm team anything.</p>';
     box.scrollTop = box.scrollHeight;

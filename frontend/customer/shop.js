@@ -1,8 +1,6 @@
 const token    = localStorage.getItem('token');
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
 if (!token) window.location.href = '../login.html';
-if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
 
 const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
     ? 'http://127.0.0.1:5000'
@@ -12,9 +10,11 @@ const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'appli
 
 const formatPrice = (n) => '₦' + Number(n).toLocaleString('en-NG');
 
-const getCart  = () => JSON.parse(localStorage.getItem('customerCart') || '[]');
-const saveCart = (cart) => {
-    localStorage.setItem('customerCart', JSON.stringify(cart));
+let cart = [];
+const getCart  = () => cart;
+const saveCart = (nextCart) => {
+    cart = nextCart;
+    window.dispatchEvent(new CustomEvent('cartChanged'));
     updateCartBadge();
 };
 
@@ -77,7 +77,6 @@ const buildCategories = (products) => {
 
 const renderProducts = () => {
     const q       = document.getElementById('searchInput').value.toLowerCase();
-    const images  = JSON.parse(localStorage.getItem('productImages') || '{}');
     const grid    = document.getElementById('shopGrid');
 
     let filtered = allProducts;
@@ -90,7 +89,7 @@ const renderProducts = () => {
     }
 
     grid.innerHTML = filtered.map(item => {
-        const imgSrc  = item.image || images[item.id] || '';
+        const imgSrc  = item.image || '';
         const imgHTML = imgSrc
             ? `<img src="${imgSrc}" alt="${item.name}">`
             : `<div class="shop-card-img-placeholder">
@@ -138,8 +137,6 @@ const loadProducts = async () => {
 
         const products = await res.json();
 
-        const images = JSON.parse(localStorage.getItem('productImages') || '{}');
-
         allProducts = products.map(p => ({
             id:       p._id,
             name:     p.name,
@@ -147,7 +144,7 @@ const loadProducts = async () => {
             price:    p.price,
             current:  p.quantity,
             unit:     p.unit || 'kg',
-            image:    p.image || images[p._id] || ''
+            image:    p.image || ''
         }));
 
         buildCategories(allProducts);
@@ -164,3 +161,10 @@ document.getElementById('searchInput').addEventListener('input', renderProducts)
 updateCartBadge();
 loadProfile();
 loadProducts();
+fetch(`${BASE}/cart`, { headers: authHeaders })
+    .then(response => response.json())
+    .then(data => {
+        cart = (data.items || []).filter(item => item.product).map(item => ({ id: item.product._id, quantity: item.quantity }));
+        updateCartBadge();
+    })
+    .catch(error => console.error('Cart load error:', error));

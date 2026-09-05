@@ -19,7 +19,10 @@ const verify = async () => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || 'Payment could not be verified');
 
-    localStorage.removeItem('customerCart');
+    await fetch(`${API_HOST}/api/cart/clear`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+    });
     title.textContent = 'Payment successful';
     message.textContent = 'Your order has been created successfully.';
     link.hidden = false;
