@@ -9,10 +9,12 @@ const paystackHeaders = () => ({
     'Content-Type': 'application/json'
 });
 
+const hasPaystackSecret = () => Boolean(process.env.PAYSTACK_SECRET_KEY?.trim());
+
 const initializePayment = async (req, res) => {
     const { items, deliveryAddress } = req.body;
     if (!Array.isArray(items) || !items.length) return res.status(400).json({ message: 'No items in payment' });
-    if (!process.env.PAYSTACK_SECRET_KEY) return res.status(503).json({ message: 'Payment service is not configured' });
+    if (!hasPaystackSecret()) return res.status(503).json({ message: 'Payment service is temporarily unavailable. Please try again later.' });
 
     try {
         const user = await User.findById(req.user.id);
@@ -56,7 +58,7 @@ const initializePayment = async (req, res) => {
 const verifyPayment = async (req, res) => {
     const { reference } = req.body;
     if (!reference) return res.status(400).json({ message: 'Payment reference is required' });
-    if (!process.env.PAYSTACK_SECRET_KEY) return res.status(503).json({ message: 'Payment service is not configured' });
+    if (!hasPaystackSecret()) return res.status(503).json({ message: 'Payment service is temporarily unavailable. Please try again later.' });
 
     try {
         const payment = await Payment.findOne({ reference, customer: req.user.id });

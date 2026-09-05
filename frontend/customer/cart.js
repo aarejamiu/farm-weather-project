@@ -70,7 +70,11 @@ const startPayment = async () => {
             })
         });
         const data = await response.json();
+        if (response.status === 503) {
+            throw new Error('Payments are temporarily unavailable. Please try again later.');
+        }
         if (!response.ok) throw new Error(data.message || 'Unable to initialize payment');
+        sessionStorage.setItem('pendingPaymentReference', data.reference);
         window.location.href = data.authorizationUrl;
     } catch (error) {
         console.error('Payment initialization error:', error);

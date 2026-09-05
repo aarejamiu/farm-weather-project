@@ -38,6 +38,10 @@ In the Render service that runs the backend, add this environment variable under
 PAYSTACK_SECRET_KEY=sk_live_your_real_key_here
 ```
 
+After saving the variable, choose **Manual Deploy > Deploy latest commit** (or restart the service). Render environment changes do not become available to the running process until it restarts.
+
+For the current deployed error, `PAYSTACK_SECRET_KEY` is missing or blank in Render. Add the secret key in the Render dashboard; do not add it to frontend files, Git, or chat.
+
 Use the live secret only after Paystack account activation and live-mode verification. Redeploy the service after saving the variable.
 
 The frontend must be served from the deployed URL so the callback URL points to the deployed `payment-callback.html` page. The backend verifies the payment using the secret key; never put this key in frontend JavaScript.
