@@ -54,6 +54,8 @@ const addToCart = async (id, name, price, unit) => {
     }
 };
 
+window.addToCart = addToCart;
+
 const productCardHTML = (item, index) => {
     const imgSrc  = item.image || '';
     const label   = labels[index % labels.length];

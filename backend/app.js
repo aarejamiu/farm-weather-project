@@ -2,6 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+const allowedOrigins = (process.env.FRONTEND_ORIGIN || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+
 const authRoutes        = require('./routes/authroute');
 const weatherRoutes     = require('./routes/weatherRoutes');
 const dateRoutes        = require('./routes/dateRoutes');
@@ -17,7 +22,12 @@ const paymentRoutes     = require('./routes/paymentRoutes');
 const taskRoutes        = require('./routes/taskRoutes');
 
 app.use(cors({
-    origin: process.env.FRONTEND_ORIGIN || true,
+    origin: (requestOrigin, callback) => {
+        if (!requestOrigin || allowedOrigins.includes(requestOrigin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Origin is not allowed by CORS'));
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
