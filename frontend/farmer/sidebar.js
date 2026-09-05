@@ -358,3 +358,12 @@ const SidebarComponent = {
         }
     }
 };
+
+const farmerPage = window.location.pathname.split('/').pop().replace(/\.html$/, '') || 'dashboard';
+const initializeFarmerSidebar = () => SidebarComponent.init(farmerPage);
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeFarmerSidebar, { once: true });
+} else {
+    initializeFarmerSidebar();
+}

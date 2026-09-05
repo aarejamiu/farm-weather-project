@@ -54,11 +54,11 @@ form.addEventListener('submit', async (e) => {
         return;
     }
 
-    message.textContent = 'Registering...';
-    message.style.color = '#6b7280';
-
     const btn = form.querySelector('button');
     btn.disabled = true;
+    btn.setAttribute('aria-busy', 'true');
+    btn.innerHTML = '<span class="button-loading"><span class="auth-spinner" aria-hidden="true"></span>Creating account...</span>';
+    message.textContent = '';
 
     try {
         const res  = await fetch(`${window.APP_CONFIG.apiBase}/auth/register`, {
@@ -84,11 +84,15 @@ form.addEventListener('submit', async (e) => {
             message.textContent = data.message || 'Registration failed.';
             message.style.color = '#ef4444';
             btn.disabled = false;
+            btn.removeAttribute('aria-busy');
+            btn.innerHTML = 'Create account <span aria-hidden="true">→</span>';
         }
 
     } catch (error) {
         message.textContent = 'An error occurred. Please try again.';
         message.style.color = '#ef4444';
         btn.disabled = false;
+        btn.removeAttribute('aria-busy');
+        btn.innerHTML = 'Create account <span aria-hidden="true">→</span>';
     }
 });

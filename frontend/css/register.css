@@ -339,11 +339,40 @@ body {
 .auth-form button:hover { background: var(--auth-green); transform: translateY(-1px); }
 .auth-form button:disabled { opacity: .65; cursor: wait; transform: none; }
 
+.button-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+}
+
 #message {
-    min-height: 20px;
+    min-height: 22px;
     margin-top: 14px;
     font-family: 'Segoe UI', sans-serif;
     font-size: 13px;
+}
+
+.auth-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.auth-status--loading {
+    color: var(--auth-muted);
+}
+
+.auth-spinner {
+    width: 13px;
+    height: 13px;
+    border: 2px solid #d5e1d8;
+    border-top-color: var(--auth-green);
+    border-radius: 50%;
+    animation: auth-spin .7s linear infinite;
+}
+
+@keyframes auth-spin {
+    to { transform: rotate(360deg); }
 }
 
 .auth-switch {

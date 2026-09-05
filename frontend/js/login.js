@@ -87,10 +87,10 @@ if (loginForm) {
         const password = loginForm.password.value;
         const loginBtn = loginForm.querySelector('button');
 
-        loginBtn.disabled    = true;
-        loginBtn.textContent = 'Logging in...';
-        loginMessage.textContent  = 'Logging in...';
-        loginMessage.style.color  = '#6b7280';
+        loginBtn.disabled = true;
+        loginBtn.setAttribute('aria-busy', 'true');
+        loginBtn.innerHTML = '<span class="button-loading"><span class="auth-spinner" aria-hidden="true"></span>Signing in...</span>';
+        loginMessage.textContent = '';
 
         try {
             const res  = await fetch(`${window.APP_CONFIG.apiBase}/auth/login`, {
@@ -102,9 +102,8 @@ if (loginForm) {
             const data = await res.json();
 
             if (res.ok) {
-                loginMessage.textContent = 'Login successful!';
+                loginMessage.textContent = 'Login successful. Redirecting...';
                 loginMessage.style.color = '#2e7d32';
-                loginBtn.textContent     = 'Success ✓';
 
                 setTimeout(() => {
                     if (data.user.role === 'farmer') {
@@ -118,14 +117,16 @@ if (loginForm) {
                 loginMessage.textContent = data.message || 'Incorrect email or password.';
                 loginMessage.style.color = '#ef4444';
                 loginBtn.disabled        = false;
-                loginBtn.textContent     = 'Login';
+                loginBtn.removeAttribute('aria-busy');
+                loginBtn.innerHTML = 'Sign in <span aria-hidden="true">→</span>';
             }
 
         } catch (error) {
             loginMessage.textContent = 'Unable to connect to server.';
             loginMessage.style.color = '#ef4444';
             loginBtn.disabled        = false;
-            loginBtn.textContent     = 'Login';
+            loginBtn.removeAttribute('aria-busy');
+            loginBtn.innerHTML = 'Sign in <span aria-hidden="true">→</span>';
         }
     });
 }
