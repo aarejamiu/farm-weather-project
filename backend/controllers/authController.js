@@ -82,6 +82,16 @@ const jwt = require('jsonwebtoken');
 
 const normalizeEmail = (email) => email.trim().toLowerCase();
 
+const setAuthCookie = (res, token) => {
+    res.cookie('accessToken', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/'
+    });
+};
+
 const getFarmerEmail = () => {
     const farmerEmail = process.env.FARMER_EMAIL?.trim().toLowerCase();
 
@@ -120,9 +130,10 @@ const registerUser = async (req, res) => {
             { expiresIn: '7d' }
         );
 
+        setAuthCookie(res, token);
+
         res.status(201).json({
             message: 'User registered successfully',
-            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -162,9 +173,10 @@ const loginUser = async (req, res) => {
             { expiresIn: '7d' }
         );
 
+        setAuthCookie(res, token);
+
         res.json({
             message: 'Login successful',
-            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -178,4 +190,9 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser };
+const logoutUser = (req, res) => {
+    res.clearCookie('accessToken', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', path: '/' });
+    res.json({ message: 'Logged out successfully' });
+};
+
+module.exports = { registerUser, loginUser, logoutUser };

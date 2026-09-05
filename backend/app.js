@@ -17,7 +17,7 @@ const paymentRoutes     = require('./routes/paymentRoutes');
 const taskRoutes        = require('./routes/taskRoutes');
 
 app.use(cors({
-    origin: '*',
+    origin: process.env.FRONTEND_ORIGIN || true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));

@@ -1,7 +1,5 @@
-const token = localStorage.getItem('token');
-const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-    ? 'http://127.0.0.1:5000'
-    : 'https://leaders-union-farm-weather-site.onrender.com';
+const token = '';
+const API_HOST = window.APP_CONFIG.apiHost;
 
 const title = document.getElementById('paymentTitle');
 const message = document.getElementById('paymentMessage');

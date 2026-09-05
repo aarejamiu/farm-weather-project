@@ -1,8 +1,6 @@
-const token = localStorage.getItem('token');
+const token = '';
 
-if (!token) window.location.href = '../login.html';
-
-const BASE = 'https://leaders-union-farm-weather-site.onrender.com/api';
+const BASE = window.APP_CONFIG.apiBase;
 const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
 
 const formatPrice = (n) => '₦' + Number(n).toLocaleString('en-NG');
@@ -103,7 +101,7 @@ const loadFeatured = () => {
 const loadProfile = async () => {
     try {
         const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
-        if (res.status === 401) { localStorage.removeItem('token'); window.location.href = '../login.html'; return; }
+        if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
         const avatar   = document.getElementById('navAvatar');

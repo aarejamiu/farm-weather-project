@@ -1,9 +1,6 @@
 const formatPrice = (value) => '₦' + Number(value).toLocaleString('en-NG');
-const token = localStorage.getItem('token');
-const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-    ? 'http://127.0.0.1:5000'
-    : 'https://leaders-union-farm-weather-site.onrender.com';
-const BASE = `${API_HOST}/api`;
+const token = '';
+const BASE = window.APP_CONFIG.apiBase;
 const authHeaders = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 let cart = [];
 const getCart = () => cart;

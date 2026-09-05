@@ -1,8 +1,5 @@
-const token = localStorage.getItem('token');
-const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-    ? 'http://127.0.0.1:5000'
-    : 'https://leaders-union-farm-weather-site.onrender.com';
-const BASE = `${API_HOST}/api`;
+const token = '';
+const BASE = window.APP_CONFIG.apiBase;
 
 const formatPrice = value => '₦' + Number(value || 0).toLocaleString('en-NG', { minimumFractionDigits: 2 });
 const formatDate = value => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });

@@ -185,8 +185,8 @@ const SidebarComponent = {
     },
 
     logout() {
-        localStorage.removeItem('token');
-        window.location.href = '../login.html';
+        fetch(`${window.APP_CONFIG.apiBase}/auth/logout`, { method: 'POST' })
+            .finally(() => { window.location.href = '../login.html'; });
     },
 
     initRouter() {

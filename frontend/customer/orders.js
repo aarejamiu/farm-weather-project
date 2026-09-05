@@ -1,10 +1,6 @@
-const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-    ? 'http://127.0.0.1:5000'
-    : 'https://leaders-union-farm-weather-site.onrender.com';
-const BASE = `${API_HOST}/api`;
-const token = localStorage.getItem('token');
+const BASE = window.APP_CONFIG.apiBase;
+const token = '';
 
-if (!token) window.location.href = '../login.html';
 
 const formatPrice = value => '₦' + Number(value || 0).toLocaleString('en-NG');
 const formatDate = value => new Date(value).toLocaleDateString('en-US', {
@@ -70,7 +66,6 @@ const loadOrders = async () => {
     try {
         const response = await fetch(`${BASE}/orders/my`, { headers: { Authorization: `Bearer ${token}` } });
         if (response.status === 401) {
-            localStorage.removeItem('token');
             window.location.href = '../login.html';
             return;
         }

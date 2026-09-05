@@ -22,7 +22,7 @@
 //         try {
 
 //             const res = await fetch(
-//                 "https://leaders-union-farm-weather-site.onrender.com/api/auth/login",
+//                 `${window.APP_CONFIG.apiBase}/auth/login`,
 //                 {
 //                     method: 'POST',
 //                     headers: {
@@ -39,7 +39,6 @@
 //                 loginMessage.textContent = 'Login successful!';
 //                 loginMessage.style.color = '#2e7d32';
 
-//                 localStorage.setItem('token', data.token);
 
 //                 loginBtn.textContent = 'Success ✓';
 
@@ -94,7 +93,7 @@ if (loginForm) {
         loginMessage.style.color  = '#6b7280';
 
         try {
-            const res  = await fetch('https://leaders-union-farm-weather-site.onrender.com/api/auth/login', {
+            const res  = await fetch(`${window.APP_CONFIG.apiBase}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -103,8 +102,6 @@ if (loginForm) {
             const data = await res.json();
 
             if (res.ok) {
-                localStorage.setItem('token', data.token);
-
                 loginMessage.textContent = 'Login successful!';
                 loginMessage.style.color = '#2e7d32';
                 loginBtn.textContent     = 'Success ✓';

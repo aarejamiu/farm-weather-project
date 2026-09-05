@@ -290,7 +290,8 @@ body{
 .mobile-menu {
   position: absolute;
   top: 70px;
-  left: 0;
+    left: auto;
+    right: 0;
   width: 100%;
   background: #fff;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
@@ -620,6 +621,27 @@ footer hr{
   .hamburger {
     display: flex;
   }
+
+    .mobile-menu {
+        position: fixed;
+        top: 70px;
+        bottom: auto;
+        left: auto;
+        right: 0;
+        width: min(280px, 85vw);
+        max-height: calc(100vh - 86px);
+        transform: translateX(100%);
+        overflow-y: auto;
+        border-radius: 0 0 0 14px;
+        box-shadow: -8px 12px 26px rgba(15,45,26,.16);
+        transition: transform .3s ease;
+        z-index: 999;
+    }
+
+    .mobile-menu.open {
+        max-height: calc(100vh - 86px);
+        transform: translateX(0);
+    }
 
   .hero {
     min-height: 75vh;

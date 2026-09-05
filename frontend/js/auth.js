@@ -14,7 +14,7 @@
 //         message.textContent = "Password does not match.";
 //     }
 //     try{
-//     const res = await fetch("https://leaders-union-farm-weather-site.onrender.com/api/auth/register",{
+//     const res = await fetch(`${window.APP_CONFIG.apiBase}/auth/register`,{
 //         method: 'POST',
 //         headers: {
 //             'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ form.addEventListener('submit', async (e) => {
     btn.disabled = true;
 
     try {
-        const res  = await fetch('https://leaders-union-farm-weather-site.onrender.com/api/auth/register', {
+        const res  = await fetch(`${window.APP_CONFIG.apiBase}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, email, password })
@@ -70,8 +70,6 @@ form.addEventListener('submit', async (e) => {
         const data = await res.json();
 
         if (res.ok) {
-            localStorage.setItem('token', data.token);
-
             message.textContent = 'Registration successful! Redirecting...';
             message.style.color = '#2e7d32';
 

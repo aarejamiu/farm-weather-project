@@ -1,6 +1,5 @@
-const token = localStorage.getItem('token');
-const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://127.0.0.1:5000' : 'https://leaders-union-farm-weather-site.onrender.com';
-const BASE = `${API_HOST}/api`;
+const token = '';
+const BASE = window.APP_CONFIG.apiBase;
 let currentUserId = null;
 let farmerId = null;
 let pollTimer;
@@ -13,7 +12,6 @@ const loadProfile = async () => {
     try {
         const response = await fetch(`${BASE}/profile`, { headers: { Authorization: `Bearer ${token}` } });
         if (response.status === 401) {
-            localStorage.removeItem('token');
             window.location.href = '../login.html';
             return;
         }

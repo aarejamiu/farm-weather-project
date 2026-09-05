@@ -1,6 +1,5 @@
-const token = localStorage.getItem('token');
-const API_HOST = ['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://127.0.0.1:5000' : 'https://leaders-union-farm-weather-site.onrender.com';
-const BASE = `${API_HOST}/api`;
+const token = '';
+const BASE = window.APP_CONFIG.apiBase;
 const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 let profile;
 
@@ -32,7 +31,7 @@ const load = async () => {
             fetch(`${BASE}/profile`, { headers }),
             fetch(`${BASE}/orders/my`, { headers })
         ]);
-        if (profileResponse.status === 401) { localStorage.removeItem('token'); window.location.href = '../login.html'; return; }
+        if (profileResponse.status === 401) { window.location.href = '../login.html'; return; }
         if (!profileResponse.ok || !ordersResponse.ok) throw new Error('Unable to load profile');
         showProfile(await profileResponse.json(), await ordersResponse.json());
     } catch (error) {
