@@ -484,6 +484,22 @@ body {
 @media (max-width: 600px) {
     .cust-hamburger { display: flex; }
     .cust-nav { position: relative; }
+    .cust-mobile-menu {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: min(280px, 85vw);
+        max-height: none;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+        z-index: 99;
+    }
+    .cust-mobile-menu.open {
+        max-height: none;
+        transform: translateX(0);
+    }
 }
 
 /* ── RESPONSIVE ── */
@@ -499,6 +515,11 @@ body {
     .badges-section { margin: 12px; grid-template-columns: 1fr 1fr; }
     .featured-section { margin: 16px 12px; }
     .featured-grid { grid-template-columns: 1fr; }
-    .cust-nav { padding: 0 16px; gap: 16px; }
+    .cust-nav { padding: 0 16px; gap: 12px; }
+    .cust-brand { margin-right: auto; min-width: 0; }
+    .cust-brand > div:last-child { min-width: 0; }
+    .cust-brand-name,
+    .cust-brand-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cust-nav-avatar { margin-left: 12px; }
     .cust-nav-links { display: none; }
 }

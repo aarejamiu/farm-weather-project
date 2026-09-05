@@ -2,25 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login - FarmWeather</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in | Leaders-Union Farm</title>
   <link rel="stylesheet" href="css/register.css">
 </head>
 <body>
 
-  <div class="container">
-    <h2>Login</h2>
+  <main class="auth-shell">
+    <section class="auth-story">
+      <a class="auth-brand" href="../index.html">Leaders-Union <span>FARM SHOP</span></a>
+      <div class="story-content">
+        <p class="eyebrow">One farm. A closer table.</p>
+        <h1>Fresh food starts with knowing where it grows.</h1>
+        <p>Shop produce from Leaders-Union Farm, follow your orders, and stay connected to the people growing your food.</p>
+      </div>
+      <p class="story-note">Seasonal produce, thoughtfully grown.</p>
+    </section>
 
-    <form id="loginForm">
-      <input type="email" id="email" placeholder="Email Address" required>
+    <section class="auth-panel">
+      <div class="auth-heading">
+        <p class="eyebrow">Welcome back</p>
+        <h2>Sign in to your account</h2>
+        <p>Access your farm shop, orders, and messages.</p>
+      </div>
 
-      <input type="password" id="password" placeholder="Password" required>
+      <form id="loginForm" class="auth-form">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
 
-      <button type="submit">Login</button>
-    </form>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
 
-    <p id="message"></p>
-    <p>Don't have an account? <a href="register.html">Register</a></p>
-  </div>
+        <button type="submit">Sign in <span aria-hidden="true">→</span></button>
+      </form>
+
+      <p id="message" role="status"></p>
+      <p class="auth-switch">New to Leaders-Union? <a href="register.html">Create an account</a></p>
+      <a class="back-link" href="../index.html">← Back to farm shop</a>
+    </section>
 
   <script src="js/login.js"></script>
 </body>

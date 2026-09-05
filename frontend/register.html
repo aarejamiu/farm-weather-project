@@ -3,25 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Create account | Leaders-Union Farm</title>
     <link rel="stylesheet" href="css/register.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Register</h2>
+    <main class="auth-shell">
+        <section class="auth-story">
+            <a class="auth-brand" href="../index.html">Leaders-Union <span>FARM SHOP</span></a>
+            <div class="story-content">
+                <p class="eyebrow">A better way to buy fresh</p>
+                <h1>Meet the farm behind your next meal.</h1>
+                <p>Create an account to browse seasonal produce, place orders, and keep your farm shop experience in one place.</p>
+            </div>
+            <p class="story-note">Grown close. Shared directly.</p>
+        </section>
 
-        <form id="registerForm">
-            <input type="text" id="username" placeholder="Username" required><br>
-            <input type="email" id="email" placeholder="Email" required><br>
-            <input type="password" id="password" placeholder="Password" required><br>
-            <input type="password" id="confirmPassword" placeholder="Confirm Password" required><br>
-            <button type="submit">Register</button>
-        </form>
+        <section class="auth-panel">
+            <div class="auth-heading">
+                <p class="eyebrow">Join the farm shop</p>
+                <h2>Create your account</h2>
+                <p>It takes less than a minute to get started.</p>
+            </div>
 
-        <p id="message"></p>
+            <form id="registerForm" class="auth-form">
+                <label for="username">Your name</label>
+                <input type="text" id="username" placeholder="e.g. Amara Okafor" autocomplete="name" required>
 
-        <p><a href="login.html">Already have an account? Login here.</a></p>
-    </div>
+                <label for="email">Email address</label>
+                <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Create a password" autocomplete="new-password" required>
+
+                <label for="confirmPassword">Confirm password</label>
+                <input type="password" id="confirmPassword" placeholder="Repeat your password" autocomplete="new-password" required>
+
+                <button type="submit">Create account <span aria-hidden="true">→</span></button>
+            </form>
+
+            <p id="message" role="status"></p>
+            <p class="auth-switch">Already have an account? <a href="login.html">Sign in</a></p>
+            <a class="back-link" href="../index.html">← Back to farm shop</a>
+        </section>
+    </main>
 <script src="./js/auth.js"></script>
 </body>
 </html>
