@@ -245,7 +245,10 @@ const requestPasswordReset = async (req, res) => {
             await sendPasswordResetEmail(user.email, resetUrl, isLocalRequest);
         }
         const response = { message: resetMessage };
-        if (isLocalRequest && resetUrl) response.resetUrl = resetUrl;
+        if (isLocalRequest && resetUrl) {
+            response.resetUrl = resetUrl;
+            response.emailSent = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+        }
         if (isLocalRequest && !user) response.message = 'No account was found for that email address.';
         res.json(response);
     } catch (error) {

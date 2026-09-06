@@ -20,7 +20,9 @@ form.addEventListener('submit', async (event) => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Unable to send the reset link.');
 
-        message.textContent = data.message;
+        message.textContent = data.emailSent === false
+            ? 'Email delivery is not configured locally. Use the reset link below.'
+            : data.message;
         if (data.resetUrl) {
             const link = document.createElement('a');
             link.href = data.resetUrl;
