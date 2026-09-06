@@ -14,6 +14,14 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    passwordResetToken: {
+        type: String,
+        default: null
+    },
+    passwordResetExpires: {
+        type: Date,
+        default: null
+    },
     role: {
         type: String,
         enum: ['farmer', 'customer'],

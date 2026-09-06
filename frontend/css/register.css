@@ -339,6 +339,18 @@ body {
 .auth-form button:hover { background: var(--auth-green); transform: translateY(-1px); }
 .auth-form button:disabled { opacity: .65; cursor: wait; transform: none; }
 
+.auth-help-link {
+    align-self: flex-end;
+    margin-top: 2px;
+    color: var(--auth-green);
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-help-link:hover { text-decoration: underline; }
+
 .button-loading {
     display: inline-flex;
     align-items: center;

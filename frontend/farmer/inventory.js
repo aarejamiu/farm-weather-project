@@ -83,7 +83,7 @@ const openModal = (title = 'Add Item') => {
 const closeModal = () => {
     document.getElementById('modalBackdrop').classList.remove('open');
     document.getElementById('itemName').value     = '';
-    document.getElementById('itemCategory').value = 'Crop';
+    document.getElementById('itemCategory').value = 'Vegetables';
     document.getElementById('itemUnit').value     = 'kg';
     document.getElementById('itemCurrent').value  = '';
     document.getElementById('itemMinimum').value  = '';
@@ -158,8 +158,24 @@ window.editItem = (id) => {
     openModal('Edit Item');
 };
 
-window.deleteItem = (id) => {
+window.deleteItem = async (id) => {
     if (!confirm('Delete this inventory item?')) return;
+
+    const isExistingApiProduct = /^[a-f\d]{24}$/i.test(id);
+
+    if (isExistingApiProduct) {
+        try {
+            const response = await fetch(`${BASE}/products/${id}`, {
+                method: 'DELETE',
+                headers: authHeaders
+            });
+            if (!response.ok) throw new Error(`Product deletion failed: ${response.status}`);
+        } catch (error) {
+            console.error('Unable to delete product from the server:', error);
+            return;
+        }
+    }
+
     inventory = inventory.filter(i => i.id !== id);
     saveInventory();
     renderTable();

@@ -19,6 +19,7 @@ const getStatus = (current, minimum, active) => {
 const statusLabel = { active: 'Active', low: 'Low Stock', critical: 'Critical', out: 'Out of Stock', inactive: 'Inactive' };
 
 const formatPrice = (n) => '₦' + Number(n).toLocaleString('en-NG');
+const singularUnit = (unit) => ({ litres: 'litre', units: 'unit', bags: 'bag', crates: 'crate' }[unit] || unit);
 
 const renderProducts = (items) => {
     const grid = document.getElementById('productsGrid');
@@ -54,7 +55,7 @@ const renderProducts = (items) => {
             <div class="product-body">
                 <div class="product-name">${item.name}</div>
                 <div class="product-price-row">
-                    <div class="product-price">${formatPrice(item.price)} <span>/ ${item.unit}</span></div>
+                    <div class="product-price">${formatPrice(item.price)} <span>/ ${singularUnit(item.unit)}</span></div>
                 </div>
                 <div class="product-stock ${stockClass}">${stockText}</div>
                 <div class="product-actions">
