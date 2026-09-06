@@ -264,10 +264,10 @@ const requestPasswordReset = async (req, res) => {
     } catch (error) {
         console.error('Password reset request failed:', error);
         const isLocalRequest = ['localhost', '127.0.0.1'].includes(req.hostname);
-        res.status(500).json({
+        res.status(503).json({
             message: isLocalRequest
                 ? error.message
-                : 'Unable to process the password reset request.'
+                : 'Password reset email service is temporarily unavailable.'
         });
     }
 };
