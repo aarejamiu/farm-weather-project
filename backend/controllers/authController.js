@@ -253,7 +253,12 @@ const requestPasswordReset = async (req, res) => {
         res.json(response);
     } catch (error) {
         console.error('Password reset request failed:', error);
-        res.status(500).json({ message: 'Unable to process the password reset request.' });
+        const isLocalRequest = ['localhost', '127.0.0.1'].includes(req.hostname);
+        res.status(500).json({
+            message: isLocalRequest
+                ? error.message
+                : 'Unable to process the password reset request.'
+        });
     }
 };
 
