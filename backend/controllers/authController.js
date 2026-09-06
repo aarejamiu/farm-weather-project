@@ -116,6 +116,10 @@ const sendPasswordResetEmail = async (email, resetUrl, isLocalRequest) => {
     });
 };
 
+const hasSmtpConfiguration = () => Boolean(
+    process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS
+);
+
 const setAuthCookie = (res, token) => {
     res.cookie('accessToken', token, {
         httpOnly: true,
@@ -232,6 +236,12 @@ const logoutUser = (req, res) => {
 const requestPasswordReset = async (req, res) => {
     const email = normalizeEmail(req.body.email || '');
     const isLocalRequest = ['localhost', '127.0.0.1'].includes(req.hostname);
+
+    if (!isLocalRequest && !hasSmtpConfiguration()) {
+        return res.status(503).json({
+            message: 'Password reset email service is not configured on the server.'
+        });
+    }
 
     try {
         const user = await User.findOne({ email });
