@@ -7,6 +7,35 @@ const allowedOrigins = (process.env.FRONTEND_ORIGIN || '')
     .map(origin => origin.trim())
     .filter(Boolean);
 
+// Also accept the origin derived from FRONTEND_URL (password-reset / site URL).
+const frontendUrlOrigin = (() => {
+    try {
+        return process.env.FRONTEND_URL ? new URL(process.env.FRONTEND_URL).origin : null;
+    } catch {
+        return null;
+    }
+})();
+if (frontendUrlOrigin && !allowedOrigins.includes(frontendUrlOrigin)) {
+    allowedOrigins.push(frontendUrlOrigin);
+}
+
+const isLocalDevOrigin = (origin) =>
+    /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin);
+
+const isAllowedOrigin = (origin) => {
+    if (!origin) return true;
+    if (allowedOrigins.includes(origin)) return true;
+    if (isLocalDevOrigin(origin)) return true;
+    // Optional: allow any subdomain of a listed base, e.g. https://*.github.io
+    return allowedOrigins.some((allowed) => {
+        if (!allowed.includes('*')) return false;
+        const pattern = allowed
+            .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+            .replace(/\\\*/g, '.*');
+        return new RegExp(`^${pattern}$`, 'i').test(origin);
+    });
+};
+
 const authRoutes        = require('./routes/authroute');
 const weatherRoutes     = require('./routes/weatherRoutes');
 const dateRoutes        = require('./routes/dateRoutes');
@@ -23,24 +52,24 @@ const taskRoutes        = require('./routes/taskRoutes');
 
 app.use(cors({
     origin: (requestOrigin, callback) => {
-        // Reflect allowed origins explicitly so browsers accept credentialed responses.
-        if (!requestOrigin) {
+        // Never throw — a thrown error becomes a browser "Failed to fetch"
+        // which the login page shows as "Unable to connect to server."
+        if (isAllowedOrigin(requestOrigin)) {
             return callback(null, true);
         }
-        if (allowedOrigins.includes(requestOrigin)) {
-            return callback(null, true);
-        }
-        // Local Live Server / VS Code preview hosts during development
-        if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(requestOrigin)) {
-            return callback(null, true);
-        }
-        return callback(new Error('Origin is not allowed by CORS'));
+        console.warn(`CORS blocked origin: ${requestOrigin}`);
+        return callback(null, false);
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 app.use(express.json());
+
+// Cheap wake-up / connectivity check for mobile clients (Render cold starts).
+app.get('/api/health', (_req, res) => {
+    res.json({ ok: true, time: new Date().toISOString() });
+});
 
 app.use('/api/auth',          authRoutes);
 app.use('/api/weather',       weatherRoutes);
