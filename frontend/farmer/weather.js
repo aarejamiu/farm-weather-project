@@ -1,11 +1,5 @@
 const BASE = window.APP_CONFIG.apiBase;
 
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-
-if (!userData.id) window.local.href = '../login.html';
-
-if (userData.role === 'customer') window.location.href = '../customer/home.html';
-
 const authHeaders = {
     'Content-Type': 'application/json'
 };
@@ -151,9 +145,8 @@ const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','S
 
 const loadWeatherPage = async () => {
     try {
-        const profileRes = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
-        if (profileRes.status === 401) { window.location.href = '../login.html'; return; }
-        const user = await profileRes.json();
+        const user = await window.Auth.verify({ requiredRole: 'farmer' });
+        if (!user) return;
 
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
         document.getElementById('sidebarAvatar').textContent = initials;

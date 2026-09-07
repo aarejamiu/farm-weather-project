@@ -117,11 +117,11 @@ const renderProducts = () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
-        if (res.status === 401) { window.location.href = '../login.html'; return; }
-        const user = await res.json();
-        const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-        document.getElementById('navAvatar').textContent = initials;
+        const user = await window.Auth.verify({ requiredRole: 'customer' });
+        if (!user) return;
+        const initials = (user.username || 'C').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        const avatar = document.getElementById('navAvatar');
+        if (avatar) avatar.textContent = initials;
     } catch (e) { console.error(e); }
 };
 

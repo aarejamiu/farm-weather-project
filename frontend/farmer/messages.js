@@ -1,10 +1,5 @@
 const BASE = window.APP_CONFIG.apiBase;
 
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-if (!userData.id) window.location.href = '../login.html';
-
-if (userData.role === 'customer') window.location.href = '../customer/home.html';
-
 const authHeaders = { 'Content-Type': 'application/json' };
 
 let currentUserId  = null;
@@ -146,14 +141,14 @@ const loadInbox = async () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
-        if (res.status === 401) { window.location.href = '../login.html'; return; }
-        const user = await res.json();
-        currentUserId = user._id || user.id;
+        const user = await window.Auth.verify({ requiredRole: 'farmer' });
+        if (!user) return;
+        currentUserId = user.id || user._id;
         const ini  = initials(user.username);
         document.getElementById('topAvatar').textContent     = ini;
         document.getElementById('sidebarAvatar').textContent = ini;
         document.getElementById('sidebarName').textContent   = user.username;
+        return user;
     } catch (e) { console.error(e); }
 };
 

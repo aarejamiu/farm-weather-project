@@ -8,13 +8,8 @@ const splitName = name => { const parts = (name || '').trim().split(/\s+/); retu
 
 const loadSettings = async () => {
     try {
-        const response = await fetch(`${BASE}/profile`, { headers, credentials: 'include' });
-        if (response.status === 401) {
-            window.location.href = '../login.html';
-            return;
-        }
-        if (!response.ok) throw new Error('Unable to load settings');
-        const user = await response.json();
+        const user = await window.Auth.verify({ requiredRole: 'farmer' });
+        if (!user) return;
         const name = splitName(user.username);
         document.getElementById('firstName').value = name.first;
         document.getElementById('lastName').value = name.last;

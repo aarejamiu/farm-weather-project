@@ -32,7 +32,7 @@ form.addEventListener('submit', async (e) => {
         const data = await res.json();
 
         if (res.ok) {
-            localStorage.setItem('userData', JSON.stringify(data.user));
+            window.Auth.setSession(data.user, data.token);
 
             message.textContent = 'Registration successful! Redirecting...';
             message.style.color = '#2e7d32';

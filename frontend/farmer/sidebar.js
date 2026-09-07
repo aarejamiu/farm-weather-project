@@ -190,7 +190,7 @@ const SidebarComponent = {
             method: 'POST',
             credentials: 'include'
         }).finally(() => {
-            localStorage.removeItem('userData');
+            window.Auth.clearSession();
             window.location.href = '../login.html';
         });
     },

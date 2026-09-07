@@ -121,10 +121,15 @@ const hasSmtpConfiguration = () => Boolean(
 );
 
 const setAuthCookie = (res, token) => {
+    // Cross-origin frontends (e.g. static host → Render API) need SameSite=None; Secure.
+    // Prefer explicit CROSS_SITE_COOKIES, otherwise treat production as cross-site.
+    const crossSite = process.env.CROSS_SITE_COOKIES === 'true'
+        || process.env.NODE_ENV === 'production';
+
     res.cookie('accessToken', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: crossSite,
+        sameSite: crossSite ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: '/'
     });
@@ -172,6 +177,7 @@ const registerUser = async (req, res) => {
 
         res.status(201).json({
             message: 'User registered successfully',
+            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -213,8 +219,11 @@ const loginUser = async (req, res) => {
 
         setAuthCookie(res, token);
 
+        // Return token so the frontend can send Authorization: Bearer when
+        // httpOnly cookies are blocked (common for cross-origin setups).
         res.json({
             message: 'Login successful',
+            token,
             user: {
                 id: user._id,
                 username: user.username,
@@ -229,7 +238,14 @@ const loginUser = async (req, res) => {
 };
 
 const logoutUser = (req, res) => {
-    res.clearCookie('accessToken', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', path: '/' });
+    const crossSite = process.env.CROSS_SITE_COOKIES === 'true'
+        || process.env.NODE_ENV === 'production';
+    res.clearCookie('accessToken', {
+        httpOnly: true,
+        secure: crossSite,
+        sameSite: crossSite ? 'none' : 'lax',
+        path: '/'
+    });
     res.json({ message: 'Logged out successfully' });
 };
 

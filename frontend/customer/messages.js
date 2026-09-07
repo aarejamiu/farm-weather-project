@@ -1,9 +1,5 @@
 const BASE = window.APP_CONFIG.apiBase;
 
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-if (!userData.id) window.location.href = '../login.html';
-if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
-
 const authHeaders = { 'Content-Type': 'application/json' };
 
 let currentUserId = null;
@@ -16,15 +12,10 @@ const time = value => new Date(value).toLocaleTimeString('en-US', { hour: '2-dig
 const loadProfile = async () => {
     const avatar = document.getElementById('navAvatar');
     try {
-        const response = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
-        if (response.status === 401) {
-            window.location.href = '../login.html';
-            return;
-        }
-        if (!response.ok) return;
-        const profile = await response.json();
-        currentUserId = profile._id || profile.id;
-        avatar.textContent = initials(profile.username || 'Customer');
+        const profile = await window.Auth.verify({ requiredRole: 'customer' });
+        if (!profile) return;
+        currentUserId = profile.id || profile._id;
+        if (avatar) avatar.textContent = initials(profile.username || 'Customer');
     } catch (error) { console.error('Profile error:', error); }
 };
 const show = (messages = []) => {

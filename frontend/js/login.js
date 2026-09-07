@@ -80,7 +80,7 @@ if (loginForm) {
             const data = await res.json();
 
             if (res.ok) {
-                localStorage.setItem('userData', JSON.stringify(data.user));
+                window.Auth.setSession(data.user, data.token);
 
                 loginMessage.textContent = 'Login successful. Redirecting...';
                 loginMessage.style.color = '#2e7d32';

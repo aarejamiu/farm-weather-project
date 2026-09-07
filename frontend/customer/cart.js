@@ -1,10 +1,5 @@
 const formatPrice = (value) => '₦' + Number(value).toLocaleString('en-NG');
-const token = '';
 const BASE = window.APP_CONFIG.apiBase;
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-if (!userData.id) window.location.href = '../login.html';
-if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
-
 const authHeaders = { 'Content-Type': 'application/json' };
 
 let cart = [];
@@ -67,7 +62,8 @@ const startPayment = async () => {
     try {
         const response = await fetch(`${BASE}/payments/initialize`, {
             method: 'POST',
-            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            headers: authHeaders,
+            credentials: 'include',
             body: JSON.stringify({
                 items: cart.map(item => ({ productId: item.id, quantity: Number(item.quantity) })),
                 deliveryAddress: '',
@@ -117,5 +113,9 @@ document.getElementById('cartContent').addEventListener('click', (event) => {
     }
 });
 
-renderCart();
-loadRemoteCart();
+(async () => {
+    const user = await window.Auth.verify({ requiredRole: 'customer' });
+    if (!user) return;
+    renderCart();
+    loadRemoteCart();
+})();

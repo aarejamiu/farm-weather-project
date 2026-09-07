@@ -1,9 +1,5 @@
 const BASE = window.APP_CONFIG.apiBase;
 
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-if (!userData.id) window.location.href = '../login.html';
-if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
-
 const headers = { 'Content-Type': 'application/json' };
 let profile;
 
@@ -31,13 +27,11 @@ const showProfile = (user, orders) => {
 
 const load = async () => {
     try {
-        const [profileResponse, ordersResponse] = await Promise.all([
-            fetch(`${BASE}/profile`, { headers, credentials: 'include' }),
-            fetch(`${BASE}/orders/my`, { headers, credentials: 'include' })
-        ]);
-        if (profileResponse.status === 401) { window.location.href = '../login.html'; return; }
-        if (!profileResponse.ok || !ordersResponse.ok) throw new Error('Unable to load profile');
-        showProfile(await profileResponse.json(), await ordersResponse.json());
+        const user = await window.Auth.verify({ requiredRole: 'customer' });
+        if (!user) return;
+        const ordersResponse = await fetch(`${BASE}/orders/my`, { headers, credentials: 'include' });
+        if (!ordersResponse.ok) throw new Error('Unable to load profile');
+        showProfile(user, await ordersResponse.json());
     } catch (error) {
         document.getElementById('profileName').textContent = 'Unable to load profile';
         console.error('Profile error:', error);

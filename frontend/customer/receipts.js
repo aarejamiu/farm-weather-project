@@ -12,10 +12,10 @@ const getCartCount = async () => {
 
 const updateAvatar = async () => {
     try {
-        const response = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include'});
-        if (!response.ok) return;
-        const user = await response.json();
-        document.getElementById('navAvatar').textContent = user.username.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+        const user = await window.Auth.verify({ requiredRole: 'customer' });
+        if (!user) return;
+        const el = document.getElementById('navAvatar');
+        if (el) el.textContent = (user.username || 'C').split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
     } catch (error) { console.error('Profile error:', error); }
 };
 

@@ -63,9 +63,12 @@ const CustomerRouter = {
             }
         });
         logoutMenu.querySelector('button').addEventListener('click', async () => {
-            await fetch(`${window.APP_CONFIG.apiBase}/auth/logout`, { method: 'POST', credentials: 'include'});
-            localStorage.removeItem('userData');
-            window.location.href = '../login.html';
+            try {
+                await fetch(`${window.APP_CONFIG.apiBase}/auth/logout`, { method: 'POST', credentials: 'include' });
+            } finally {
+                window.Auth.clearSession();
+                window.location.href = '../login.html';
+            }
         });
         document.addEventListener('click', event => {
             if (!logoutMenu.hidden && !logoutMenu.contains(event.target) && event.target !== avatar) {

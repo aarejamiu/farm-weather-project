@@ -1,9 +1,4 @@
 const BASE = window.APP_CONFIG.apiBase;
-
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-if (!userData.id) window.location.href = '../login.html';
-if (userData.role === 'customer') window.location.href = '../customer/home.html';
-
 const authHeaders = { 'Content-Type': 'application/json' };
 
 let dashboardTasks = [];
@@ -265,12 +260,8 @@ const loadDashboardTasks = async () => {
 
 const loadDashboard = async () => {
     try {
-        const profileRes = await fetch(`${BASE}/profile`, {
-            headers: authHeaders,
-            credentials: 'include'
-        });
-        if (profileRes.status === 401) { window.location.href = '../login.html'; return; }
-        const user = await profileRes.json();
+        const user = await window.Auth.verify({ requiredRole: 'farmer' });
+        if (!user) return;
         renderProfile(user);
 
         const location = user.farmLocation || '';

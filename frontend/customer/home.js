@@ -1,8 +1,4 @@
 const BASE = window.APP_CONFIG.apiBase;
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-if (!userData.id) window.location.href = '../login.html';
-if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
-
 const authHeaders = { 'Content-Type': 'application/json' };
 const formatPrice = (n) => '₦' + Number(n).toLocaleString('en-NG');
 
@@ -104,10 +100,9 @@ const loadFeatured = () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include'});
-        if (res.status === 401) { window.location.href = '../login.html'; return; }
-        const user = await res.json();
-        const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        const user = await window.Auth.verify({ requiredRole: 'customer' });
+        if (!user) return;
+        const initials = (user.username || 'C').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
         const avatar   = document.getElementById('navAvatar');
         if (avatar) avatar.textContent = initials;
     } catch (e) { console.error(e); }

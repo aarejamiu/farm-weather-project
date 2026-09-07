@@ -1,9 +1,5 @@
 const BASE = window.APP_CONFIG.apiBase;
 
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-if (!userData.id) window.location.href = '../login.html';
-if (userData.role === 'customer') window.location.href = '../customer/home.html';
-
 const authHeaders = { 'Content-Type': 'application/json' };
 
 let inventory = [];
@@ -182,16 +178,18 @@ window.deleteItem = async (id) => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, {
-            headers: authHeaders,
-            credentials: 'include'
-        });
-        if (res.status === 401) { window.location.href = '../login.html'; return; }
-        const user = await res.json();
-        const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-        document.getElementById('topAvatar').textContent     = initials;
-        document.getElementById('sidebarAvatar').textContent = initials;
-        document.getElementById('sidebarName').textContent   = user.username;
+        const user = await window.Auth.verify({ requiredRole: 'farmer' });
+        if (!user) return;
+        const name = user.username || 'Farmer';
+        const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        const top = document.getElementById('topAvatar');
+        const side = document.getElementById('sidebarAvatar');
+        const sideName = document.getElementById('sidebarName');
+        if (top) top.textContent = initials;
+        if (side) side.textContent = initials;
+        if (sideName) sideName.textContent = name;
+        if (typeof currentUserId !== 'undefined') currentUserId = user.id || user._id;
+        return user;
     } catch (e) { console.error(e); }
 };
 
