@@ -23,12 +23,21 @@ const taskRoutes        = require('./routes/taskRoutes');
 
 app.use(cors({
     origin: (requestOrigin, callback) => {
-        if (!requestOrigin || allowedOrigins.includes(requestOrigin)) {
+        // Reflect allowed origins explicitly so browsers accept credentialed responses.
+        if (!requestOrigin) {
+            return callback(null, true);
+        }
+        if (allowedOrigins.includes(requestOrigin)) {
+            return callback(null, true);
+        }
+        // Local Live Server / VS Code preview hosts during development
+        if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(requestOrigin)) {
             return callback(null, true);
         }
         return callback(new Error('Origin is not allowed by CORS'));
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 app.use(express.json());

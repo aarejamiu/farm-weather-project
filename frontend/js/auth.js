@@ -32,6 +32,15 @@ form.addEventListener('submit', async (e) => {
         const data = await res.json();
 
         if (res.ok) {
+            if (!data.token) {
+                message.textContent = 'Register API is outdated (no token). Merge the auth fix to main and redeploy the backend on Render, then try again.';
+                message.style.color = '#ef4444';
+                btn.disabled = false;
+                btn.removeAttribute('aria-busy');
+                btn.innerHTML = 'Create account <span aria-hidden="true">→</span>';
+                return;
+            }
+
             window.Auth.setSession(data.user, data.token);
 
             message.textContent = 'Registration successful! Redirecting...';

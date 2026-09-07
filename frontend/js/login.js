@@ -80,6 +80,16 @@ if (loginForm) {
             const data = await res.json();
 
             if (res.ok) {
+                if (!data.token) {
+                    // Old backend still deployed — cookie-only auth fails cross-origin.
+                    loginMessage.textContent = 'Login API is outdated (no token). Merge the auth fix to main and redeploy the backend on Render, then try again.';
+                    loginMessage.style.color = '#ef4444';
+                    loginBtn.disabled = false;
+                    loginBtn.removeAttribute('aria-busy');
+                    loginBtn.innerHTML = 'Sign in <span aria-hidden="true">→</span>';
+                    return;
+                }
+
                 window.Auth.setSession(data.user, data.token);
 
                 loginMessage.textContent = 'Login successful. Redirecting...';
