@@ -5,8 +5,6 @@ if (!userData.id) window.location.href = '../login.html';
 
 if (userData.role === 'customer') window.location.href = '../customer/home.html';
 
-if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
-
 const authHeaders = { 'Content-Type': 'application/json' };
 
 let currentYear  = new Date().getFullYear();
@@ -18,7 +16,7 @@ const saveTaskToServer = async task => {
     const response = await fetch(`${BASE}/tasks`, {
         method: 'POST',
         headers: authHeaders,
-        credentials: 'include'
+        credentials: 'include',
         body: JSON.stringify(task)
     });
     if (!response.ok) throw new Error('Unable to save task');

@@ -40,7 +40,7 @@ const addToCart = async (id, name, price, unit) => {
         const response = await fetch(`${BASE}/cart/add`, {
             method: 'POST',
             headers: authHeaders,
-            credentials: 'include'
+            credentials: 'include',
             body: JSON.stringify({ productId: id, quantity: 1 })
         });
         if (!response.ok) throw new Error('Unable to sync cart');
@@ -104,7 +104,7 @@ const loadFeatured = () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders credentials: 'include'});
+        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include'});
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);

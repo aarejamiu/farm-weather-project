@@ -5,8 +5,6 @@ if (!userData.id) window.location.href = '../login.html';
 
 if (userData.role === 'customer') window.location.href = '../customer/home.html';
 
-if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
-
 const authHeaders = { 'Content-Type': 'application/json' };
 const formatCurrency = (n) => '₦' + Number(n).toLocaleString('en-NG', { minimumFractionDigits: 0 });
 

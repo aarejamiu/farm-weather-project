@@ -16,7 +16,7 @@ const time = value => new Date(value).toLocaleTimeString('en-US', { hour: '2-dig
 const loadProfile = async () => {
     const avatar = document.getElementById('navAvatar');
     try {
-        const response = await fetch(`${BASE}/profile`, { headers: authHeaders}, credentials: 'include'});
+        const response = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
         if (response.status === 401) {
             window.location.href = '../login.html';
             return;

@@ -184,9 +184,15 @@ const SidebarComponent = {
         };
     },
 
+    // ✅ FIXED: added missing semicolon after localStorage.removeItem('userData')
     logout() {
-        fetch(`${window.APP_CONFIG.apiBase}/auth/logout`, { method: 'POST', credentials: 'include'})
-            .finally(() => {localStorage.removeItem('userData') window.location.href = '../login.html'; });
+        fetch(`${window.APP_CONFIG.apiBase}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        }).finally(() => {
+            localStorage.removeItem('userData');
+            window.location.href = '../login.html';
+        });
     },
 
     initRouter() {

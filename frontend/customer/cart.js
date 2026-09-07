@@ -111,7 +111,7 @@ document.getElementById('cartContent').addEventListener('click', (event) => {
         fetch(`${BASE}/cart/item/${productId}`, {
             method: action === 'remove' || nextQuantity <= 0 ? 'DELETE' : 'PUT',
             headers: authHeaders,
-            credentials: 'include'
+            credentials: 'include',
             body: action === 'remove' || nextQuantity <= 0 ? undefined : JSON.stringify({ quantity: nextQuantity })
         }).catch(error => console.error('Cart update error:', error));
     }
