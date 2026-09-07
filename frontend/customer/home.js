@@ -1,8 +1,9 @@
-const token = '';
-
 const BASE = window.APP_CONFIG.apiBase;
-const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
 
+const authHeaders = { 'Content-Type': 'application/json' };
 const formatPrice = (n) => '₦' + Number(n).toLocaleString('en-NG');
 
 const labels = ['Bestseller', 'Fresh', 'Popular', 'New'];
@@ -39,6 +40,7 @@ const addToCart = async (id, name, price, unit) => {
         const response = await fetch(`${BASE}/cart/add`, {
             method: 'POST',
             headers: authHeaders,
+            credentials: 'include'
             body: JSON.stringify({ productId: id, quantity: 1 })
         });
         if (!response.ok) throw new Error('Unable to sync cart');
@@ -102,7 +104,7 @@ const loadFeatured = () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders credentials: 'include'});
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);

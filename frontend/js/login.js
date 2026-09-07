@@ -1,46 +1,31 @@
-// const loginForm = document.getElementById('loginForm');
+// const loginForm    = document.getElementById('loginForm');
 // const loginMessage = document.getElementById('message');
 
 // if (loginForm) {
-
 //     loginForm.addEventListener('submit', async (e) => {
-
 //         e.preventDefault();
 
-//         const email = loginForm.email.value.trim();
+//         const email    = loginForm.email.value.trim();
 //         const password = loginForm.password.value;
-
 //         const loginBtn = loginForm.querySelector('button');
 
-//         // Loading state
 //         loginBtn.disabled = true;
-//         loginBtn.textContent = 'Logging in...';
-
-//         loginMessage.textContent = 'Logging in...';
-//         loginMessage.style.color = '#4A90E2';
+//         loginBtn.setAttribute('aria-busy', 'true');
+//         loginBtn.innerHTML = '<span class="button-loading"><span class="auth-spinner" aria-hidden="true"></span>Signing in...</span>';
+//         loginMessage.textContent = '';
 
 //         try {
-
-//             const res = await fetch(
-//                 `${window.APP_CONFIG.apiBase}/auth/login`,
-//                 {
-//                     method: 'POST',
-//                     headers: {
-//                         'Content-Type': 'application/json'
-//                     },
-//                     body: JSON.stringify({ email, password })
-//                 }
-//             );
+//             const res  = await fetch(`${window.APP_CONFIG.apiBase}/auth/login`, {
+//                 method: 'POST',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify({ email, password })
+//             });
 
 //             const data = await res.json();
 
 //             if (res.ok) {
-
-//                 loginMessage.textContent = 'Login successful!';
+//                 loginMessage.textContent = 'Login successful. Redirecting...';
 //                 loginMessage.style.color = '#2e7d32';
-
-
-//                 loginBtn.textContent = 'Success ✓';
 
 //                 setTimeout(() => {
 //                     if (data.user.role === 'farmer') {
@@ -48,30 +33,22 @@
 //                     } else {
 //                         window.location.href = 'customer/home.html';
 //                     }
-//                 }, 1000);
+//                 }, 800);
 
 //             } else {
-
-//                 loginMessage.textContent =
-//                     data.message || 'Incorrect email or password.';
-
-//                 loginMessage.style.color = '#ff9800';
-
-//                 loginBtn.disabled = false;
-//                 loginBtn.textContent = 'Login';
+//                 loginMessage.textContent = data.message || 'Incorrect email or password.';
+//                 loginMessage.style.color = '#ef4444';
+//                 loginBtn.disabled        = false;
+//                 loginBtn.removeAttribute('aria-busy');
+//                 loginBtn.innerHTML = 'Sign in <span aria-hidden="true">→</span>';
 //             }
 
 //         } catch (error) {
-
-//             console.error('Error:', error);
-
-//             loginMessage.textContent =
-//                 'Unable to connect to server.';
-
-//             loginMessage.style.color = '#ff9800';
-
-//             loginBtn.disabled = false;
-//             loginBtn.textContent = 'Login';
+//             loginMessage.textContent = 'Unable to connect to server.';
+//             loginMessage.style.color = '#ef4444';
+//             loginBtn.disabled        = false;
+//             loginBtn.removeAttribute('aria-busy');
+//             loginBtn.innerHTML = 'Sign in <span aria-hidden="true">→</span>';
 //         }
 //     });
 // }
@@ -93,15 +70,18 @@ if (loginForm) {
         loginMessage.textContent = '';
 
         try {
-            const res  = await fetch(`${window.APP_CONFIG.apiBase}/auth/login`, {
+            const res = await fetch(`${window.APP_CONFIG.apiBase}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ email, password })
             });
 
             const data = await res.json();
 
             if (res.ok) {
+                localStorage.setItem('userData', JSON.stringify(data.user));
+
                 loginMessage.textContent = 'Login successful. Redirecting...';
                 loginMessage.style.color = '#2e7d32';
 

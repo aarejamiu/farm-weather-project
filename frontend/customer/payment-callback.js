@@ -1,4 +1,3 @@
-const token = '';
 const API_HOST = window.APP_CONFIG.apiHost;
 
 const title = document.getElementById('paymentTitle');
@@ -13,6 +12,7 @@ const verify = async () => {
     const response = await fetch(`${API_HOST}/api/payments/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ reference })
     });
     const data = await response.json();

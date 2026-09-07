@@ -1,6 +1,10 @@
-const token = '';
 const BASE = window.APP_CONFIG.apiBase;
-const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
+
+const headers = { 'Content-Type': 'application/json' };
 let profile;
 
 const initials = name => name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
@@ -28,8 +32,8 @@ const showProfile = (user, orders) => {
 const load = async () => {
     try {
         const [profileResponse, ordersResponse] = await Promise.all([
-            fetch(`${BASE}/profile`, { headers }),
-            fetch(`${BASE}/orders/my`, { headers })
+            fetch(`${BASE}/profile`, { headers, credentials: 'include' }),
+            fetch(`${BASE}/orders/my`, { headers, credentials: 'include' })
         ]);
         if (profileResponse.status === 401) { window.location.href = '../login.html'; return; }
         if (!profileResponse.ok || !ordersResponse.ok) throw new Error('Unable to load profile');
@@ -46,10 +50,10 @@ document.getElementById('profileForm').addEventListener('submit', async event =>
     const first = document.getElementById('firstName').value.trim();
     const last = document.getElementById('lastName').value.trim();
     try {
-        const response = await fetch(`${BASE}/profile`, { method: 'PUT', headers, body: JSON.stringify({ username: `${first} ${last}`.trim(), email: document.getElementById('email').value.trim(), phone: document.getElementById('phone').value.trim() }) });
+        const response = await fetch(`${BASE}/profile`, { method: 'PUT', headers, credentials: 'include', body: JSON.stringify({ username: `${first} ${last}`.trim(), email: document.getElementById('email').value.trim(), phone: document.getElementById('phone').value.trim() }) });
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Could not save changes');
-        showProfile(data.user, await (await fetch(`${BASE}/orders/my`, { headers })).json());
+        showProfile(data.user, await (await fetch(`${BASE}/orders/my`, { headers, credentials: 'include' })).json());
         message.textContent = 'Saved';
     } catch (error) { message.textContent = error.message; }
 });

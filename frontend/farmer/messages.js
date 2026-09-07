@@ -1,7 +1,12 @@
-const token    = '';
-
-
 const BASE = window.APP_CONFIG.apiBase;
+
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+
+if (userData.role === 'customer') window.location.href = '../customer/home.html';
+
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
+
 const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
 
 let currentUserId  = null;
@@ -23,7 +28,7 @@ const formatInboxTime = (d) => {
 
 const updateUnreadBadge = async () => {
     try {
-        const res = await fetch(`${BASE}/messages/unread-count`, { headers: authHeaders });
+        const res = await fetch(`${BASE}/messages/unread-count`, { headers: authHeaders, credentials: 'include' });
         if (!res.ok) return;
         const { unreadCount } = await res.json();
         const badge = document.getElementById('messagesBadge');
@@ -104,7 +109,7 @@ window.openThread = async (userId, name) => {
 
 const loadThread = async (userId) => {
     try {
-        const res      = await fetch(`${BASE}/messages/${userId}`, { headers: authHeaders });
+        const res      = await fetch(`${BASE}/messages/${userId}`, { headers: authHeaders, credentials: 'include' });
         const messages = await res.json();
         currentThread  = messages;
         renderMessages(messages);
@@ -123,6 +128,7 @@ const sendMessage = async () => {
         const res = await fetch(`${BASE}/messages`, {
             method: 'POST',
             headers: authHeaders,
+            credentials: 'include',
             body: JSON.stringify({ receiverId: currentUserId, content })
         });
         if (!res.ok) throw new Error('Send failed');
@@ -133,7 +139,7 @@ const sendMessage = async () => {
 
 const loadInbox = async () => {
     try {
-        const res     = await fetch(`${BASE}/messages/inbox`, { headers: authHeaders });
+        const res     = await fetch(`${BASE}/messages/inbox`, { headers: authHeaders, credentials: 'include' });
         const threads = await res.json();
         renderInbox(threads);
         await updateUnreadBadge();
@@ -142,7 +148,7 @@ const loadInbox = async () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         currentUserId = user._id || user.id;

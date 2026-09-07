@@ -1,9 +1,13 @@
-const token    = '';
-
-
 const BASE = window.APP_CONFIG.apiBase;
-const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
 
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+
+if (userData.role === 'customer') window.location.href = '../customer/home.html';
+
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
+
+const authHeaders = { 'Content-Type': 'application/json' };
 const formatCurrency = (n) => '₦' + Number(n).toLocaleString('en-NG', { minimumFractionDigits: 0 });
 
 const now       = new Date();
@@ -208,7 +212,10 @@ const renderDonutChart = (topProducts) => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/profile`, { 
+            headers: authHeaders,
+            credentials: 'include'
+        });
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         const ini  = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -221,10 +228,10 @@ const loadProfile = async () => {
 const init = async () => {
     try {
         const [statsRes, monthlyRes, topRes, ordersRes] = await Promise.all([
-            fetch(`${BASE}/analytics/stats`,        { headers: authHeaders }),
-            fetch(`${BASE}/analytics/monthly`,      { headers: authHeaders }),
-            fetch(`${BASE}/analytics/top-products`, { headers: authHeaders }),
-            fetch(`${BASE}/orders`,                 { headers: authHeaders })
+            fetch(`${BASE}/analytics/stats`,        { headers: authHeaders, credentials: 'include' }),
+            fetch(`${BASE}/analytics/monthly`,      { headers: authHeaders, credentials: 'include' }),
+            fetch(`${BASE}/analytics/top-products`, { headers: authHeaders, credentials: 'include' }),
+            fetch(`${BASE}/orders`,                 { headers: authHeaders, credentials: 'include' })
         ]);
 
         const [stats, monthly, topProducts, orders] = await Promise.all([

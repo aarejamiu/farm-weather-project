@@ -1,8 +1,13 @@
-const token = '';
-
-
 const BASE = window.APP_CONFIG.apiBase;
-const authHeaders = { 'Authorization': `Bearer ${token}` };
+
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+
+if (userData.role === 'customer') window.location.href = '../customer/home.html';
+
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
+
+const authHeaders = { 'Content-Type': 'application/json' };
 
 let currentYear  = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
@@ -12,7 +17,8 @@ let selectedTask = null;
 const saveTaskToServer = async task => {
     const response = await fetch(`${BASE}/tasks`, {
         method: 'POST',
-        headers: { ...authHeaders, 'Content-Type': 'application/json' },
+        headers: authHeaders,
+        credentials: 'include'
         body: JSON.stringify(task)
     });
     if (!response.ok) throw new Error('Unable to save task');
@@ -22,7 +28,8 @@ const saveTaskToServer = async task => {
 const updateTaskOnServer = async task => {
     const response = await fetch(`${BASE}/tasks/${task.id}`, {
         method: 'PUT',
-        headers: { ...authHeaders, 'Content-Type': 'application/json' },
+        headers: authHeaders,
+        credentials: 'include',
         body: JSON.stringify(task)
     });
     if (!response.ok) throw new Error('Unable to update task');
@@ -138,7 +145,7 @@ const saveTask = async () => {
 const deleteTask = async () => {
     if (!selectedTask) return;
     try {
-        const response = await fetch(`${BASE}/tasks/${selectedTask.id}`, { method: 'DELETE', headers: authHeaders });
+        const response = await fetch(`${BASE}/tasks/${selectedTask.id}`, { method: 'DELETE', headers: authHeaders, credentials: 'include' });
         if (!response.ok) throw new Error('Unable to delete task');
         tasks = tasks.filter(t => t.id !== selectedTask.id);
         closeDetailModal();
@@ -150,7 +157,7 @@ const deleteTask = async () => {
 
 const loadTasks = async () => {
     try {
-        const response = await fetch(`${BASE}/tasks`, { headers: authHeaders });
+        const response = await fetch(`${BASE}/tasks`, { headers: authHeaders, credentials: 'include' });
         if (!response.ok) throw new Error('Unable to load tasks');
         tasks = (await response.json()).map(task => ({ ...task, id: task._id }));
         renderCalendar();
@@ -161,7 +168,7 @@ const loadTasks = async () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);

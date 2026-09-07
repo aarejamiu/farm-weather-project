@@ -1,7 +1,12 @@
-const token    = '';
-
-
 const BASE = window.APP_CONFIG.apiBase;
+
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+
+if (userData.role === 'customer') window.location.href = '../customer/home.html';
+
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
+
 const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
 
 const formatCurrency = (n) => '₦' + Number(n).toLocaleString('en-NG', { minimumFractionDigits: 2 });
@@ -126,6 +131,7 @@ const updateStatus = async (status) => {
         const res = await fetch(`${BASE}/orders/${currentOrder._id}/status`, {
             method: 'PUT',
             headers: authHeaders,
+            credentials: 'include',
             body: JSON.stringify({ status })
         });
         if (!res.ok) throw new Error('Update failed');
@@ -147,7 +153,7 @@ const updateStatus = async (status) => {
 
 const loadOrders = async () => {
     try {
-        const res  = await fetch(`${BASE}/orders`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/orders`, { headers: authHeaders, credentials: 'include' });
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         allOrders  = await res.json();
         renderStats();
@@ -161,7 +167,7 @@ const loadOrders = async () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
         const user = await res.json();
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
         document.getElementById('topAvatar').textContent     = initials;

@@ -1,6 +1,5 @@
-const token = '';
 const BASE = window.APP_CONFIG.apiBase;
-const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+const headers = {  'Content-Type': 'application/json' };
 
 const initials = name => (name || 'Farmer').split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
 const message = document.getElementById('settingsMessage');
@@ -9,7 +8,7 @@ const splitName = name => { const parts = (name || '').trim().split(/\s+/); retu
 
 const loadSettings = async () => {
     try {
-        const response = await fetch(`${BASE}/profile`, { headers });
+        const response = await fetch(`${BASE}/profile`, { headers, credentials: 'include' });
         if (response.status === 401) {
             window.location.href = '../login.html';
             return;
@@ -44,8 +43,8 @@ document.getElementById('profileForm').addEventListener('submit', async event =>
     profileMessage.textContent = 'Saving...';
     try {
         const [profileResponse, addressResponse] = await Promise.all([
-            fetch(`${BASE}/profile`, { method: 'PUT', headers, body: JSON.stringify(profile) }),
-            fetch(`${BASE}/profile/address`, { method: 'PUT', headers, body: JSON.stringify({ address }) })
+            fetch(`${BASE}/profile`, { method: 'PUT', headers, credentials: 'include', body: JSON.stringify(profile) }),
+            fetch(`${BASE}/profile/address`, { method: 'PUT', headers, credentials: 'include', body: JSON.stringify({ address }) })
         ]);
         const profileData = await profileResponse.json();
         const addressData = await addressResponse.json();
@@ -74,6 +73,7 @@ document.getElementById('locationForm').addEventListener('submit', async event =
         const response = await fetch(`${BASE}/profile/location`, {
             method: 'PUT',
             headers,
+            credentials: 'include',
             body: JSON.stringify({ farmLocation })
         });
         const data = await response.json();

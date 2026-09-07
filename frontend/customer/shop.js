@@ -1,8 +1,6 @@
-const token    = '';
-
-
 const BASE = window.APP_CONFIG.apiBase;
-const authHeaders = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+const authHeaders = { 'Content-Type': 'application/json' };
 
 const formatPrice = (n) => '₦' + Number(n).toLocaleString('en-NG');
 
@@ -33,6 +31,7 @@ const addToCart = async (id, name, price, unit, btn) => {
         const response = await fetch(`${BASE}/cart/add`, {
             method: 'POST',
             headers: authHeaders,
+            credentials: 'include',
             body: JSON.stringify({ productId: id, quantity: 1 })
         });
         if (!response.ok) throw new Error('Unable to sync cart');
@@ -118,7 +117,7 @@ const renderProducts = () => {
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -159,7 +158,7 @@ document.getElementById('searchInput').addEventListener('input', renderProducts)
 updateCartBadge();
 loadProfile();
 loadProducts();
-fetch(`${BASE}/cart`, { headers: authHeaders })
+fetch(`${BASE}/cart`, { headers: authHeaders, credentials: 'include' })
     .then(response => response.json())
     .then(data => {
         cart = (data.items || []).filter(item => item.product).map(item => ({ id: item.product._id, quantity: item.quantity }));

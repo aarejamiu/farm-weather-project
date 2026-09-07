@@ -1,9 +1,12 @@
-const token = '';
-
 const BASE = window.APP_CONFIG.apiBase;
 
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+if (!userData.id) window.local.href = '../login.html';
+
+if (userData.role === 'customer') window.location.href = '../customer/home.html';
+
 const authHeaders = {
-    'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
 };
 
@@ -148,7 +151,7 @@ const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','S
 
 const loadWeatherPage = async () => {
     try {
-        const profileRes = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const profileRes = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
         if (profileRes.status === 401) { window.location.href = '../login.html'; return; }
         const user = await profileRes.json();
 

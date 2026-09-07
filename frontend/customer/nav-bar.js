@@ -63,7 +63,8 @@ const CustomerRouter = {
             }
         });
         logoutMenu.querySelector('button').addEventListener('click', async () => {
-            await fetch(`${window.APP_CONFIG.apiBase}/auth/logout`, { method: 'POST' });
+            await fetch(`${window.APP_CONFIG.apiBase}/auth/logout`, { method: 'POST', credentials: 'include'});
+            localStorage.removeItem('userData');
             window.location.href = '../login.html';
         });
         document.addEventListener('click', event => {

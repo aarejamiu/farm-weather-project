@@ -1,13 +1,13 @@
-const token = '';
-
-
 const BASE = window.APP_CONFIG.apiBase;
-const authHeaders = { 'Authorization': `Bearer ${token}` };
+
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+if (userData.role === 'customer') window.location.href = '../customer/home.html';
+
+const authHeaders = { 'Content-Type': 'application/json' };
 
 let inventory = [];
 let editingId = null;
-
-const saveInventory = () => {};
 
 const getStatus = (current, minimum, maximum) => {
     const pct = maximum > 0 ? (current / maximum) * 100 : (current > 0 ? 100 : 0);
@@ -113,7 +113,6 @@ const saveItem = async () => {
         inventory.push({ id: Date.now().toString(), ...itemData });
     }
 
-    saveInventory();
     closeModal();
     renderTable();
 
@@ -124,7 +123,8 @@ const saveItem = async () => {
     try {
         const res = await fetch(endpoint, {
             method: isExistingApiProduct ? 'PUT' : 'POST',
-            headers: { ...authHeaders, 'Content-Type': 'application/json' },
+            headers: authHeaders,
+            credentials: 'include',
             body: JSON.stringify({
                 name, category, unit, price,
                 quantity: current,
@@ -137,7 +137,6 @@ const saveItem = async () => {
         const data = await res.json();
         if (!isExistingApiProduct && data.product?._id) {
             savedItem.id = data.product._id;
-            saveInventory();
         }
     } catch (error) {
         console.error('Unable to sync product with the server:', error);
@@ -167,7 +166,8 @@ window.deleteItem = async (id) => {
         try {
             const response = await fetch(`${BASE}/products/${id}`, {
                 method: 'DELETE',
-                headers: authHeaders
+                headers: authHeaders,
+                credentials: 'include'
             });
             if (!response.ok) throw new Error(`Product deletion failed: ${response.status}`);
         } catch (error) {
@@ -177,13 +177,15 @@ window.deleteItem = async (id) => {
     }
 
     inventory = inventory.filter(i => i.id !== id);
-    saveInventory();
     renderTable();
 };
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/profile`, {
+            headers: authHeaders,
+            credentials: 'include'
+        });
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -193,57 +195,27 @@ const loadProfile = async () => {
     } catch (e) { console.error(e); }
 };
 
-const syncExistingInventory = async () => {
-    const unsyncedItems = inventory.filter(item => !/^[a-f\d]{24}$/i.test(item.id));
-
-    for (const item of unsyncedItems) {
-        try {
-            const res = await fetch(`${BASE}/products`, {
-                method: 'POST',
-                headers: { ...authHeaders, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: item.name,
-                    category: item.category,
-                    unit: item.unit,
-                    price: item.price,
-                    quantity: item.current,
-                    available: item.active !== false,
-                    lowStockThreshold: item.minimum
-                })
-            });
-            if (!res.ok) throw new Error(`Product sync failed: ${res.status}`);
-
-            const data = await res.json();
-            if (data.product?._id) item.id = data.product._id;
-        } catch (error) {
-            console.error('Unable to sync existing inventory:', error);
-            break;
-        }
-    }
-
-    saveInventory();
-};
-
 const loadInventory = async () => {
     try {
-        await syncExistingInventory();
-        const response = await fetch(`${BASE}/products`, { headers: authHeaders });
+        const response = await fetch(`${BASE}/products`, {
+            headers: authHeaders,
+            credentials: 'include'
+        });
         if (!response.ok) throw new Error(`Inventory request failed: ${response.status}`);
         const products = await response.json();
 
         if (products.length) {
             inventory = products.map(product => ({
-                id: product._id,
-                name: product.name,
+                id:       product._id,
+                name:     product.name,
                 category: product.category,
-                unit: product.unit || 'unit',
-                current: product.quantity,
-                minimum: product.lowStockThreshold || 0,
-                maximum: product.maximum || product.quantity,
-                price: product.price,
-                active: product.available !== false
+                unit:     product.unit || 'unit',
+                current:  product.quantity,
+                minimum:  product.lowStockThreshold || 0,
+                maximum:  product.maximum || product.quantity,
+                price:    product.price,
+                active:   product.available !== false
             }));
-            saveInventory();
         }
         renderTable();
     } catch (error) {

@@ -1,17 +1,18 @@
-const token = '';
 const BASE = window.APP_CONFIG.apiBase;
+
+const authHeaders = { 'Content-Type': 'application/json' };
 
 const formatPrice = value => '₦' + Number(value || 0).toLocaleString('en-NG', { minimumFractionDigits: 2 });
 const formatDate = value => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const getCartCount = async () => {
-    const response = await fetch(`${BASE}/cart`, { headers: { Authorization: `Bearer ${token}` } });
+    const response = await fetch(`${BASE}/cart`, { headers:  authHeaders, credentials: 'include'});
     const data = await response.json();
     return (data.items || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
 };
 
 const updateAvatar = async () => {
     try {
-        const response = await fetch(`${BASE}/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include'});
         if (!response.ok) return;
         const user = await response.json();
         document.getElementById('navAvatar').textContent = user.username.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
@@ -69,7 +70,7 @@ const renderReceipts = orders => {
 
 const loadReceipts = async () => {
     try {
-        const response = await fetch(`${BASE}/orders/my`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await fetch(`${BASE}/orders/my`, { headers: authHeaders, credentials: 'include' });
         if (!response.ok) throw new Error('Unable to load receipts');
         renderReceipts(await response.json());
     } catch (error) {

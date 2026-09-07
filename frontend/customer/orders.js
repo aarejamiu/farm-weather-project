@@ -1,6 +1,10 @@
 const BASE = window.APP_CONFIG.apiBase;
-const token = '';
 
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
+
+const authHeaders = { 'Content-Type': 'application/json' };
 
 const formatPrice = value => '₦' + Number(value || 0).toLocaleString('en-NG');
 const formatDate = value => new Date(value).toLocaleDateString('en-US', {
@@ -52,7 +56,7 @@ const renderOrders = orders => {
 
 const loadProfile = async () => {
     try {
-        const response = await fetch(`${BASE}/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await fetch(`${BASE}/profile`, { headers: authHeaders, credentials: 'include' });
         if (!response.ok) return;
         const user = await response.json();
         document.getElementById('navAvatar').textContent = user.username.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
@@ -64,7 +68,7 @@ const loadProfile = async () => {
 const loadOrders = async () => {
     const content = document.getElementById('ordersContent');
     try {
-        const response = await fetch(`${BASE}/orders/my`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await fetch(`${BASE}/orders/my`, { headers: authHeaders, credentials: 'include' });
         if (response.status === 401) {
             window.location.href = '../login.html';
             return;

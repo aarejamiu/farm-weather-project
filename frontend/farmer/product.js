@@ -1,12 +1,13 @@
-const token = '';
-
-
 const BASE = window.APP_CONFIG.apiBase;
-const authHeaders = { 'Authorization': `Bearer ${token}` };
 
-let inventory  = [];
-let currentId  = null;
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+if (userData.role === 'customer') window.location.href = '../customer/home.html';
 
+const authHeaders = { 'Content-Type': 'application/json' };
+
+let inventory = [];
+let currentId = null;
 
 const getStatus = (current, minimum, active) => {
     if (active === false) return 'inactive';
@@ -33,9 +34,9 @@ const renderProducts = (items) => {
     }
 
     grid.innerHTML = items.map(item => {
-        const status   = getStatus(item.current, item.minimum);
-        const imgSrc   = item.image || '';
-        const imgHTML  = imgSrc
+        const status  = getStatus(item.current, item.minimum, item.active);
+        const imgSrc  = item.image || '';
+        const imgHTML = imgSrc
             ? `<img class="product-img" src="${imgSrc}" alt="${item.name}">`
             : `<div class="product-img-placeholder" onclick="openImageModal('${item.id}', '${item.name}')">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -70,13 +71,14 @@ const renderProducts = (items) => {
             </div>
         </div>`;
     }).join('');
+
     window.toggleProduct = (id) => {
         const idx = inventory.findIndex(i => i.id === id);
         if (idx === -1) return;
         inventory[idx].active = !inventory[idx].active;
         filterProducts();
         syncProduct(inventory[idx]);
-    }
+    };
 };
 
 const filterProducts = () => {
@@ -90,8 +92,11 @@ const filterProducts = () => {
 window.deleteProduct = (id) => {
     if (!confirm('Remove this product from the shop? It will also be deleted from inventory.')) return;
     inventory = inventory.filter(i => i.id !== id);
-    fetch(`${BASE}/products/${id}`, { method: 'DELETE', headers: authHeaders })
-        .catch(error => console.error('Product delete error:', error));
+    fetch(`${BASE}/products/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders,
+        credentials: 'include'
+    }).catch(error => console.error('Product delete error:', error));
     filterProducts();
 };
 
@@ -102,7 +107,8 @@ const syncProduct = async (item) => {
     try {
         const res = await fetch(endpoint, {
             method: isExistingApiProduct ? 'PUT' : 'POST',
-            headers: { ...authHeaders, 'Content-Type': 'application/json' },
+            headers: authHeaders,
+            credentials: 'include',
             body: JSON.stringify({
                 name: item.name,
                 category: item.category,
@@ -125,31 +131,27 @@ const syncProduct = async (item) => {
     }
 };
 
-const syncInventory = async () => {
-    for (const item of inventory) {
-        await syncProduct(item);
-    }
-};
-
 const loadProducts = async () => {
     try {
-        await syncInventory();
-        const response = await fetch(`${BASE}/products`, { headers: authHeaders });
+        const response = await fetch(`${BASE}/products`, {
+            headers: authHeaders,
+            credentials: 'include'
+        });
         if (!response.ok) throw new Error(`Products request failed: ${response.status}`);
         const products = await response.json();
 
         if (products.length) {
             inventory = products.map(product => ({
-                id: product._id,
-                name: product.name,
+                id:       product._id,
+                name:     product.name,
                 category: product.category,
-                unit: product.unit || 'unit',
-                current: product.quantity,
-                minimum: product.lowStockThreshold || 0,
-                maximum: product.maximum || product.quantity,
-                price: product.price,
-                active: product.available !== false,
-                image: product.image || ''
+                unit:     product.unit || 'unit',
+                current:  product.quantity,
+                minimum:  product.lowStockThreshold || 0,
+                maximum:  product.maximum || product.quantity,
+                price:    product.price,
+                active:   product.available !== false,
+                image:    product.image || ''
             }));
         }
         filterProducts();
@@ -210,8 +212,10 @@ document.getElementById('saveImageBtn').addEventListener('click', () => {
 
     if (finalSrc) {
         const item = inventory.find(product => product.id === currentId);
-        if (item) item.image = finalSrc;
-        if (item) syncProduct(item);
+        if (item) {
+            item.image = finalSrc;
+            syncProduct(item);
+        }
     }
 
     closeImageModal();
@@ -227,7 +231,10 @@ document.getElementById('searchInput').addEventListener('input', filterProducts)
 
 const loadProfile = async () => {
     try {
-        const res  = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const res  = await fetch(`${BASE}/profile`, {
+            headers: authHeaders,
+            credentials: 'include'
+        });
         if (res.status === 401) { window.location.href = '../login.html'; return; }
         const user = await res.json();
         const initials = user.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);

@@ -1,14 +1,19 @@
 const formatPrice = (value) => '₦' + Number(value).toLocaleString('en-NG');
 const token = '';
 const BASE = window.APP_CONFIG.apiBase;
-const authHeaders = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
+
+const authHeaders = { 'Content-Type': 'application/json' };
+
 let cart = [];
 const getCart = () => cart;
 const saveCart = (nextCart) => { cart = nextCart; };
 
 const loadRemoteCart = async () => {
     try {
-        const response = await fetch(`${BASE}/cart`, { headers: authHeaders });
+        const response = await fetch(`${BASE}/cart`, { headers: authHeaders, credentials: 'include'});
         if (!response.ok) throw new Error('Unable to load cart');
         const data = await response.json();
         const remoteCart = (data.items || []).filter(item => item.product).map(item => ({
@@ -106,6 +111,7 @@ document.getElementById('cartContent').addEventListener('click', (event) => {
         fetch(`${BASE}/cart/item/${productId}`, {
             method: action === 'remove' || nextQuantity <= 0 ? 'DELETE' : 'PUT',
             headers: authHeaders,
+            credentials: 'include'
             body: action === 'remove' || nextQuantity <= 0 ? undefined : JSON.stringify({ quantity: nextQuantity })
         }).catch(error => console.error('Cart update error:', error));
     }

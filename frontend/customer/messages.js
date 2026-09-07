@@ -1,5 +1,11 @@
-const token = '';
 const BASE = window.APP_CONFIG.apiBase;
+
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+if (userData.role === 'farmer') window.location.href = '../farmer/dashboard.html';
+
+const authHeaders = { 'Content-Type': 'application/json' };
+
 let currentUserId = null;
 let farmerId = null;
 let pollTimer;
@@ -10,7 +16,7 @@ const time = value => new Date(value).toLocaleTimeString('en-US', { hour: '2-dig
 const loadProfile = async () => {
     const avatar = document.getElementById('navAvatar');
     try {
-        const response = await fetch(`${BASE}/profile`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await fetch(`${BASE}/profile`, { headers: authHeaders}, credentials: 'include'});
         if (response.status === 401) {
             window.location.href = '../login.html';
             return;
@@ -33,14 +39,14 @@ const show = (messages = []) => {
 const loadThread = async () => {
     if (!farmerId) return;
     try {
-        const response = await fetch(`${BASE}/messages/${farmerId}`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await fetch(`${BASE}/messages/${farmerId}`, { headers: authHeaders, credentials: 'include'});
         if (response.ok) show(await response.json());
     } catch (error) { console.error('Conversation error:', error); }
 };
 
 const load = async () => {
     try {
-        const response = await fetch(`${BASE}/messages/farmer`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await fetch(`${BASE}/messages/farmer`, { headers: authHeaders, credentials: 'include'});
         if (!response.ok) throw new Error('Farm contact unavailable');
         const farmer = await response.json();
         farmerId = farmer._id;
@@ -60,7 +66,7 @@ document.getElementById('messageForm').addEventListener('submit', async event =>
     if (!content || !farmerId) return;
     input.value = '';
     try {
-        const response = await fetch(`${BASE}/messages`, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ receiverId: farmerId, content }) });
+        const response = await fetch(`${BASE}/messages`, { method: 'POST', headers: authHeaders, credentials: 'include', body: JSON.stringify({ receiverId: farmerId, content }) });
         if (!response.ok) throw new Error('Message could not be sent');
         await loadThread();
     } catch (error) { input.value = content; console.error('Send error:', error); }

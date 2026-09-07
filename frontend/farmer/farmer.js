@@ -1,12 +1,10 @@
-const token = '';
-
-
 const BASE = window.APP_CONFIG.apiBase;
 
-const authHeaders = {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-};
+const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+if (!userData.id) window.location.href = '../login.html';
+if (userData.role === 'customer') window.location.href = '../customer/home.html';
+
+const authHeaders = { 'Content-Type': 'application/json' };
 
 let dashboardTasks = [];
 
@@ -139,6 +137,7 @@ const loadAIRecommendations = async (context) => {
         const response = await fetch(`${BASE}/ai/ask`, {
             method: 'POST',
             headers: authHeaders,
+            credentials: 'include',
             body: JSON.stringify({
                 question: 'Give exactly three concise, practical recommendations for today. Put each recommendation on its own line and include the reason in the same line. Use only the supplied farm context; do not invent crop observations.',
                 context
@@ -197,9 +196,7 @@ const renderRevenueChart = (data) => {
     });
 };
 
-const getDashboardTasks = () => {
-    return dashboardTasks;
-};
+const getDashboardTasks = () => dashboardTasks;
 
 const renderDashboardTasks = () => {
     const list = document.querySelector('.task-list');
@@ -214,27 +211,21 @@ const renderDashboardTasks = () => {
         return;
     }
 
-    const colorMap = {
-        irrigation: 'red',
-        harvest: 'yellow',
-        logistics: 'green',
-        pest: 'red'
-    };
+    const colorMap = { irrigation: 'red', harvest: 'yellow', logistics: 'green', pest: 'red' };
 
     list.innerHTML = tasks.map(task => {
-        const dotClass = colorMap[task.category] || 'green';
-        const checked = task.done ? 'checked' : '';
+        const dotClass  = colorMap[task.category] || 'green';
+        const checked   = task.done ? 'checked' : '';
         const doneClass = task.done ? 'task-done' : '';
         return `
-            <div class="task-item">
-                <input type="checkbox" data-task-id="${task.id}" ${checked}>
-                <span class="${doneClass}">${task.name}${task.date ? ` — ${task.date}` : ''}</span>
-                <span class="dot dot--${dotClass}"></span>
-            </div>
-        `;
+        <div class="task-item">
+            <input type="checkbox" data-task-id="${task.id}" ${checked}>
+            <span class="${doneClass}">${task.name}${task.date ? ` — ${task.date}` : ''}</span>
+            <span class="dot dot--${dotClass}"></span>
+        </div>`;
     }).join('');
 
-    const inputs = list.querySelectorAll('input[type="checkbox"]');
+    const inputs    = list.querySelectorAll('input[type="checkbox"]');
     const doneCount = tasks.filter(task => task.done).length;
 
     document.getElementById('taskProgress').textContent = `${doneCount} / ${tasks.length} done`;
@@ -242,14 +233,14 @@ const renderDashboardTasks = () => {
 
     inputs.forEach(input => {
         input.addEventListener('change', () => {
-            const allTasks = getDashboardTasks();
+            const allTasks     = getDashboardTasks();
             const matchingTask = allTasks.find(task => task.id === input.dataset.taskId);
             if (!matchingTask) return;
-
             matchingTask.done = input.checked;
             fetch(`${BASE}/tasks/${matchingTask.id}`, {
                 method: 'PUT',
                 headers: authHeaders,
+                credentials: 'include',
                 body: JSON.stringify({ done: matchingTask.done })
             }).catch(error => console.error('Task update error:', error));
             renderDashboardTasks();
@@ -257,13 +248,12 @@ const renderDashboardTasks = () => {
     });
 };
 
-const initTaskProgress = () => {
-    renderDashboardTasks();
-};
-
 const loadDashboardTasks = async () => {
     try {
-        const response = await fetch(`${BASE}/tasks`, { headers: authHeaders });
+        const response = await fetch(`${BASE}/tasks`, {
+            headers: authHeaders,
+            credentials: 'include'
+        });
         if (response.ok) {
             dashboardTasks = (await response.json()).map(task => ({ ...task, id: task._id }));
             renderDashboardTasks();
@@ -275,7 +265,10 @@ const loadDashboardTasks = async () => {
 
 const loadDashboard = async () => {
     try {
-        const profileRes = await fetch(`${BASE}/profile`, { headers: authHeaders });
+        const profileRes = await fetch(`${BASE}/profile`, {
+            headers: authHeaders,
+            credentials: 'include'
+        });
         if (profileRes.status === 401) { window.location.href = '../login.html'; return; }
         const user = await profileRes.json();
         renderProfile(user);
@@ -285,24 +278,24 @@ const loadDashboard = async () => {
         const [weatherRes, forecastRes, statsRes, chartRes, notifRes, productsRes] = await Promise.all([
             location ? fetch(`${BASE}/weather/weather?location=${encodeURIComponent(location)}`) : null,
             location ? fetch(`${BASE}/weather/forecast?location=${encodeURIComponent(location)}`) : null,
-            fetch(`${BASE}/analytics/stats`,   { headers: authHeaders }),
-            fetch(`${BASE}/analytics/monthly`, { headers: authHeaders }),
-            fetch(`${BASE}/notifications`,     { headers: authHeaders }),
-            fetch(`${BASE}/products`,          { headers: authHeaders })
+            fetch(`${BASE}/analytics/stats`,   { headers: authHeaders, credentials: 'include' }),
+            fetch(`${BASE}/analytics/monthly`, { headers: authHeaders, credentials: 'include' }),
+            fetch(`${BASE}/notifications`,     { headers: authHeaders, credentials: 'include' }),
+            fetch(`${BASE}/products`,          { headers: authHeaders, credentials: 'include' })
         ]);
 
-        let weatherContext = null;
+        let weatherContext  = null;
         let forecastContext = [];
 
         if (weatherRes) {
             const weatherData = await weatherRes.json();
-            weatherContext = weatherData.weather || null;
+            weatherContext    = weatherData.weather || null;
             if (weatherData.weather) renderWeather(weatherData.weather);
         }
 
         if (forecastRes) {
             const forecastData = await forecastRes.json();
-            forecastContext = forecastData.forecast || [];
+            forecastContext    = forecastData.forecast || [];
             renderForecast(forecastData.forecast, location);
         }
 
@@ -321,10 +314,10 @@ const loadDashboard = async () => {
         const products = productsRes.ok ? await productsRes.json() : [];
         loadAIRecommendations(JSON.stringify({
             farmLocation: location || 'Not provided',
-            weather: weatherContext,
-            forecast: forecastContext,
-            inventory: products.map(item => ({ name: item.name, category: item.category, quantity: item.quantity, unit: item.unit })),
-            tasks: getDashboardTasks().filter(task => !task.done)
+            weather:      weatherContext,
+            forecast:     forecastContext,
+            inventory:    products.map(item => ({ name: item.name, category: item.category, quantity: item.quantity, unit: item.unit })),
+            tasks:        getDashboardTasks().filter(task => !task.done)
         }));
 
     } catch (e) {
@@ -339,5 +332,5 @@ document.querySelectorAll('.chart-tab').forEach(tab => {
     });
 });
 
-initTaskProgress();
+renderDashboardTasks();
 loadDashboard();
