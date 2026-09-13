@@ -1,14 +1,18 @@
 const jwt= require('jsonwebtoken');
 
-const getCookie = (req, name) => (req.headers.cookie || '')
-    .split(';')
-    .map(value => value.trim().split('='))
-    .find(([key]) => key === name)?.[1];
+const getCookie = (req, name) => {
+    const raw = (req.headers.cookie || '')
+        .split(';')
+        .map(value => value.trim().split('='))
+        .find(([key]) => key === name)?.[1];
+    return raw ? decodeURIComponent(raw) : null;
+};
 
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    const token = getCookie(req, 'accessToken') || bearerToken;
+    const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+    // Prefer Bearer token (works cross-origin) over cookie.
+    const token = bearerToken || getCookie(req, 'accessToken');
 
     if (!token) {
         return res.status(401).json({ message: "No token provided" });

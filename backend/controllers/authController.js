@@ -121,15 +121,13 @@ const hasSmtpConfiguration = () => Boolean(
 );
 
 const setAuthCookie = (res, token) => {
-    // Cross-origin frontends (e.g. static host → Render API) need SameSite=None; Secure.
-    // Prefer explicit CROSS_SITE_COOKIES, otherwise treat production as cross-site.
-    const crossSite = process.env.CROSS_SITE_COOKIES === 'true'
-        || process.env.NODE_ENV === 'production';
-
+    // Safari (ITP) blocks cross-site cookies unless SameSite=None; Secure.
+    // Frontend (GitHub Pages / Vercel) and API (Render) are different sites, so
+    // always use cross-site cookie flags. Auth still primarily uses Bearer token.
     res.cookie('accessToken', token, {
         httpOnly: true,
-        secure: crossSite,
-        sameSite: crossSite ? 'none' : 'lax',
+        secure: true,
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: '/'
     });
@@ -238,12 +236,10 @@ const loginUser = async (req, res) => {
 };
 
 const logoutUser = (req, res) => {
-    const crossSite = process.env.CROSS_SITE_COOKIES === 'true'
-        || process.env.NODE_ENV === 'production';
     res.clearCookie('accessToken', {
         httpOnly: true,
-        secure: crossSite,
-        sameSite: crossSite ? 'none' : 'lax',
+        secure: true,
+        sameSite: 'none',
         path: '/'
     });
     res.json({ message: 'Logged out successfully' });
