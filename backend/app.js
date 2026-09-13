@@ -7,6 +7,15 @@ const allowedOrigins = (process.env.FRONTEND_ORIGIN || '')
     .map(origin => origin.trim())
     .filter(Boolean);
 
+// Built-in public frontends for this project (Safari needs exact origin match).
+const defaultPublicOrigins = [
+    'https://aarejamiu.github.io',
+    'https://farm-weather-project.vercel.app'
+];
+defaultPublicOrigins.forEach((origin) => {
+    if (!allowedOrigins.includes(origin)) allowedOrigins.push(origin);
+});
+
 // Also accept the origin derived from FRONTEND_URL (password-reset / site URL).
 const frontendUrlOrigin = (() => {
     try {
