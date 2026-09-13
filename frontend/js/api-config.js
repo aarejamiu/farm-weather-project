@@ -30,7 +30,7 @@
     const customerHome = () => {
         const path = window.location.pathname || '';
         if (path.includes('/farmer/')) return '../customer/home.html';
-        if (path.includes('/customer/')) return 'home.html';
+        if (path.includRes('/customer/')) return 'home.html';
         return 'customer/home.html';
     };
 
